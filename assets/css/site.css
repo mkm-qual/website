@@ -1100,3 +1100,4 @@ fieldset.ct-f{border:0;margin:0;padding:0}
   .regions li:hover>button{background:var(--surface);color:var(--ink)}
 }
 @media (max-width:720px){ .regions{position:relative} .regions li{position:static} .office-pop{left:0;right:auto} }
+@media (max-width:720px){ .legal{flex-direction:column-reverse;align-items:center;text-align:center;gap:12px} .regions{justify-content:center} .office-pop{left:50%;transform:translateX(-50%);text-align:left} }
