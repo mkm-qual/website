@@ -204,7 +204,7 @@
   const caption = document.getElementById('e2e-caption'), replay = document.getElementById('e2e-replay');
   STEPS.forEach((s, i) => {
     const li = document.createElement('li');
-    li.innerHTML = `<button type="button"><span class="e2e-n" style="background:${s.c}">${i + 1}</span><span class="e2e-t"><small>${s.sys}</small><b>${s.step}</b></span><span class="e2e-d">✓</span></button>`;
+    li.innerHTML = `<button type="button"><span class="e2e-n" style="background:${s.c}">${i + 1}</span><span class="e2e-t"><small>${s.sys}</small><b>${s.step}</b></span><span class="e2e-d" aria-hidden="true"><svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="10"/><path d="M5.8 10.4l2.8 2.8 5.6-6"/></svg></span></button>`;
     li.querySelector('button').addEventListener('click', () => go(i, true));
     stepsEl.appendChild(li);
     prog.insertAdjacentHTML('beforeend', '<i><b></b></i>');
