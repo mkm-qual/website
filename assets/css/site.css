@@ -509,8 +509,8 @@ footer{padding:clamp(56px,7vw,96px) var(--side) 32px;font-size:var(--t-small)}
 .pp-checks li{display:flex;gap:14px;align-items:flex-start;padding:18px 0;border-bottom:1px solid var(--ink-faint);font-size:clamp(18px,1.5vw,21px);font-weight:300;line-height:1.3}
 .pp-checks svg{flex:none;width:22px;height:22px;margin-top:2px;fill:none;stroke:var(--pass);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .pp-split .media{aspect-ratio:auto;min-height:clamp(420px,38vw,540px)}
-.pp-split .mock-r{align-items:baseline}
-.pp-split .mock-r span:first-child{white-space:normal;overflow:visible}
+.pp-split .mock-r,.pp-hero .mock-r{align-items:baseline}
+.pp-split .mock-r span:first-child,.pp-hero .mock-r span:first-child{white-space:normal;overflow:visible}
 
 .pp-next-head{padding:var(--sec) var(--side) clamp(32px,4vw,48px);text-align:center}
 .pp-next{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--g);padding:0 var(--side)}
@@ -532,3 +532,6 @@ footer{padding:clamp(56px,7vw,96px) var(--side) 32px;font-size:var(--t-small)}
   .pp-card{min-height:0}
   .pp-hero .media,.pp-split .media{min-height:0}
 }
+.pp-grid.four{grid-template-columns:repeat(4,1fr)}
+@media (max-width:1024px){ .pp-grid.four{grid-template-columns:1fr 1fr} }
+@media (max-width:768px){ .pp-grid.four{grid-template-columns:1fr} }

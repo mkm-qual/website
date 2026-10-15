@@ -72,7 +72,7 @@
       <h4>Capabilities</h4>
       <ul>
         <li><a href="one-click-generation.html"><div><b>1-Click generation</b><span>End-to-end journeys from your metadata</span></div></a></li>
-        <li><a href="index.html#feat-update"><div><b>1-Click update</b><span>Keep the suite current every sprint</span></div></a></li>
+        <li><a href="instant-update.html"><div><b>1-Click update</b><span>Keep the suite current every sprint</span></div></a></li>
         <li><a href="index.html#feat-heal"><div><b>Self-healing</b><span>Patented, for reliable runs</span></div></a></li>
         <li><a href="index.html#feat-integrate"><div><b>Integration testing</b><span>Web, mobile, API, PDF and legacy</span></div></a></li>
         <li><a href="index.html#turnaround"><div><b>Turnaround</b><span>See the sprint-by-sprint difference</span></div></a></li>
@@ -94,6 +94,7 @@
   <a class="btn btn-cta r" href="#demo">Book a demo</a>
   <div class="mega-float" id="pill-list" hidden>
     <a href="one-click-generation.html">1-Click generation <span>Capability</span></a>
+    <a href="instant-update.html">1-Click update <span>Capability</span></a>
     <a href="index.html#turnaround">Turnaround <span>Proof</span></a>
     <a href="index.html#platforms">Salesforce &amp; ServiceNow <span>Platforms</span></a>
     <a href="index.html#secure">Security <span>Enterprise</span></a>
@@ -115,14 +116,14 @@
     </div>
     <div class="media mascot">
       <img class="mascot-img" src="assets/mascot/magic-wand.webp" alt="" width="962" height="1241">
-      <div class="mock" id="gen-mock">
+      <div class="mock" id="gen-mock" data-anim data-running="generating" data-progress="Generating {n} of {total}" data-done="4 journeys ready · 65 steps">
         <div class="mock-h">Generate automation <small>Sales Cloud · UAT</small></div>
         <div class="mock-r"><span>Lead to Opportunity conversion</span><span class="ok">✓ 14 steps</span></div>
         <div class="mock-r"><span>Quote with CPQ discount approval</span><span class="ok">✓ 22 steps</span></div>
         <div class="mock-r"><span>Case escalation, Lightning console</span><span class="ok">✓ 11 steps</span></div>
         <div class="mock-r"><span>OmniScript · Policy onboarding</span><span class="ok">✓ 18 steps</span></div>
-        <button class="mock-btn" type="button" id="gen-btn" style="border:0;width:calc(100% - 28px);cursor:pointer;font:inherit;font-weight:500">Generate 4 journeys</button>
-        <div class="mock-foot"><span id="gen-status">4 journeys ready · 65 steps</span><span>Example</span></div>
+        <button class="mock-btn" type="button" id="gen-btn" data-anim-btn style="border:0;width:calc(100% - 28px);cursor:pointer;font:inherit;font-weight:500">Generate 4 journeys</button>
+        <div class="mock-foot"><span id="gen-status" data-anim-status>4 journeys ready · 65 steps</span><span>Example</span></div>
       </div>
     </div>
   </section>
@@ -193,7 +194,7 @@
   <!-- More from Boson -->
   <section class="pp-next-head"><h2 class="h2">More from Qualitia Boson</h2></section>
   <section class="pp-next" aria-label="Other capabilities">
-    <a href="index.html#feat-update"><span class="chip">1-Click</span><b>Update every test, every sprint</b></a>
+    <a href="instant-update.html"><span class="chip">1-Click</span><b>Update every test, every sprint</b></a>
     <a href="index.html#feat-heal"><span class="chip">Patented</span><b>Self-healing that keeps runs reliable</b></a>
     <a href="index.html#feat-integrate"><span class="chip">End to end</span><b>Integration tests that cross systems</b></a>
   </section>
@@ -223,7 +224,7 @@
       <a class="logo" href="index.html" aria-label="Qualitia home"><svg class="logo-boson" viewBox="0 0 250 36" aria-hidden="true"><use href="#q-boson"/></svg></a>
       <p class="soft" style="margin-top:16px;max-width:24em">AI-native test automation for Salesforce and ServiceNow.</p>
     </div>
-    <div><h4>Platform</h4><ul><li><a href="one-click-generation.html">1-Click generation</a></li><li><a href="index.html#platforms">Salesforce</a></li><li><a href="index.html#platforms">ServiceNow</a></li><li><a href="index.html#feat-integrate">Integrations</a></li></ul></div>
+    <div><h4>Platform</h4><ul><li><a href="one-click-generation.html">1-Click generation</a></li><li><a href="instant-update.html">1-Click update</a></li><li><a href="index.html#platforms">Salesforce</a></li><li><a href="index.html#platforms">ServiceNow</a></li><li><a href="index.html#feat-integrate">Integrations</a></li></ul></div>
     <div><h4>Resources</h4><ul><li><a href="#">Blog</a></li><li><a href="#">Release readiness guides</a></li><li><a href="#">Documentation</a></li><li><a href="#">Help center</a></li></ul></div>
     <div><h4>Company</h4><ul><li><a href="#">About</a></li><li><a href="customers.html">Customers</a></li><li><a href="#">Careers</a></li><li><a href="#demo">Contact</a></li></ul></div>
     <div><h4>Legal</h4><ul><li><a href="#">Privacy Policy</a></li><li><a href="#">Cookie Policy</a></li><li><a href="#">Terms of Service</a></li><li><a href="index.html#secure">Security</a></li></ul></div>
