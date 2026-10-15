@@ -81,10 +81,10 @@
   // Console runs (illustrative), only on pages that have the console
   if (document.getElementById('c-body')) {
   const RUNS = {
-    sf:{meta:'sprint 14 · UAT sandbox', release:['Sprint 14 · 37 changes','1-Click · 412 tests updated'], lines:[
+    sf:{meta:'sprint 14 · UAT sandbox', release:['Sprint 14 · 37 changes','Instant update · 412 tests'], lines:[
       ['Lead → Opportunity conversion','1.8s'],['Quote with CPQ discount approval','3.2s'],['Case escalation to Tier 2','2.1s'],
       ['Lightning page layout · Account','0.9s','healed · field moved'],['Experience Cloud partner login','1.4s'],['Order sync → ERP integration','4.6s'],['Agentforce case summary','2.7s']]},
-    sn:{meta:'sprint 9 · test instance', release:['Sprint 9 · 22 changes','1-Click · 268 tests updated'], lines:[
+    sn:{meta:'sprint 9 · test instance', release:['Sprint 9 · 22 changes','Instant update · 268 tests'], lines:[
       ['Incident P1 → major incident','2.3s'],['Change request CAB approval','3.0s'],['Service Catalog · laptop request','1.6s'],
       ['HR case onboarding journey','2.9s','healed · form updated'],['CMDB CI relationship check','1.2s'],['Salesforce case → ServiceNow incident','4.1s'],['Service Operations Workspace','1.7s']]}
   };

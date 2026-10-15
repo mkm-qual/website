@@ -17,7 +17,7 @@ Then open http://127.0.0.1:4173. Open the page through a local server rather tha
 - `index.html` is the homepage.
 - `customers.html` is the customers page (logo grid, case studies, stats and testimonials).
 - `one-click-generation.html` is the 1-Click Generation product page.
-- `instant-update.html` is the 1-Click Update product page.
+- `instant-update.html` is the Instant Update product page.
 - `total-control.html` is the Total Control page, with the end-to-end app-screens walkthrough and the CI/CD pipeline simulator.
 - `assets/css/site.css` and `assets/js/site.js` hold the styles and behaviour that both pages share.
 - `assets/hero/` holds the hero photo and a 1200px copy for phones.
