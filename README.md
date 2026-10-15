@@ -22,6 +22,7 @@ Then open http://127.0.0.1:4173. Open the page through a local server rather tha
 - `resources.html` is the Resources page: case studies, blogs, podcasts and videos with filters.
 - `contact.html` is the Contact page with the demo request form. It validates and confirms in the browser, but submissions are not sent anywhere yet; connect it to your CRM or form service before launch.
 - `privacy-policy.html` is the Privacy Policy. Its wording matches qualitia.ai/privacy-policy word for word (last modified July 2024). Every footer's "Privacy Policy" link points to it.
+- `cookies-policy.html` is the Cookie Policy. Its wording matches qualitia.ai/cookies-policy word for word. Every footer's "Cookie Policy" link, and section 3 of the Privacy Policy, point to it.
 - `assets/css/site.css` and `assets/js/site.js` hold the styles and behaviour that both pages share.
 - `assets/hero/` holds the hero photo and a 1200px copy for phones.
 - `assets/brand/` holds the official Qualitia, Qualitia Boson and symbol logos as SVG, light and white.
