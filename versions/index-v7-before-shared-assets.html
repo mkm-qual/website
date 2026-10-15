@@ -1,0 +1,1001 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Qualitia Boson</title>
+<meta name="description" content="Qualitia Boson is the AI-native test automation platform for Salesforce and ServiceNow. Generate end-to-end tests in one click, update them in one click every sprint, and cut regression cycles from weeks to hours.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@100..700&family=Geist+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: edge-to-edge 16px gutter grid, 16px gaps, 12px cards, airy 200px section rhythm, light-weight Archivo headings (after teamtailor.com), in Qualitia navy */
+:root{
+  --paper:#FFFFFF;
+  --surface:#F1F4F8;        /* soft cool card ground */
+  --ink:#001630;            /* Qualitia navy (from brand files) */
+  --brand:#0095EB;          /* Qualitia blue, the symbol tail */
+  --ink-soft:rgba(0,22,48,.68);
+  --ink-faint:rgba(0,22,48,.12);
+  --cta:#B4C6FF;            /* periwinkle CTA, navy text */
+  --chip:#E1E9FF;
+  --deep:#001630;           /* dark media cards */
+  --deep-fg:#EEF2F8;
+  --deep-soft:rgba(238,242,248,.66);
+  --pass:#34C38F;
+  --run:#E0A84A;
+  --sans:"Archivo", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+  --mono:"Geist Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  /* type scale */
+  --t-display:clamp(40px,4.4vw,60px);
+  --t-h1:clamp(34px,3.4vw,48px);
+  --t-h2:clamp(28px,2.6vw,36px);
+  --t-quote:clamp(28px,3vw,42px);
+  --t-lede:18px;
+  --t-body:16px;
+  --t-small:14px;
+  --t-chip:12px;
+  --g:16px;                 /* gutter + gap */
+  --r:12px;
+  --sec:clamp(96px,13vw,200px);
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#070E1A; --surface:#0F1A2B; --ink:#E8EEF7; --ink-soft:rgba(232,238,247,.66); --ink-faint:rgba(232,238,247,.12);
+    --cta:#B4C6FF; --chip:#1D2B47; --deep:#122440; --deep-fg:#EEF2F8; --deep-soft:rgba(238,242,248,.66);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#070E1A; --surface:#0F1A2B; --ink:#E8EEF7; --ink-soft:rgba(232,238,247,.66); --ink-faint:rgba(232,238,247,.12);
+  --cta:#B4C6FF; --chip:#1D2B47; --deep:#122440; --deep-fg:#EEF2F8; --deep-soft:rgba(238,242,248,.66);
+  color-scheme:dark;
+}
+
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:var(--t-body);line-height:1.5;-webkit-font-smoothing:antialiased;padding-bottom:env(safe-area-inset-bottom,0px)}
+img{max-width:100%}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--ink);outline-offset:2px;border-radius:8px}
+h1,h2,h3,h4{margin:0;font-weight:300;text-wrap:balance}
+p{margin:0}
+.display{font-size:var(--t-display);line-height:1.05;letter-spacing:-0.01em;font-weight:300}
+.h1{font-size:var(--t-h1);line-height:1.15;letter-spacing:-0.015em;font-weight:300}
+.h2{font-size:var(--t-h2);line-height:1.15;letter-spacing:-0.01em;font-weight:300}
+.lede{font-size:var(--t-lede);line-height:1.25;letter-spacing:-0.005em}
+.soft{color:var(--ink-soft)}
+.chip{display:inline-block;font-size:var(--t-chip);font-weight:500;letter-spacing:.01em;line-height:1;padding:6px;border-radius:8px;background:var(--chip);color:var(--ink)}
+
+/* Buttons (teamtailor: 14px/500, 12px pad, 8px radius) */
+.btn{display:inline-flex;align-items:center;gap:6px;font-size:var(--t-small);font-weight:500;line-height:1;padding:12px;border-radius:8px;border:0;cursor:pointer;white-space:nowrap;transition:filter .15s,background .15s,transform .15s}
+.btn:active{transform:scale(.98)}
+.btn-cta{background:var(--cta);color:#001630}
+.btn-cta:hover{filter:brightness(.95)}
+.btn-soft{background:var(--surface);color:var(--ink)}
+.btn-soft:hover{background:var(--ink-faint)}
+.btn-ghost{background:transparent;color:var(--ink)}
+.btn-ghost:hover{background:var(--surface)}
+.caret{width:8px;height:8px;transition:transform .2s}
+[aria-expanded="true"] .caret{transform:rotate(180deg)}
+
+/* Header */
+.site-header{position:relative;z-index:50;background:var(--paper)}
+.hdr{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;height:50px;padding-inline:var(--g)}
+.hdr-l,.hdr-r{display:flex;align-items:center;gap:4px}
+.hdr-r{justify-content:flex-end}
+.logo{display:inline-flex;align-items:center;color:var(--ink)}
+.logo svg{display:block;height:auto}
+.logo-full{width:118px}
+.logo-sym{width:30px}
+.logo-boson{width:200px}
+/* Mega menu */
+.mega{position:absolute;left:0;right:0;top:50px;background:var(--paper);border-radius:0 0 var(--r) var(--r);box-shadow:0 24px 48px -24px rgba(11,31,58,.25);padding:20px var(--g) 24px;display:grid;grid-template-columns:1fr 1fr 1.1fr;gap:var(--g)}
+.mega[hidden]{display:none!important}
+.mega h4{font-size:12px;font-weight:500;color:var(--ink-soft);margin-bottom:14px;letter-spacing:.01em}
+.mega ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px}
+.mega li a{display:flex;gap:12px;align-items:flex-start;padding:8px;margin-left:-8px;border-radius:8px;font-size:var(--t-small);line-height:1.3}
+.mega li a:hover{background:var(--surface)}
+.mega li a b{font-weight:500;display:block}
+.mega li a span{color:var(--ink-soft)}
+.orb{width:16px;height:16px;border-radius:50%;flex:none;margin-top:1px;background:radial-gradient(circle at 35% 30%,#fff 0,var(--c,#B4C6FF) 55%,color-mix(in srgb,var(--c,#B4C6FF) 70%,#001630) 100%)}
+.mega .m-story{background:var(--deep);color:var(--deep-fg);border-radius:var(--r);padding:20px;display:flex;flex-direction:column;justify-content:space-between;min-height:220px}
+.mega .m-story .num{font-size:56px;font-weight:200;letter-spacing:-0.03em;line-height:1}
+.mega .m-story p{font-size:var(--t-small);color:var(--deep-soft)}
+.new{font-size:10px;font-weight:500;font-style:normal;padding:3px 5px;border-radius:5px;background:var(--cta);color:#001630;margin-left:6px;vertical-align:1px}
+
+/* Floating pill nav */
+.pill-nav{position:fixed;left:50%;top:calc(16px + env(safe-area-inset-top,0px));z-index:60;width:460px;max-width:calc(100vw - 32px);display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:8px;border-radius:16px;background:color-mix(in srgb,var(--paper) 94%,transparent);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);box-shadow:0 8px 30px -8px rgba(11,31,58,.22),0 0 0 1px var(--ink-faint);transform:translate(-50%,-160%);transition:transform .35s cubic-bezier(.2,.8,.2,1)}
+.pill-nav.show{transform:translate(-50%,0)}
+.pill-nav .btn{padding:10px}
+.pill-nav .r{justify-self:end}
+.pill-nav .mega-float{position:absolute;top:calc(100% + 8px);left:0;right:0;background:var(--paper);border-radius:var(--r);box-shadow:0 24px 48px -16px rgba(11,31,58,.3),0 0 0 1px var(--ink-faint);padding:12px;display:flex;flex-direction:column;gap:2px}
+.pill-nav .mega-float[hidden]{display:none!important}
+.pill-nav .mega-float a{padding:10px;border-radius:8px;font-size:var(--t-small);display:flex;justify-content:space-between;gap:12px}
+.pill-nav .mega-float a span{color:var(--ink-soft)}
+.pill-nav .mega-float a:hover{background:var(--surface)}
+
+/* Hero: text left, live console right */
+.hero{padding:clamp(6px,1vw,16px) var(--g) var(--g)}
+.hero-card{position:relative;overflow:hidden;border-radius:var(--r);background:#001630;color:#fff;min-height:clamp(520px,78vh,720px);display:flex;flex-direction:column;justify-content:flex-end}
+.hero-photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:60% 40%}
+.hero-card::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(0deg,rgba(0,22,48,.92) 0%,rgba(0,22,48,.62) 34%,rgba(0,22,48,.12) 68%,rgba(0,22,48,0) 100%),linear-gradient(90deg,rgba(0,22,48,.35),transparent 55%)}
+.hero-tag{position:absolute;z-index:1;top:clamp(20px,2.4vw,32px);left:clamp(20px,2.4vw,32px);display:inline-flex;gap:8px;align-items:center;font-size:var(--t-small);color:#fff;padding:4px 12px 4px 4px;border-radius:10px;background:rgba(0,22,48,.55);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.hero-tag:hover{background:rgba(0,22,48,.7)}
+.hero-tag .chip{background:var(--cta);color:#001630}
+.hero-in{position:relative;z-index:1;display:grid;grid-template-columns:1.2fr 1fr;gap:32px;align-items:end;padding:clamp(20px,2.4vw,32px)}
+.hero-in > *{min-width:0}
+.hero h1{font-size:var(--t-display);line-height:1.05;letter-spacing:-0.01em;font-weight:300;max-width:12em}
+.hero h1 span{color:rgba(255,255,255,.62)}
+.hero-side{display:flex;flex-direction:column;gap:20px;justify-self:end;max-width:30em}
+.hero-side .lede{color:rgba(255,255,255,.86)}
+.hero-side .row{display:flex;gap:8px;flex-wrap:wrap}
+.hero .btn-soft{background:rgba(255,255,255,.14);color:#fff}
+.hero .btn-soft:hover{background:rgba(255,255,255,.22)}
+.hero-notes{display:flex;gap:18px;flex-wrap:wrap;font-size:13px;color:rgba(255,255,255,.7)}
+.hero-notes span{display:inline-flex;align-items:center;gap:8px}
+.dot{width:7px;height:7px;flex:none;aspect-ratio:1;border-radius:50%;background:var(--pass);display:inline-block}
+.dot.sn{background:var(--brand)}
+
+/* Product frame: the live console gets its own stage below the intro */
+.frame-wrap{padding:clamp(40px,5vw,72px) var(--g) 0}
+.frame{background:var(--surface);border-radius:var(--r);padding:clamp(24px,5vw,80px) clamp(16px,5vw,80px) 0;overflow:hidden}
+.frame .console{max-width:1080px;margin-inline:auto;border-radius:14px 14px 0 0;box-shadow:0 40px 80px -40px rgba(0,22,48,.5)}
+
+/* Logos */
+.logos{padding-block:clamp(32px,4vw,64px);overflow:hidden;mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);-webkit-mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent)}
+.track{display:flex;gap:clamp(56px,6vw,96px);width:max-content;animation:scroll 70s linear infinite;align-items:center}
+.logos:hover .track{animation-play-state:paused}
+/* Vector logos in a fixed box so wide and tall marks read at a similar weight; mono at rest, brand colour on hover */
+.track img{display:block;width:100px;height:26px;object-fit:contain;filter:grayscale(1) contrast(1.1);opacity:.6;transition:filter .25s,opacity .25s}
+.track img:hover{filter:none;opacity:1}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .track img{filter:grayscale(1) invert(1) brightness(1.4);opacity:.7} :root:not([data-theme="light"]) .track img:hover{filter:none;opacity:1} }
+:root[data-theme="dark"] .track img{filter:grayscale(1) invert(1) brightness(1.4);opacity:.7}
+:root[data-theme="dark"] .track img:hover{filter:none;opacity:1}
+@keyframes scroll{to{transform:translateX(-50%)}}
+
+/* Intro (centered) */
+.intro{padding:var(--sec) var(--g) var(--g);text-align:center;display:flex;flex-direction:column;align-items:center}
+.intro .h1{max-width:16em}
+.intro .lede{max-width:34em;margin-top:24px;color:var(--ink-soft)}
+.intro .row{display:flex;gap:8px;margin-top:32px;flex-wrap:wrap;justify-content:center}
+.pillars{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--g);margin-top:clamp(56px,7vw,96px);width:100%;max-width:1200px}
+.pillars div{display:flex;flex-direction:column;align-items:center;gap:14px}
+.pillars p{font-size:clamp(18px,1.7vw,24px);font-weight:300;letter-spacing:-0.01em;line-height:1.2}
+
+/* Console */
+.console{background:#001630;color:#C9D3E3;font-family:var(--mono);font-size:13px;overflow:hidden}
+.c-head{display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid rgba(201,211,227,.08)}
+.dots{display:flex;gap:6px}
+.dots i{width:10px;height:10px;border-radius:50%;background:rgba(201,211,227,.18)}
+.c-tabs{display:flex;gap:4px;margin-left:8px}
+.c-tab{all:unset;cursor:pointer;padding:6px 12px;border-radius:8px;color:#6B7A93;font-size:12px}
+.c-tab[aria-selected="true"]{background:rgba(201,211,227,.08);color:#C9D3E3}
+.c-tab:focus-visible{outline:2px solid #B4C6FF}
+.c-meta{margin-left:auto;color:#6B7A93;font-size:11.5px;white-space:nowrap}
+.bar{height:2px;background:rgba(201,211,227,.08)}
+.bar i{display:block;height:100%;width:100%;background:var(--pass);transition:width .4s}
+.c-body{padding:18px 20px 8px;min-height:318px}
+.c-release{display:flex;justify-content:space-between;gap:12px;padding:10px 12px;border-radius:10px;background:rgba(180,198,255,.1);color:#B4C6FF;font-size:12px;margin-bottom:14px}
+.c-release span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.c-release span:first-child{flex:none}
+.c-release span:last-child{color:#8FA0BA;min-width:0}
+.c-line{display:grid;grid-template-columns:18px 1fr auto;gap:10px;align-items:baseline;padding:7px 2px;border-bottom:1px dashed rgba(201,211,227,.07)}
+.c-line:last-child{border-bottom:0}
+.c-line .st{color:var(--pass)}
+.c-line .nm{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.c-line .tm{color:#6B7A93;font-variant-numeric:tabular-nums}
+.c-line.running .st{color:var(--run)}
+.c-line.pending{color:#6B7A93}
+.c-line .heal{color:#B4C6FF}
+.c-foot{display:flex;justify-content:space-between;gap:12px;padding:12px 20px;border-top:1px solid rgba(201,211,227,.08);color:#6B7A93;font-size:11.5px;font-variant-numeric:tabular-nums}
+.c-foot b{color:var(--pass);font-weight:500}
+
+/* Statement */
+.statement{padding:var(--sec) var(--g);text-align:center}
+.statement .display{max-width:16em;margin-inline:auto}
+.statement .soft{display:block}
+
+/* Feature rows (sticky text left, media right) */
+.features{padding:0 var(--g) var(--sec);display:flex;flex-direction:column;gap:var(--g)}
+.feat{display:grid;grid-template-columns:1fr 1fr;gap:var(--g);align-items:start}
+.feat > *{min-width:0}
+.feat-text{position:sticky;top:96px;padding-top:8px;display:flex;flex-direction:column;gap:20px}
+.feat-text h3{font-size:var(--t-h2);line-height:1.15;letter-spacing:-0.01em;font-weight:300;max-width:15em;display:flex;flex-direction:column;gap:4px}
+.feat-text h3 span{color:var(--ink-soft)}
+.feat-text .chip{align-self:flex-start}
+.media{border-radius:var(--r);aspect-ratio:696/450;max-width:100%;background:var(--surface);padding:clamp(20px,3vw,40px);display:flex;align-items:center;justify-content:center;overflow:hidden}
+.media.dark{background:var(--deep);color:var(--deep-fg)}
+.mock{width:100%;max-width:440px;background:var(--paper);color:var(--ink);border-radius:10px;box-shadow:0 20px 40px -20px rgba(11,31,58,.35);font-size:13px;overflow:hidden}
+.media.dark .mock{background:#16294A;color:var(--deep-fg);box-shadow:none}
+.mock-h{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid var(--ink-faint);font-weight:500}
+.media.dark .mock-h{border-bottom-color:rgba(238,242,248,.1)}
+.mock-h small{font-weight:400;color:var(--ink-soft);font-size:12px}
+.media.dark .mock-h small{color:var(--deep-soft)}
+.mock-r{display:flex;justify-content:space-between;gap:12px;padding:10px 14px;border-bottom:1px solid var(--ink-faint)}
+.media.dark .mock-r{border-bottom-color:rgba(238,242,248,.08)}
+.mock-r span:first-child{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mock-r .ok{color:var(--pass);font-family:var(--mono);font-size:12px;white-space:nowrap}
+.mock-r .chg{font-family:var(--mono);font-size:12px;white-space:nowrap;color:var(--ink-soft)}
+.media.dark .mock-r .chg{color:var(--deep-soft)}
+.mock-btn{margin:12px 14px 14px;display:flex;justify-content:center;padding:11px;border-radius:8px;background:var(--cta);color:#001630;font-weight:500}
+.code{font-family:var(--mono);font-size:12.5px;line-height:1.8;padding:16px 18px}
+.code div{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.code .del{color:#E58A8A;text-decoration:line-through;opacity:.85}
+.code .add{color:var(--pass)}
+.code .c{color:var(--deep-soft)}
+.flow{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:center}
+.node{background:var(--paper);border-radius:10px;padding:14px 16px;font-size:14px;box-shadow:0 12px 24px -16px rgba(11,31,58,.35);display:flex;flex-direction:column;gap:2px;min-width:118px}
+.node small{color:var(--ink-soft);font-size:12px}
+.node b{font-weight:500}
+.arrow{width:28px;height:1px;background:var(--ink-soft);position:relative}
+.arrow::after{content:"";position:absolute;right:0;top:-3px;border:3.5px solid transparent;border-left:5px solid var(--ink-soft);border-right:0}
+
+/* Mascot inside feature cards: product mock on the left, character stands on the card floor at right */
+.media.mascot{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);grid-template-rows:minmax(0,1fr);gap:clamp(12px,2vw,28px);align-items:center;justify-content:stretch}
+.media.mascot > :not(.mascot-img){grid-column:1;grid-row:1;min-width:0}
+.media.mascot .mock{max-width:none;width:100%}
+.mascot-img{grid-column:2;grid-row:1;width:100%;height:100%;min-height:0;object-fit:contain;object-position:center bottom;pointer-events:none;filter:drop-shadow(0 18px 24px rgba(0,22,48,.12));transition:transform .5s cubic-bezier(.2,.8,.2,1)}
+.media.mascot.wide-art{grid-template-columns:minmax(0,1.1fr) minmax(0,1fr)}
+.mascot-mini{display:none}
+.feat:hover .mascot-img{transform:translateY(-6px)}
+.flow.col{flex-direction:column;align-items:flex-start;gap:8px}
+.flow.col .arrow{width:1px;height:18px;margin-left:24px}
+.flow.col .arrow::after{right:-3px;top:auto;bottom:0;border:3.5px solid transparent;border-top:5px solid var(--ink-soft);border-bottom:0}
+
+/* Turnaround */
+.turn{padding:0 var(--g) var(--sec)}
+.turn-head,.sec-title{text-align:center;margin-bottom:clamp(40px,5vw,72px);display:flex;flex-direction:column;align-items:center;gap:20px}
+.turn-head .lede,.sec-title .lede{max-width:34em;color:var(--ink-soft)}
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:var(--g)}
+.cmp{background:var(--surface);border-radius:var(--r);padding:clamp(24px,3vw,40px);display:flex;flex-direction:column;gap:24px;min-width:0;margin:0}
+.cmp h3{font-size:24px;letter-spacing:-0.01em;line-height:1.2;font-weight:300}
+.cmp .sub{color:var(--ink-soft);font-size:var(--t-small);margin-top:6px}
+.row2{display:grid;grid-template-columns:120px 1fr;gap:14px;align-items:center}
+.row2 > *{min-width:0}
+.row2 .who{font-size:var(--t-small);line-height:1.25}
+.row2 .who b{font-weight:500}
+.track2{position:relative;height:36px;border-radius:8px;background:var(--paper)}
+.fill{position:absolute;inset-block:0;left:0;border-radius:8px;display:flex;align-items:center;padding-inline:10px;font-family:var(--mono);font-size:12px;white-space:nowrap;font-variant-numeric:tabular-nums}
+.fill.us{background:var(--cta);color:#001630}
+.fill.them{background:color-mix(in srgb,var(--ink) 20%,transparent);color:var(--ink)}
+.fill.range{background:repeating-linear-gradient(135deg,color-mix(in srgb,var(--ink) 20%,transparent) 0 6px,color-mix(in srgb,var(--ink) 8%,transparent) 6px 12px);color:var(--ink)}
+.fill.min{padding:0}
+.out{position:absolute;top:50%;transform:translateY(-50%);font-family:var(--mono);font-size:12px;white-space:nowrap;color:var(--ink)}
+.axis{display:grid;grid-template-columns:120px 1fr;gap:14px}
+.ticks{position:relative;height:18px;font-family:var(--mono);font-size:11px;color:var(--ink-soft);font-variant-numeric:tabular-nums}
+.ticks span{position:absolute;transform:translateX(-50%)}
+.ticks span:first-child{transform:none}
+.ticks span:last-child{transform:translateX(-100%)}
+.window{position:absolute;inset-block:-6px;width:0;border-left:1.5px dashed var(--ink);z-index:1}
+.legend{font-size:13px;color:var(--ink-soft);display:flex;gap:8px;align-items:center}
+.legend i{display:inline-block;width:0;height:14px;border-left:1.5px dashed var(--ink)}
+
+/* Quote */
+.quote{padding:0 var(--g) var(--sec);text-align:center;display:flex;flex-direction:column;align-items:center;gap:32px;margin:0}
+.quote blockquote{margin:0;font-size:var(--t-quote);font-weight:275;line-height:1.2;letter-spacing:-0.01em;max-width:20em}
+.quote figcaption{font-size:var(--t-small)}
+.quote figcaption b{font-weight:500}
+.quote figcaption span{color:var(--ink-soft)}
+
+/* Results (dark, big card) */
+.results{padding:0 var(--g) var(--g)}
+.results-card{background:var(--deep);color:var(--deep-fg);border-radius:20px;padding:clamp(28px,5vw,64px) clamp(20px,3vw,40px);display:flex;flex-direction:column;gap:clamp(64px,10vw,160px)}
+.results-card .h1{max-width:12em}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--g)}
+.stat{border-top:1px solid rgba(238,242,248,.18);padding-top:20px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.stat .num{font-size:clamp(48px,5.5vw,80px);font-weight:200;letter-spacing:-0.04em;line-height:1;font-variant-numeric:tabular-nums}
+.stat .num.sm{font-size:clamp(18px,1.6vw,22px);font-weight:400;letter-spacing:0;font-family:var(--mono);line-height:1.4}
+.stat p{color:var(--deep-soft);font-size:var(--t-small);max-width:22em}
+
+/* Platforms */
+.plats{padding:var(--sec) var(--g)}
+.plat-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--g)}
+.plat{background:var(--surface);border-radius:var(--r);padding:clamp(24px,3vw,40px);display:flex;flex-direction:column;gap:28px;min-width:0;min-height:460px}
+.plat-top{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.plat-top small{font-size:var(--t-chip);color:var(--ink-soft)}
+.plat h3{font-size:var(--t-h1);line-height:1.1;letter-spacing:-0.015em}
+.plat p{color:var(--ink-soft);max-width:30em}
+.tags{display:flex;flex-wrap:wrap;gap:6px}
+.tags span{font-size:13px;padding:7px 10px;border-radius:8px;background:var(--paper)}
+.plat .btn{margin-top:auto;align-self:flex-start}
+.chip.hi{background:var(--cta);color:#001630}
+
+/* Security */
+.secure{padding:0 var(--g) var(--g)}
+.secure-card{background:var(--surface);border-radius:var(--r);padding:clamp(28px,3vw,40px);display:grid;grid-template-columns:1fr 1fr;gap:clamp(32px,4vw,64px)}
+.secure-card > *{min-width:0}
+.secure-card .lede{color:var(--ink-soft);margin-top:20px;max-width:26em}
+.sec-items{display:grid;grid-template-columns:1fr 1fr;gap:var(--g)}
+.sec-items div{background:var(--paper);border-radius:var(--r);padding:20px;display:flex;flex-direction:column;gap:8px}
+.sec-items h4{font-size:20px;letter-spacing:-0.01em;line-height:1.2}
+.sec-items p{font-size:var(--t-small);color:var(--ink-soft)}
+
+/* Stories (horizontal reel) */
+.stories{padding:var(--sec) 0 0}
+.stories .sec-title{padding-inline:var(--g)}
+.reel{display:flex;gap:var(--g);overflow-x:auto;scroll-snap-type:x mandatory;padding:0 var(--g) var(--g);scroll-padding-inline:var(--g);scrollbar-width:none}
+.reel::-webkit-scrollbar{display:none}
+.story{flex:0 0 min(452px,86vw);scroll-snap-align:start;background:var(--surface);border-radius:var(--r);padding:28px;display:flex;flex-direction:column;justify-content:space-between;gap:40px;min-height:444px;margin:0}
+.story blockquote{margin:0;font-size:24px;font-weight:300;line-height:1.25;letter-spacing:-0.01em}
+.story figcaption{font-size:var(--t-small)}
+.story figcaption b{display:block;font-weight:500}
+.story figcaption span{color:var(--ink-soft)}
+.story.dark{background:var(--deep);color:var(--deep-fg)}
+.story.dark .big{font-size:80px;font-weight:200;letter-spacing:-0.04em;line-height:1}
+.story.dark p{color:var(--deep-soft);font-size:var(--t-small)}
+.story .inds{display:flex;flex-wrap:wrap;gap:6px}
+.story .inds span{font-size:13px;padding:7px 10px;border-radius:8px;background:var(--paper)}
+.reel-nav{display:flex;justify-content:flex-end;gap:8px;padding:0 var(--g)}
+.reel-nav button{width:40px;height:40px;border-radius:8px;border:0;background:var(--surface);cursor:pointer;font-size:16px}
+.reel-nav button:hover{background:var(--ink-faint)}
+
+/* CTA */
+.cta{padding:0 var(--g) var(--g)}
+.cta-card{position:relative;overflow:hidden;background:#001630;color:#fff;border-radius:20px;display:grid;grid-template-columns:1.25fr 1fr;align-items:end;gap:32px;padding:clamp(40px,6vw,96px) clamp(20px,3vw,48px) 0}
+.cta-card::before{content:"";position:absolute;right:-10%;bottom:-30%;width:70%;aspect-ratio:1;border-radius:50%;background:radial-gradient(closest-side,rgba(0,149,235,.28),transparent);pointer-events:none}
+.cta-copy{display:flex;flex-direction:column;align-items:flex-start;gap:32px;padding-bottom:clamp(40px,6vw,96px);position:relative;min-width:0}
+.cta-card .display{max-width:13em}
+.cta-mascot{position:relative;justify-self:center;width:min(100%,400px);height:auto;display:block}
+.cta form{display:flex;flex-direction:column;align-items:flex-start;gap:12px;width:100%;max-width:460px}
+.field{display:flex;gap:6px;width:100%;background:rgba(255,255,255,.1);border-radius:12px;padding:6px 6px 6px 16px}
+.field:focus-within{background:rgba(255,255,255,.16)}
+.field input{flex:1;min-width:0;border:0;background:transparent;font:inherit;color:#fff;outline:none}
+.field input::placeholder{color:rgba(255,255,255,.6)}
+.form-note{font-size:var(--t-small);color:rgba(255,255,255,.7);min-height:1.5em}
+
+/* Footer */
+footer{padding:clamp(56px,7vw,96px) var(--g) 32px;font-size:var(--t-small)}
+.foot{display:grid;grid-template-columns:2fr repeat(4,1fr);gap:var(--g)}
+.foot > *{min-width:0}
+.foot h4{font-size:var(--t-small);font-weight:500;margin-bottom:16px}
+.foot ul{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:10px;color:var(--ink-soft)}
+.foot a:hover{color:var(--ink)}
+.foot-trust{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:32px;margin-top:64px;padding-top:32px;border-top:1px solid var(--ink-faint)}
+.badges{display:flex;align-items:center;gap:clamp(12px,1.5vw,20px);flex-wrap:wrap;list-style:none;margin:0;padding:0}
+.badges img{display:block;height:40px;width:auto}
+.socials{display:flex;gap:6px;list-style:none;margin:0;padding:0}
+.socials a{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;background:color-mix(in srgb,var(--brand) 14%,var(--paper));color:var(--ink);transition:background .2s,transform .2s}
+.socials a:hover{background:var(--cta);color:#001630;transform:translateY(-1px)}
+.socials svg{width:10px;height:10px;fill:currentColor}
+.legal{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;margin-top:32px;color:var(--ink-soft);font-size:13px}
+.regions{display:flex;gap:4px;list-style:none;margin:0;padding:0}
+.regions li{position:relative}
+.regions button{all:unset;cursor:pointer;padding:6px 8px;border-radius:8px;color:var(--ink-soft);font-size:13px}
+.regions button:hover,.regions button[aria-expanded="true"]{background:var(--surface);color:var(--ink)}
+.regions button:focus-visible{outline:2px solid var(--ink)}
+.office-pop{position:absolute;right:0;bottom:calc(100% + 8px);width:min(280px,calc(100vw - 32px));background:var(--paper);color:var(--ink);border-radius:var(--r);padding:16px;box-shadow:0 20px 40px -16px rgba(0,22,48,.3),0 0 0 1px var(--ink-faint);display:flex;flex-direction:column;gap:10px;z-index:10}
+.office-pop[hidden]{display:none!important}
+.office-pop b{font-weight:500;font-size:14px}
+.office-pop address{font-style:normal;color:var(--ink-soft);line-height:1.5}
+.office-pop a{font-weight:500;color:var(--ink);text-decoration:underline;text-underline-offset:3px}
+
+/* Responsive */
+@media (max-width:1024px){
+  .hide-md{display:none!important}
+  .mega{grid-template-columns:1fr 1fr}
+  .mega .story-col{display:none}
+  .hero-in{grid-template-columns:1fr}
+  .hero-side{justify-self:start}
+  .stats{grid-template-columns:1fr 1fr;row-gap:40px}
+  .secure-card{grid-template-columns:1fr}
+  .foot{grid-template-columns:1fr 1fr 1fr}
+  .foot > :first-child{grid-column:1 / -1}
+}
+@media (max-width:768px){
+  .hdr{grid-template-columns:auto 1fr auto}
+  .hdr .logo{order:-1;justify-self:start}
+  .hdr-l{justify-content:flex-end}
+  .hdr-l .lnk{display:none}
+  .mega{grid-template-columns:1fr}
+  .pillars{grid-template-columns:1fr 1fr;row-gap:32px}
+  .hero-card{min-height:600px}
+  .feat{grid-template-columns:1fr;gap:20px}
+  .feat-text{position:static}
+  .compare,.plat-grid{grid-template-columns:1fr}
+  .plat{min-height:0}
+  .row2,.axis{grid-template-columns:92px 1fr}
+  .c-meta{display:none}
+  .c-body{padding:14px 12px 6px}
+  .media{aspect-ratio:auto;min-height:300px}
+  .media.mascot{display:flex}
+  .media.mascot .mascot-img{display:none}
+  .feat-text{position:relative;top:auto;padding-right:112px;min-height:112px}
+  .mascot-mini{display:block;position:absolute;top:0;right:0;width:104px;height:112px;object-fit:contain;object-position:center bottom}
+  .cta-card{grid-template-columns:1fr}
+  .cta-copy{padding-bottom:0}
+  .cta-mascot{width:min(70%,280px)}
+}
+@media (max-width:480px){
+  .badges img{height:40px}
+  .sec-items,.stats{grid-template-columns:1fr}
+  .foot{grid-template-columns:1fr 1fr}
+  .c-release span:last-child{display:none}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="q-logo" viewBox="0 0 141 36"><path d="M81.3864 4.01567H76.917V30.8964H81.3864V4.01567Z" fill="currentColor"/>
+<path d="M89.2395 12.4542H84.7697V30.8961H89.2395V12.4542Z" fill="currentColor"/>
+<path d="M92.4084 23.7563V5.95864H96.8782V12.4606H106.455V16.4733H96.8782V23.7563C96.8782 26.208 98.1543 27.1748 99.9955 27.1748C101.837 27.1748 103.112 26.2479 103.112 23.7563V23.2733H107.582V23.7563C107.582 28.8465 104.501 31.2988 99.995 31.2988C95.4887 31.2988 92.4056 28.8461 92.4056 23.7563" fill="currentColor"/>
+<path d="M115.014 12.4421H110.544V30.8571H115.014V12.4421Z" fill="currentColor"/>
+<path d="M17.5312 4.03571C14.8551 4.03562 12.239 4.8206 10.0139 6.29138C7.78868 7.76217 6.05434 9.8527 5.03015 12.2986C4.00596 14.7445 3.73791 17.436 4.2599 20.0326C4.7819 22.6292 6.07049 25.0144 7.96273 26.8865C9.85497 28.7586 12.2659 30.0336 14.8906 30.5502C17.5152 31.0668 20.2358 30.8018 22.7083 29.7887C25.1807 28.7757 27.294 27.06 28.7809 24.8588C30.2677 22.6575 31.0614 20.0695 31.0615 17.4221C31.0615 13.8719 29.636 10.4672 27.0986 7.95681C24.5612 5.44641 21.1197 4.03596 17.5312 4.03571ZM17.5312 26.0073C15.8147 26.0074 14.1367 25.504 12.7094 24.5606C11.2822 23.6172 10.1697 22.2763 9.5128 20.7074C8.85587 19.1386 8.68397 17.4122 9.01882 15.7467C9.35367 14.0812 10.1802 12.5513 11.394 11.3506C12.6078 10.1498 14.1542 9.33207 15.8377 9.0008C17.5213 8.66953 19.2663 8.8396 20.8521 9.48949C22.438 10.1394 23.7934 11.2399 24.747 12.6519C25.7005 14.0639 26.2095 15.7239 26.2094 17.4221C26.2094 19.6991 25.2951 21.8828 23.6676 23.4929C22.0402 25.1031 19.8328 26.0072 17.5312 26.0073Z" fill="currentColor"/>
+<path d="M33.6316 21.6299V12.0825H38.1014V21.6299C38.1014 25.1222 39.9786 26.7944 42.7961 26.7944C45.6135 26.7944 47.4908 25.1222 47.4908 21.6299V12.0825H51.9601V21.6299C51.9601 27.7607 48.2792 30.9188 42.7961 30.9188C37.313 30.9188 33.6316 27.7978 33.6316 21.6299Z" fill="currentColor"/>
+<path d="M127.275 11.6672C125.761 11.6677 124.267 12.0182 122.914 12.6907C121.56 13.3632 120.385 14.3392 119.48 15.5409C118.575 16.7425 117.967 18.1366 117.703 19.612C117.439 21.0874 117.528 22.6034 117.961 24.0391C118.394 25.4748 119.161 26.7905 120.199 27.8814C121.237 28.9722 122.518 29.8081 123.941 30.3224C125.364 30.8366 126.888 31.015 128.392 30.8434C129.897 30.6717 131.34 30.1548 132.607 29.3337V30.9354H136.966V30.9294H136.995V21.5586C136.998 21.4686 137 21.3783 137 21.2884C137 20.0249 136.749 18.7738 136.26 17.6065C135.771 16.4392 135.055 15.3786 134.152 14.4853C133.249 13.5919 132.177 12.8833 130.997 12.3999C129.817 11.9166 128.552 11.667 127.275 11.6672ZM127.275 26.5404C126.225 26.5402 125.199 26.232 124.326 25.6546C123.452 25.0773 122.772 24.2569 122.37 23.297C121.969 22.3371 121.864 21.281 122.069 20.2621C122.273 19.2431 122.779 18.3072 123.522 17.5727C124.265 16.8382 125.211 16.338 126.241 16.1353C127.271 15.9327 128.338 16.0368 129.308 16.4344C130.279 16.832 131.108 17.5053 131.691 18.3691C132.275 19.233 132.586 20.2485 132.586 21.2874C132.584 22.6802 132.024 24.0155 131.029 25.0002C130.033 25.9849 128.683 26.5394 127.275 26.5404Z" fill="currentColor"/>
+<path d="M73.7375 20.8518C73.6398 18.7291 72.8342 16.6982 71.4465 15.0763C70.0589 13.4543 68.1673 12.3327 66.0673 11.8867C63.9672 11.4406 61.777 11.6951 59.8386 12.6106C57.9003 13.526 56.323 15.0507 55.3531 16.9467C54.3832 18.8426 54.0753 21.0029 54.4775 23.0903C54.8797 25.1776 55.9694 27.0743 57.5764 28.4843C59.1834 29.8942 61.2171 30.7379 63.3599 30.8836C65.5028 31.0294 67.6341 30.4689 69.4209 29.2897V30.9355H73.7436V20.9899C73.7436 20.9436 73.7399 20.8982 73.7375 20.8518ZM69.4354 21.4998C69.4354 21.5772 69.427 21.6532 69.4204 21.7264C69.3013 23.1205 68.6345 24.4129 67.5632 25.3263C66.4919 26.2397 65.1014 26.7012 63.69 26.612C62.2786 26.5227 60.9588 25.8898 60.0138 24.8489C59.0687 23.808 58.5737 22.4421 58.635 21.0443C58.6962 19.6465 59.3088 18.3281 60.3413 17.372C61.3738 16.416 62.7441 15.8983 64.1579 15.9302C65.5718 15.9621 66.9168 16.5409 67.9042 17.5426C68.8916 18.5442 69.4429 19.8888 69.4397 21.288C69.4397 21.3589 69.4378 21.4307 69.4354 21.4998Z" fill="currentColor"/>
+<path d="M89.8514 6.8165C89.8514 7.37357 89.6844 7.91813 89.3716 8.38131C89.0587 8.84449 88.6141 9.20548 88.0938 9.41864C87.5736 9.6318 87.0011 9.68755 86.4489 9.57884C85.8966 9.47013 85.3893 9.20184 84.9912 8.8079C84.593 8.41396 84.3219 7.91206 84.2121 7.36568C84.1023 6.81931 84.1588 6.25299 84.3743 5.73835C84.5899 5.22371 84.9549 4.78386 85.4231 4.47444C85.8913 4.16502 86.4418 3.99991 87.0049 4C87.3788 3.99994 87.7491 4.07275 88.0945 4.21427C88.4399 4.35579 88.7538 4.56325 89.0182 4.8248C89.2826 5.08634 89.4923 5.39686 89.6353 5.7386C89.7784 6.08034 89.8515 6.44661 89.8514 6.8165Z" fill="currentColor"/>
+<path d="M115.626 6.8165C115.626 7.37355 115.459 7.91809 115.146 8.38126C114.833 8.84443 114.389 9.20543 113.868 9.4186C113.348 9.63177 112.776 9.68755 112.223 9.57887C111.671 9.4702 111.164 9.20195 110.766 8.80806C110.368 8.41417 110.096 7.91231 109.987 7.36597C109.877 6.81962 109.933 6.25332 110.149 5.73867C110.364 5.22402 110.729 4.78415 111.197 4.47467C111.665 4.16518 112.216 4 112.779 4C113.534 4.00012 114.258 4.29691 114.792 4.8251C115.326 5.35328 115.626 6.06959 115.626 6.8165Z" fill="currentColor"/>
+<path d="M30.3944 32H24.7726L15.818 20.0425H21.4398L30.3944 32Z" fill="#0095EB"/></symbol>
+  <symbol id="q-symbol" viewBox="0 0 35 36"><path d="M17.5005 4C14.8304 3.99991 12.2203 4.78589 10.0002 6.25855C7.78008 7.73121 6.04968 9.82442 5.02781 12.2735C4.00594 14.7225 3.7385 17.4174 4.25931 20.0173C4.78012 22.6173 6.06579 25.0055 7.95373 26.88C9.84168 28.7545 12.2471 30.0311 14.8658 30.5483C17.4845 31.0656 20.199 30.8003 22.6658 29.7859C25.1326 28.7716 27.2411 27.0537 28.7246 24.8497C30.2081 22.6456 30.9999 20.0543 31 17.4034C31 13.8488 29.5778 10.4397 27.0461 7.92611C24.5145 5.4125 21.0809 4.00025 17.5005 4ZM17.5005 25.9997C15.7879 25.9998 14.1137 25.4957 12.6896 24.5511C11.2656 23.6065 10.1557 22.2639 9.50028 20.693C8.84484 19.1222 8.67333 17.3936 9.00742 15.726C9.34151 14.0583 10.1662 12.5265 11.3772 11.3242C12.5882 10.1219 14.1311 9.30312 15.8108 8.97143C17.4906 8.63974 19.2316 8.81002 20.8139 9.46075C22.3961 10.1115 23.7484 11.2134 24.6998 12.6272C25.6513 14.041 26.159 15.7031 26.1589 17.4034C26.1589 19.6834 25.2467 21.8699 23.623 23.4821C21.9992 25.0943 19.7969 25.9996 17.5005 25.9997Z" fill="currentColor"/>
+<path d="M30.3344 32H24.7254L15.7911 20.0272H21.4001L30.3344 32Z" fill="#0095EB"/></symbol>
+  <symbol id="q-boson" viewBox="0 0 250 36"><path d="M81.24 4.01588H76.7789V30.8976H81.24V4.01588Z" fill="currentColor"/>
+<path d="M89.0776 12.4547H84.6166V30.8976H89.0776V12.4547Z" fill="currentColor"/>
+<path d="M92.241 23.7573V5.9593H96.702V12.4614H106.261V16.4746H96.702V23.7573C96.702 26.2094 97.9762 27.1775 99.8136 27.1775C101.651 27.1775 102.925 26.2491 102.925 23.7573V23.2742H107.386V23.7573C107.386 28.8479 104.311 31.3007 99.8136 31.3007C95.3162 31.3007 92.241 28.8479 92.241 23.7573Z" fill="currentColor"/>
+<path d="M114.803 12.4424H110.342V30.8579H114.803V12.4424Z" fill="currentColor"/>
+<path d="M17.5057 4.03603C14.8347 4.03591 12.2236 4.8209 10.0026 6.29173C7.78162 7.76255 6.05054 9.85316 5.02826 12.2992C4.00597 14.7452 3.7384 17.4368 4.25938 20.0335C4.78036 22.6303 6.06649 25.0156 7.95512 26.8878C9.84376 28.76 12.2501 30.0351 14.8698 30.5517C17.4895 31.0683 20.2049 30.8034 22.6727 29.7903C25.1405 28.7772 27.2498 27.0615 28.7338 24.8602C30.2179 22.6589 31.0101 20.0707 31.0102 17.4231C31.01 13.8729 29.5872 10.4681 27.0547 7.95764C24.5222 5.44714 21.0874 4.03652 17.5057 4.03603ZM17.5057 26.0085C15.7925 26.0085 14.1178 25.5049 12.6933 24.5615C11.2688 23.618 10.1586 22.277 9.50298 20.7081C8.84739 19.1392 8.67589 17.4128 9.01016 15.7473C9.34444 14.0817 10.1695 12.5519 11.381 11.3511C12.5924 10.1504 14.1359 9.33268 15.8162 9.00146C17.4965 8.67024 19.2382 8.84036 20.821 9.4903C22.4037 10.1402 23.7565 11.2408 24.7083 12.6529C25.66 14.0649 26.1679 15.725 26.1678 17.4231C26.1678 18.5506 25.9437 19.6671 25.5084 20.7088C25.0731 21.7504 24.435 22.6969 23.6307 23.4941C22.8263 24.2914 21.8714 24.9237 20.8205 25.3552C19.7696 25.7866 18.6432 26.0086 17.5057 26.0085Z" fill="currentColor"/>
+<path d="M73.6112 20.9906V21.4999C73.6112 21.4285 73.6162 21.3601 73.6162 21.288C73.6162 21.1878 73.6162 21.0895 73.6112 20.9906Z" fill="currentColor"/>
+<path d="M33.5765 21.6306V12.0809H38.0376V21.6306C38.0376 25.1235 39.9113 26.7952 42.7204 26.7952C45.5295 26.7952 47.4033 25.1235 47.4033 21.6306V12.0809H51.8643V21.6306C51.8643 27.762 48.1907 30.9202 42.7173 30.9202C37.244 30.9202 33.5765 27.7986 33.5765 21.6306Z" fill="currentColor"/>
+<path d="M69.8508 21.4993C69.8508 21.5769 69.8422 21.6526 69.836 21.7259V21.4993H69.8508Z" fill="currentColor"/>
+<path d="M127.041 11.6674C125.53 11.6679 124.039 12.0184 122.688 12.6909C121.338 13.3635 120.164 14.3394 119.261 15.5411C118.358 16.7427 117.751 18.1368 117.488 19.6123C117.225 21.0877 117.313 22.6037 117.745 24.0394C118.177 25.4751 118.942 26.7908 119.978 27.8817C121.015 28.9726 122.294 29.8085 123.713 30.3228C125.133 30.8372 126.654 31.0156 128.156 30.8441C129.658 30.6725 131.098 30.1557 132.363 29.3347V30.9342H136.714V30.9281H136.743V21.5586C136.743 21.4688 136.748 21.3753 136.748 21.2886C136.748 20.0251 136.497 18.7739 136.009 17.6065C135.522 16.4392 134.807 15.3785 133.905 14.485C133.004 13.5916 131.934 12.8829 130.756 12.3994C129.578 11.916 128.316 11.6672 127.041 11.6674ZM127.041 26.5405C125.993 26.5405 124.969 26.2324 124.097 25.6553C123.226 25.0781 122.547 24.2578 122.146 23.298C121.745 22.3383 121.64 21.2822 121.844 20.2633C122.049 19.2444 122.553 18.3085 123.294 17.5739C124.035 16.8394 124.98 16.3391 126.008 16.1364C127.035 15.9338 128.101 16.0378 129.069 16.4353C130.037 16.8329 130.865 17.5061 131.447 18.3699C132.03 19.2336 132.34 20.2491 132.34 21.288C132.339 22.6806 131.78 24.0157 130.787 25.0004C129.793 25.9852 128.446 26.539 127.041 26.5405Z" fill="currentColor"/>
+<path d="M73.6112 20.8525V20.9906C73.6112 20.9441 73.6075 20.8983 73.6051 20.8525H73.6112Z" fill="currentColor"/>
+<path d="M73.6051 20.8525C73.5076 18.7295 72.7035 16.6977 71.3184 15.0756C69.9333 13.4534 68.0452 12.3316 65.9489 11.8855C63.8527 11.4393 61.6664 11.6938 59.7316 12.6094C57.7967 13.5249 56.2222 15.0498 55.2541 16.946C54.2859 18.8421 53.9785 21.0027 54.38 23.0903C54.7815 25.1779 55.8692 27.0749 57.4732 28.485C59.0772 29.8951 61.1073 30.739 63.2462 30.8848C65.3852 31.0305 67.5126 30.47 69.2962 29.2907V30.9342H73.6094L73.6112 20.9906C73.6112 20.9441 73.6075 20.8983 73.6051 20.8525ZM69.3141 21.4999C69.3141 21.5775 69.3055 21.6532 69.2987 21.7265C69.18 23.1209 68.5146 24.4135 67.4454 25.3272C66.3761 26.2409 64.9882 26.7027 63.5794 26.6137C62.1705 26.5247 60.853 25.8918 59.9095 24.8509C58.966 23.8101 58.4717 22.4441 58.5325 21.0461C58.5934 19.6481 59.2047 18.3294 60.2352 17.373C61.2657 16.4167 62.6334 15.8987 64.0447 15.9304C65.4561 15.962 66.7987 16.5407 67.7845 17.5424C68.7703 18.544 69.3208 19.8887 69.3178 21.288C69.3141 21.3601 69.3141 21.4309 69.3141 21.4999Z" fill="currentColor"/>
+<path d="M89.6888 6.81618C89.6889 7.37335 89.5224 7.91803 89.2102 8.38134C88.898 8.84466 88.4541 9.20579 87.9348 9.41906C87.4156 9.63233 86.8441 9.68816 86.2928 9.5795C85.7415 9.47083 85.2351 9.20254 84.8376 8.80857C84.4402 8.4146 84.1695 7.91264 84.0599 7.36618C83.9503 6.81971 84.0066 6.2533 84.2218 5.73857C84.4369 5.22385 84.8012 4.78393 85.2687 4.47446C85.7361 4.16499 86.2856 3.99988 86.8477 4C87.6012 4 88.3239 4.2967 88.8567 4.82484C89.3895 5.35298 89.6888 6.06929 89.6888 6.81618Z" fill="currentColor"/>
+<path d="M115.414 6.81618C115.414 7.37335 115.247 7.91803 114.935 8.38134C114.623 8.84466 114.179 9.20579 113.66 9.41906C113.14 9.63233 112.569 9.68816 112.018 9.5795C111.466 9.47083 110.96 9.20254 110.563 8.80857C110.165 8.4146 109.894 7.91264 109.785 7.36618C109.675 6.81971 109.731 6.2533 109.947 5.73857C110.162 5.22385 110.526 4.78393 110.994 4.47446C111.461 4.16499 112.01 3.99988 112.573 4C113.326 4 114.049 4.2967 114.582 4.82484C115.114 5.35298 115.414 6.06929 115.414 6.81618Z" fill="currentColor"/>
+<path d="M30.3441 32H24.7327L15.7983 20.0451H21.4073L30.3441 32Z" fill="#0095EB"/>
+<path d="M197.784 30.8274C196.381 30.85 194.988 30.573 193.702 30.0151C192.574 29.533 191.589 28.7734 190.84 27.8084C190.151 26.9182 189.749 25.8433 189.686 24.7235H194.404C194.448 25.0729 194.564 25.4096 194.746 25.7122C194.927 26.0149 195.17 26.2769 195.459 26.4818C196.123 26.9619 196.93 27.2071 197.751 27.1781C198.487 27.2205 199.218 27.035 199.842 26.6474C200.074 26.5024 200.264 26.3016 200.396 26.0639C200.528 25.8261 200.597 25.5591 200.596 25.2878C200.597 24.9979 200.51 24.7143 200.346 24.4745C200.182 24.2347 199.948 24.0498 199.675 23.9442C198.731 23.5328 197.751 23.2058 196.747 22.967C195.592 22.7051 194.456 22.3616 193.35 21.9391C192.471 21.5862 191.69 21.0285 191.074 20.3132C190.403 19.478 190.063 18.4275 190.121 17.3608C190.114 16.3622 190.424 15.3867 191.007 14.5721C191.653 13.6884 192.533 12.9994 193.55 12.5817C194.784 12.069 196.112 11.8193 197.449 11.8488C199.353 11.7511 201.23 12.3338 202.737 13.4911C203.391 14.038 203.923 14.7146 204.297 15.4773C204.672 16.24 204.881 17.072 204.912 17.9197H200.428C200.407 17.5815 200.314 17.2516 200.155 16.9516C199.997 16.6515 199.776 16.3881 199.507 16.1784C198.873 15.7197 198.099 15.4913 197.315 15.5316C196.631 15.4904 195.95 15.6518 195.358 15.9952C195.14 16.1336 194.963 16.3256 194.842 16.5524C194.722 16.7793 194.663 17.0332 194.672 17.2894C194.67 17.5899 194.758 17.8842 194.925 18.1351C195.091 18.386 195.329 18.5822 195.609 18.699C196.542 19.1261 197.518 19.4537 198.52 19.6762C199.648 19.9416 200.755 20.285 201.834 20.7041C202.71 21.0627 203.485 21.6262 204.093 22.3464C204.76 23.1794 205.11 24.2195 205.079 25.2829C205.092 26.3024 204.781 27.3002 204.192 28.1358C203.548 29.0176 202.666 29.7017 201.648 30.1097C200.422 30.608 199.107 30.8506 197.783 30.8225" fill="currentColor"/>
+<path d="M216.112 11.7462C214.198 11.7462 212.327 12.3088 210.735 13.363C209.143 14.4172 207.903 15.9155 207.17 17.6685C206.438 19.4216 206.246 21.3505 206.62 23.2115C206.993 25.0725 207.915 26.782 209.268 28.1237C210.622 29.4654 212.347 30.3791 214.224 30.7493C216.102 31.1195 218.048 30.9295 219.816 30.2033C221.585 29.4772 223.096 28.2476 224.16 26.6699C225.223 25.0922 225.791 23.2374 225.791 21.3399C225.791 18.7955 224.771 16.3554 222.956 14.5563C221.141 12.7572 218.679 11.7463 216.112 11.7462ZM216.112 26.6632C215.05 26.6634 214.012 26.3512 213.128 25.7664C212.245 25.1815 211.557 24.3502 211.15 23.3775C210.744 22.4048 210.637 21.3344 210.844 20.3017C211.051 19.2691 211.563 18.3205 212.314 17.576C213.065 16.8314 214.022 16.3244 215.064 16.1189C216.106 15.9135 217.185 16.0188 218.167 16.4217C219.148 16.8246 219.987 17.5069 220.577 18.3824C221.167 19.2578 221.482 20.287 221.482 21.3399C221.482 22.7516 220.916 24.1056 219.909 25.1039C218.902 26.1022 217.537 26.6631 216.112 26.6632Z" fill="currentColor"/>
+<path d="M178.656 11.7462C176.741 11.7462 174.87 12.3088 173.278 13.363C171.687 14.4172 170.446 15.9155 169.714 17.6685C168.981 19.4216 168.789 21.3505 169.163 23.2115C169.536 25.0725 170.458 26.782 171.812 28.1237C173.165 29.4654 174.89 30.3791 176.767 30.7493C178.645 31.1195 180.591 30.9295 182.36 30.2033C184.128 29.4772 185.64 28.2476 186.703 26.6699C187.767 25.0922 188.334 23.2374 188.334 21.3399C188.334 18.7955 187.314 16.3554 185.499 14.5563C183.684 12.7572 181.223 11.7463 178.656 11.7462ZM178.656 26.6632C177.593 26.6634 176.555 26.3512 175.672 25.7664C174.789 25.1815 174.1 24.3502 173.694 23.3775C173.287 22.4048 173.18 21.3344 173.388 20.3017C173.595 19.2691 174.106 18.3205 174.857 17.576C175.608 16.8314 176.565 16.3244 177.607 16.1189C178.649 15.9135 179.729 16.0188 180.71 16.4217C181.691 16.8246 182.53 17.5069 183.12 18.3824C183.711 19.2578 184.026 20.287 184.026 21.3399C184.026 22.7516 183.46 24.1056 182.453 25.1039C181.446 26.1022 180.08 26.6631 178.656 26.6632Z" fill="currentColor"/>
+<path d="M158.103 26.9289C159.114 26.9899 160.113 26.691 160.921 26.0861C161.262 25.7902 161.53 25.4212 161.705 25.0071C161.88 24.5931 161.957 24.145 161.931 23.6968C161.955 23.231 161.872 22.766 161.688 22.3368C161.503 21.9076 161.223 21.5256 160.868 21.2196C160.052 20.5871 159.032 20.2688 157.997 20.3236H153.106V26.9289H158.103ZM153.106 16.5302H157.643C158.619 16.5922 159.585 16.3111 160.372 15.7362C160.696 15.4562 160.95 15.1064 161.116 14.7135C161.282 14.3207 161.355 13.8954 161.329 13.4703C161.354 13.0428 161.281 12.6152 161.115 12.2197C160.949 11.8242 160.695 11.4711 160.372 11.1867C159.59 10.6021 158.621 10.3153 157.643 10.3787H153.106V16.5302ZM162.179 18.357C163.546 18.5976 164.773 19.3369 165.618 20.4293C166.505 21.5236 166.981 22.8896 166.965 24.2935C166.99 25.5171 166.651 26.721 165.99 27.7547C165.297 28.7857 164.319 29.5967 163.173 30.0902C161.798 30.6817 160.311 30.9695 158.813 30.9336H148.141V6.41187H158.35C159.839 6.37554 161.318 6.65087 162.692 7.21989C163.817 7.68299 164.778 8.46511 165.456 9.46808C166.087 10.4419 166.414 11.5785 166.396 12.7356C166.441 14.026 166.034 15.292 165.244 16.3189C164.455 17.2927 163.385 18.0039 162.176 18.357H162.179Z" fill="currentColor"/>
+<path d="M232.098 13.711V12.3521H227.807V30.6374H232.243V21.139C232.243 17.665 234.106 16.0019 236.903 16.0019C239.7 16.0019 241.564 17.665 241.564 21.139V30.6374H246V21.139C246 11.8238 237.478 10.2956 232.098 13.711Z" fill="currentColor"/></symbol>
+</svg>
+
+<header class="site-header" id="top">
+  <div class="hdr">
+    <div class="hdr-l">
+      <button class="btn btn-ghost" id="menu-btn" aria-expanded="false" aria-controls="mega">Platform <svg class="caret" viewBox="0 0 8 8" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M1 2.5l3 3 3-3"/></svg></button>
+      <a class="btn btn-ghost lnk" href="#stories">Customers</a>
+    </div>
+    <a class="logo" href="#top" aria-label="Qualitia home"><svg class="logo-full" viewBox="0 0 141 36" role="img" aria-hidden="true"><use href="#q-logo"/></svg></a>
+    <div class="hdr-r">
+      <a class="btn btn-cta" href="#demo">Book a demo</a>
+    </div>
+  </div>
+
+  <div class="mega" id="mega" hidden>
+    <div>
+      <h4>Platforms</h4>
+      <ul>
+        <li><a href="#platforms"><i class="orb" style="--c:#7FB2FF"></i><div><b>Salesforce</b><span>Every cloud, every customisation</span></div></a></li>
+        <li><a href="#platforms"><i class="orb" style="--c:#8FE3C0"></i><div><b>ServiceNow<em class="new">New</em></b><span>1-Click testing for the Now Platform</span></div></a></li>
+        <li><a href="#feat-integrate"><i class="orb" style="--c:#C9B4FF"></i><div><b>Integrations</b><span>Azure DevOps, Jira, GitHub, Jenkins</span></div></a></li>
+        <li><a href="#secure"><i class="orb" style="--c:#FFD08A"></i><div><b>Enterprise &amp; security</b><span>Runs inside your network</span></div></a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Capabilities</h4>
+      <ul>
+        <li><a href="#feat-generate"><div><b>1-Click generation</b><span>End-to-end journeys from your metadata</span></div></a></li>
+        <li><a href="#feat-update"><div><b>1-Click update</b><span>Keep the suite current every sprint</span></div></a></li>
+        <li><a href="#feat-heal"><div><b>Self-healing</b><span>Patented, for reliable runs</span></div></a></li>
+        <li><a href="#feat-integrate"><div><b>Integration testing</b><span>Web, mobile, API, PDF and legacy</span></div></a></li>
+        <li><a href="#turnaround"><div><b>Turnaround</b><span>See the sprint-by-sprint difference</span></div></a></li>
+      </ul>
+    </div>
+    <div class="story-col">
+      <h4>Results</h4>
+      <a class="m-story" href="#results">
+        <span class="num">5–7×</span>
+        <p>Average efficacy gain clients see from 1-Click generation and updates.</p>
+      </a>
+    </div>
+  </div>
+</header>
+
+<nav class="pill-nav" id="pill" aria-label="Quick navigation">
+  <button class="btn btn-soft" id="pill-menu" aria-expanded="false" aria-controls="pill-list" style="justify-self:start">Menu <svg class="caret" viewBox="0 0 8 8" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M1 2.5l3 3 3-3"/></svg></button>
+  <a class="logo" href="#top" aria-label="Back to top"><svg class="logo-sym" viewBox="0 0 35 36" aria-hidden="true"><use href="#q-symbol"/></svg></a>
+  <a class="btn btn-cta r" href="#demo">Book a demo</a>
+  <div class="mega-float" id="pill-list" hidden>
+    <a href="#feat-generate">1-Click generation <span>Capability</span></a>
+    <a href="#turnaround">Turnaround <span>Proof</span></a>
+    <a href="#platforms">Salesforce &amp; ServiceNow <span>Platforms</span></a>
+    <a href="#secure">Security <span>Enterprise</span></a>
+    <a href="#stories">Customers <span>Stories</span></a>
+  </div>
+</nav>
+
+<main>
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-card">
+      <img class="hero-photo" src="assets/hero/team-at-work.jpg" srcset="assets/hero/team-at-work-1200.jpg 1200w, assets/hero/team-at-work.jpg 2000w" sizes="100vw" alt="Two engineers working at their desks, one reviewing code on a monitor" width="2000" height="1333" fetchpriority="high">
+      <a class="hero-tag" href="#platforms"><span class="chip">New</span>1-Click testing, now for ServiceNow</a>
+      <div class="hero-in">
+        <h1>One click. <span>Regression in hours, not weeks.</span></h1>
+        <div class="hero-side">
+          <p class="lede">Qualitia Boson generates your test automation for Salesforce and ServiceNow in one click, and updates it in one click every sprint.</p>
+          <div class="row">
+            <a class="btn btn-cta" href="#demo">Book a demo</a>
+            <a class="btn btn-soft" href="#feat-generate">See how 1-Click works</a>
+          </div>
+          <div class="hero-notes">
+            <span><i class="dot"></i>Salesforce · all clouds</span>
+            <span><i class="dot"></i>100% no-code</span>
+            <span><i class="dot sn"></i>ServiceNow · early access</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Logos -->
+  <div class="logos" aria-label="Customers">
+    <div class="track" id="track">
+      <img src="assets/clients/philips.svg" alt="Philips"><img src="assets/clients/pwc.svg" alt="PwC"><img src="assets/clients/metlife.svg" alt="MetLife"><img src="assets/clients/prudential.svg" alt="Prudential"><img src="assets/clients/cibc.svg" alt="CIBC"><img src="assets/clients/ge-healthcare.svg" alt="GE HealthCare"><img src="assets/clients/whirlpool.svg" alt="Whirlpool"><img src="assets/clients/pitney-bowes.svg" alt="Pitney Bowes"><img src="assets/clients/ptc.svg" alt="PTC"><img src="assets/clients/qlik.svg" alt="Qlik"><img src="assets/clients/springer.svg" alt="Springer"><img src="assets/clients/newrez.svg" alt="Newrez"><img src="assets/clients/bse.svg" alt="BSE"><img src="assets/clients/sbi.svg" alt="SBI"><img src="assets/clients/hdfc-bank.svg" alt="HDFC Bank"><img src="assets/clients/kotak.svg" alt="Kotak Mahindra Bank"><img src="assets/clients/axis-bank.svg" alt="Axis Bank"><img src="assets/clients/aditya-birla-capital.svg" alt="Aditya Birla Capital"><img src="assets/clients/indiafirst-life.svg" alt="IndiaFirst Life">
+    </div>
+  </div>
+
+  <!-- Intro -->
+  <section class="intro">
+    <h2 class="h1">The 1-Click platform for Salesforce and ServiceNow testing</h2>
+    <p class="lede">Your build ships to UAT every two weeks and testers get about a day with it. Boson writes and maintains the automation so that day is enough.</p>
+    <div class="row">
+      <a class="btn btn-cta" href="#demo">Book a demo</a>
+      <a class="btn btn-soft" href="#features">See all capabilities</a>
+    </div>
+    <div class="pillars">
+      <div><span class="chip">Generate</span><p>Full journeys in one click</p></div>
+      <div><span class="chip">Update</span><p>Every change, every sprint</p></div>
+      <div><span class="chip">Heal</span><p>Runs that stay reliable</p></div>
+      <div><span class="chip">Integrate</span><p>Tests that cross systems</p></div>
+    </div>
+  </section>
+
+  <!-- Product frame -->
+  <div class="frame-wrap">
+    <div class="frame">
+      <div class="console" aria-label="Example Qualitia Boson test run">
+        <div class="c-head">
+          <div class="dots" aria-hidden="true"><i></i><i></i><i></i></div>
+          <div class="c-tabs" role="tablist">
+            <button class="c-tab" role="tab" aria-selected="true" data-run="sf" id="tab-sf">Salesforce</button>
+            <button class="c-tab" role="tab" aria-selected="false" data-run="sn" id="tab-sn">ServiceNow</button>
+          </div>
+          <span class="c-meta" id="c-meta"></span>
+        </div>
+        <div class="bar"><i id="c-bar"></i></div>
+        <div class="c-body" id="c-body" role="tabpanel"></div>
+        <div class="c-foot"><span id="c-count"></span><span id="c-time"></span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Statement -->
+  <section class="statement">
+    <p class="display">Building automation is easy. <span class="soft">Keeping it current every sprint is the hard part.</span></p>
+  </section>
+
+  <!-- Features -->
+  <section class="features" id="features">
+    <div class="feat" id="feat-generate">
+      <div class="feat-text">
+        <img class="mascot-mini" src="assets/mascot/one-click.webp" alt="" width="741" height="500" loading="lazy">
+        <span class="chip">1-Click</span>
+        <h3>Generation<span>Complete end-to-end journeys, built from your own org.</span></h3>
+      </div>
+      <div class="media mascot wide-art">
+        <img class="mascot-img" src="assets/mascot/one-click.webp" alt="" width="741" height="500" loading="lazy">
+        <div class="mock">
+          <div class="mock-h">Generate automation <small>Sales Cloud · UAT</small></div>
+          <div class="mock-r"><span>Lead to Opportunity conversion</span><span class="ok">✓ 14 steps</span></div>
+          <div class="mock-r"><span>Quote with CPQ discount approval</span><span class="ok">✓ 22 steps</span></div>
+          <div class="mock-r"><span>Case escalation, Lightning console</span><span class="ok">✓ 11 steps</span></div>
+          <div class="mock-r"><span>OmniScript · Policy onboarding</span><span class="ok">✓ 18 steps</span></div>
+          <div class="mock-btn">Generate 4 journeys</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="feat" id="feat-update">
+      <div class="feat-text">
+        <img class="mascot-mini" src="assets/mascot/instant-update.webp" alt="" width="480" height="480" loading="lazy">
+        <span class="chip">1-Click</span>
+        <h3>Update<span>Boson finds what changed in the sprint and updates every affected test.</span></h3>
+      </div>
+      <div class="media mascot">
+        <img class="mascot-img" src="assets/mascot/instant-update.webp" alt="" width="480" height="480" loading="lazy">
+        <div class="mock">
+          <div class="mock-h">Sprint 14 changes <small>37 found</small></div>
+          <div class="mock-r"><span>Opportunity · new picklist value</span><span class="chg">58 tests</span></div>
+          <div class="mock-r"><span>Account layout · field moved</span><span class="chg">121 tests</span></div>
+          <div class="mock-r"><span>Flow · approval step added</span><span class="chg">34 tests</span></div>
+          <div class="mock-r"><span>LWC · address component</span><span class="chg">199 tests</span></div>
+          <div class="mock-btn">Update 412 tests</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="feat" id="feat-heal">
+      <div class="feat-text">
+        <span class="chip">Patented</span>
+        <h3>Self-healing<span>Dynamic Lightning elements, iframes and shadow DOM, found every run.</span></h3>
+      </div>
+      <div class="media dark">
+        <div class="mock code">
+          <div class="c">// Account › Billing City</div>
+          <div class="del">xpath=//div[@id="input-2187"]/input</div>
+          <div class="add">healed → label "Billing City" · Address</div>
+          <div class="c">// run 8 of 8 · passed</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="feat" id="feat-integrate">
+      <div class="feat-text">
+        <img class="mascot-mini" src="assets/mascot/total-control.webp" alt="" width="447" height="534" loading="lazy">
+        <span class="chip">End to end</span>
+        <h3>Integration testing<span>One flow across Salesforce, ServiceNow and the systems in between.</span></h3>
+      </div>
+      <div class="media mascot">
+        <img class="mascot-img" src="assets/mascot/total-control.webp" alt="" width="447" height="534" loading="lazy">
+        <div class="flow col">
+          <div class="node"><small>Salesforce</small><b>Case created</b></div>
+          <i class="arrow" aria-hidden="true"></i>
+          <div class="node"><small>ServiceNow</small><b>Incident raised</b></div>
+          <i class="arrow" aria-hidden="true"></i>
+          <div class="node"><small>API · ERP</small><b>Order synced</b></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Turnaround -->
+  <section class="turn" id="turnaround">
+    <div class="turn-head">
+      <span class="chip">Turnaround</span>
+      <h2 class="h1">Ready the day the sprint lands</h2>
+      <p class="lede">With script-based tools, updating automation after a sprint takes weeks. With Boson it takes one click.</p>
+    </div>
+    <div class="compare">
+      <figure class="cmp">
+        <div>
+          <h3>Time to update automation after a sprint</h3>
+          <p class="sub">Working days, 0 to 30</p>
+        </div>
+        <div class="row2">
+          <span class="who"><b>Boson</b></span>
+          <div class="track2"><div class="window" style="left:3.33%"></div><div class="fill us min" style="width:1.5%"></div><span class="out" style="left:calc(3.33% + 10px)">same day, 1 click</span></div>
+        </div>
+        <div class="row2">
+          <span class="who">Script-based tools</span>
+          <div class="track2"><div class="window" style="left:3.33%"></div><div class="fill them" style="width:50%">3 weeks</div><div class="fill range" style="left:50%;width:50%;border-radius:0 8px 8px 0;justify-content:flex-end">6 weeks</div></div>
+        </div>
+        <div class="axis"><span></span><div class="ticks"><span style="left:0">0</span><span style="left:33.33%">10</span><span style="left:66.67%">20</span><span style="left:100%">30</span></div></div>
+        <p class="legend"><i></i>The tester's window in a two-week sprint: 1 day</p>
+      </figure>
+      <figure class="cmp">
+        <div>
+          <h3>Automated coverage within one sprint day</h3>
+          <p class="sub">Share of user flows automated, 0 to 100%</p>
+        </div>
+        <div class="row2">
+          <span class="who"><b>Boson</b></span>
+          <div class="track2"><div class="fill us" style="width:70%">70%+</div></div>
+        </div>
+        <div class="row2">
+          <span class="who">Other tools</span>
+          <div class="track2"><div class="fill them" style="width:20%"></div><span class="out" style="left:calc(20% + 10px)">under 20%</span></div>
+        </div>
+        <div class="axis"><span></span><div class="ticks"><span style="left:0">0</span><span style="left:50%">50</span><span style="left:100%">100%</span></div></div>
+        <p class="legend">Up to 90% with custom tuning for your implementation</p>
+      </figure>
+    </div>
+  </section>
+
+  <!-- Quote -->
+  <figure class="quote">
+    <blockquote>“Qualitia helped us arrest defects early, crunch testing time, and consistently deliver reliable test automation.”</blockquote>
+    <figcaption><b>Kersi Tavadia</b><span>, CIO, Bombay Stock Exchange</span></figcaption>
+  </figure>
+
+  <!-- Results -->
+  <section class="results" id="results">
+    <div class="results-card">
+      <h2 class="h1">Faster turnaround, sprint after sprint</h2>
+      <div class="stats">
+        <div class="stat"><span class="num">5–7×</span><p>Average efficacy gain from 1-Click generation and updates</p></div>
+        <div class="stat"><span class="num">40%</span><p>Faster Salesforce deliveries</p></div>
+        <div class="stat"><span class="num">125+</span><p>Enterprise clients across North America, Australia and India</p></div>
+        <div class="stat"><span class="num sm">US 11,977,477 B2<br>IN 515306</span><p>Patents for self-healing test technology</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Platforms -->
+  <section class="plats" id="platforms">
+    <div class="sec-title">
+      <h2 class="h1">Two platforms. One way to test them.</h2>
+      <p class="lede">Salesforce runs your customers and ServiceNow runs your operations. One QA team can cover both, including the work that crosses between them.</p>
+    </div>
+    <div class="plat-grid">
+      <article class="plat">
+        <div class="plat-top"><span class="chip">Generally available</span><small>3 releases a year</small></div>
+        <div>
+          <h3>Salesforce</h3>
+          <p style="margin-top:16px">Every cloud and every customisation, including LWC, OmniScripts, Flows, triggers, Apex and Visualforce. Upgraded ahead of each Spring, Summer and Winter release.</p>
+        </div>
+        <div class="tags"><span>Sales Cloud</span><span>Service Cloud</span><span>Experience Cloud</span><span>CPQ &amp; Billing</span><span>Field Service</span><span>Agentforce</span><span>Industry clouds</span></div>
+        <a class="btn btn-cta" href="#demo">Book a Salesforce demo</a>
+      </article>
+      <article class="plat">
+        <div class="plat-top"><span class="chip hi">Early access</span><small>2 family releases a year</small></div>
+        <div>
+          <h3>ServiceNow</h3>
+          <p style="margin-top:16px">The same 1-Click generation and updates for your Now Platform instances. Cover catalog items, workflows and workspaces before every family upgrade.</p>
+        </div>
+        <div class="tags"><span>ITSM</span><span>ITOM</span><span>HR Service Delivery</span><span>Customer Service Management</span><span>Service Catalog</span><span>Workspaces</span></div>
+        <a class="btn btn-cta" href="#demo">Join the early access program</a>
+      </article>
+    </div>
+  </section>
+
+  <!-- Security -->
+  <section class="secure" id="secure">
+    <div class="secure-card">
+      <div>
+        <h2 class="h1">Runs inside your network</h2>
+        <p class="lede">Boson is deployed on your own infrastructure or cloud tenancy. Test data, assets and results never leave your boundary.</p>
+      </div>
+      <div class="sec-items">
+        <div><h4>Your data residency</h4><p>Host in Australia, the US or wherever you choose. Nothing is stored on Qualitia systems.</p></div>
+        <div><h4>ISO 27001:2022</h4><p>Certified. SAML, Active Directory and OAuth2 sign-in, with sensitive data encrypted at rest.</p></div>
+        <div><h4>Fits your pipeline</h4><p>Azure DevOps, Jira, GitHub Actions and Jenkins. Parallel runs on BrowserStack or Sauce Labs.</p></div>
+        <div><h4>100% no-code</h4><p>Business testers automate without scripting. Engineers keep full control.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stories -->
+  <section class="stories" id="stories">
+    <div class="sec-title"><h2 class="h2">Stories from our customers</h2></div>
+    <div class="reel" id="reel">
+      <figure class="story">
+        <blockquote>“Our conventional testing approach, with its long test cycles and unreliability, wasn’t working for us. Qualitia helped us crunch testing time.”</blockquote>
+        <figcaption><b>Kersi Tavadia</b><span>CIO, Bombay Stock Exchange</span></figcaption>
+      </figure>
+      <div class="story dark">
+        <span class="big">70%+</span>
+        <p>Automated coverage within a single sprint day, against under 20% with other tools.</p>
+      </div>
+      <figure class="story">
+        <blockquote>“Technologies, people and interfaces will always change. My ability to quickly and efficiently automate and execute test cases will not.”</blockquote>
+        <figcaption><b>Peter Becker</b><span>Project Manager, e-Business Applications, Pitney Bowes</span></figcaption>
+      </figure>
+      <figure class="story">
+        <blockquote>“Our testers lived with their automation tools, but never loved them until they started using Qualitia.”</blockquote>
+        <figcaption><b>Vipin Parayantil</b><span>Catalog Transformation Lead, Philips</span></figcaption>
+      </figure>
+      <div class="story">
+        <h3 class="h2">Built for regulated, high-change industries</h3>
+        <div class="inds"><span>Financial services</span><span>Life sciences</span><span>Government</span><span>Energy &amp; utilities</span><span>Communications</span><span>Consumer goods</span><span>Retail</span><span>Manufacturing</span><span>Automotive</span><span>Media</span><span>Education</span><span>Non-profit</span></div>
+      </div>
+    </div>
+    <div class="reel-nav">
+      <button type="button" id="reel-prev" aria-label="Previous stories">←</button>
+      <button type="button" id="reel-next" aria-label="Next stories">→</button>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta" id="demo">
+    <div class="cta-card">
+      <div class="cta-copy">
+      <h2 class="display">See your next sprint tested in one click</h2>
+      <form id="demo-form" novalidate>
+        <label for="email" class="form-note" style="color:rgba(255,255,255,.8)">Work email</label>
+        <div class="field">
+          <input id="email" name="email" type="email" placeholder="you@company.com" autocomplete="email" required>
+          <button class="btn btn-cta" type="submit">Book a demo</button>
+        </div>
+        <p class="form-note" id="form-note" aria-live="polite">A specialist replies within one business day.</p>
+      </form>
+      </div>
+      <img class="cta-mascot" src="assets/mascot/waving-cutout.webp" alt="The Qualitia mascot waving hello" width="800" height="871" loading="lazy">
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="foot">
+    <div>
+      <a class="logo" href="#top" aria-label="Qualitia home"><svg class="logo-boson" viewBox="0 0 250 36" aria-hidden="true"><use href="#q-boson"/></svg></a>
+      <p class="soft" style="margin-top:16px;max-width:24em">AI-native test automation for Salesforce and ServiceNow.</p>
+    </div>
+    <div><h4>Platform</h4><ul><li><a href="#feat-generate">1-Click generation</a></li><li><a href="#platforms">Salesforce</a></li><li><a href="#platforms">ServiceNow</a></li><li><a href="#feat-integrate">Integrations</a></li></ul></div>
+    <div><h4>Resources</h4><ul><li><a href="#">Blog</a></li><li><a href="#">Release readiness guides</a></li><li><a href="#">Documentation</a></li><li><a href="#">Help center</a></li></ul></div>
+    <div><h4>Company</h4><ul><li><a href="#">About</a></li><li><a href="#stories">Customers</a></li><li><a href="#">Careers</a></li><li><a href="#demo">Contact</a></li></ul></div>
+    <div><h4>Legal</h4><ul><li><a href="#">Privacy Policy</a></li><li><a href="#">Cookie Policy</a></li><li><a href="#">Terms of Service</a></li><li><a href="#secure">Security</a></li></ul></div>
+  </div>
+  <div class="foot-trust">
+    <ul class="badges" aria-label="Certifications and partnerships">
+        <li><img src="assets/badges/iso-27001.webp" alt="ISO 27001:2022 certified company" width="560" height="560" loading="lazy"></li>
+        <li><img src="assets/badges/great-place-to-work.webp" alt="Great Place To Work certified, Jan 2025 to Jan 2026, India" width="2058" height="3508" loading="lazy"></li>
+        <li><img src="assets/badges/salesforce-appexchange.webp" alt="Available on Salesforce AppExchange" width="196" height="208" loading="lazy"></li>
+        <li><img src="assets/badges/salesforce-partner.webp" alt="Salesforce Partner" width="196" height="208" loading="lazy"></li>
+    </ul>
+    <ul class="socials" aria-label="Qualitia on social media">
+        <li><a href="https://www.facebook.com/Qualitia" target="_blank" rel="noopener" aria-label="Qualitia on Facebook"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 8h3V4h-3c-2.76 0-5 2.24-5 5v2H7v4h2v9h4v-9h3l1-4h-4V9c0-.55.45-1 1-1z"/></svg></a></li>
+        <li><a href="https://x.com/Qualitia" target="_blank" rel="noopener" aria-label="Qualitia on X"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.9 1.15h3.68l-8.04 9.19L24 22.85h-7.41l-5.8-7.58-6.64 7.58H.47l8.6-9.83L0 1.15h7.59l5.24 6.93 6.07-6.93zM17.61 20.64h2.04L6.49 3.24H4.3l13.31 17.4z"/></svg></a></li>
+        <li><a href="https://www.linkedin.com/company/qualitia" target="_blank" rel="noopener" aria-label="Qualitia on LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45z"/></svg></a></li>
+        <li><a href="https://www.youtube.com/@QualitiaSoft" target="_blank" rel="noopener" aria-label="Qualitia on YouTube"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M23.5 6.19a3.02 3.02 0 0 0-2.12-2.14C19.5 3.55 12 3.55 12 3.55s-7.5 0-9.38.5A3.02 3.02 0 0 0 .5 6.19C0 8.07 0 12 0 12s0 3.93.5 5.81a3.02 3.02 0 0 0 2.12 2.14c1.88.5 9.38.5 9.38.5s7.5 0 9.38-.5a3.02 3.02 0 0 0 2.12-2.14C24 15.93 24 12 24 12s0-3.93-.5-5.81zM9.55 15.57V8.43L15.82 12l-6.27 3.57z"/></svg></a></li>
+    </ul>
+  </div>
+  <div class="legal"><span>© 2026 Qualitia Software Private Limited</span>
+    <ul class="regions" aria-label="Offices">
+      <li>
+        <button type="button" aria-expanded="false" aria-controls="pop-usa">USA</button>
+        <div class="office-pop" id="pop-usa" hidden>
+          <b>Newark, Delaware</b>
+          <address>6 Polly Drummond Hill Rd<br>Newark, DE 19711, USA</address>
+          <a href="https://www.google.com/maps/search/?api=1&amp;query=6+Polly+Drummond+Hill+Rd%2C+Newark%2C+DE+19711%2C+USA" target="_blank" rel="noopener">Open in Maps ↗</a>
+        </div>
+      </li>
+      <li>
+        <button type="button" aria-expanded="false" aria-controls="pop-aus">Australia</button>
+        <div class="office-pop" id="pop-aus" hidden>
+          <b>Sydney</b>
+          <address>Salesforce Tower<br>Levels 22 &amp; 23, 180 George Street, Sydney NSW 2000, Australia</address>
+          <a href="https://www.google.com/maps/search/?api=1&amp;query=Salesforce+Tower%2C+Levels+22+%26+23%2C+180+George+Street%2C+Sydney+NSW+2000%2C+Australia" target="_blank" rel="noopener">Open in Maps ↗</a>
+        </div>
+      </li>
+      <li>
+        <button type="button" aria-expanded="false" aria-controls="pop-ind">India</button>
+        <div class="office-pop" id="pop-ind" hidden>
+          <b>Pune · Engineering</b>
+          <address>6th Floor<br>Sai Radhe Complex, Raja Bahadur Mill Road, Pune 411001, India</address>
+          <a href="https://www.google.com/maps/search/?api=1&amp;query=6th+Floor%2C+Sai+Radhe+Complex%2C+Raja+Bahadur+Mill+Road%2C+Pune+411001%2C+India" target="_blank" rel="noopener">Open in Maps ↗</a>
+        </div>
+      </li>
+    </ul>
+  </div>
+</footer>
+
+<script>
+(function(){
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // Mega menu
+  const menuBtn = document.getElementById('menu-btn'), mega = document.getElementById('mega');
+  const setMega = open => { mega.hidden = !open; menuBtn.setAttribute('aria-expanded', open); };
+  menuBtn.addEventListener('click', e => { e.stopPropagation(); setMega(mega.hidden); });
+  mega.addEventListener('click', e => { if (e.target.closest('a')) setMega(false); });
+
+  // Floating pill nav
+  const pill = document.getElementById('pill'), pillBtn = document.getElementById('pill-menu'), pillList = document.getElementById('pill-list');
+  const setPill = open => { pillList.hidden = !open; pillBtn.setAttribute('aria-expanded', open); };
+  pillBtn.addEventListener('click', e => { e.stopPropagation(); setPill(pillList.hidden); });
+  pillList.addEventListener('click', e => { if (e.target.closest('a')) setPill(false); });
+  document.addEventListener('click', e => {
+    if (!mega.contains(e.target)) setMega(false);
+    if (!pill.contains(e.target)) setPill(false);
+  });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape'){ setMega(false); setPill(false); } });
+  const onScroll = () => {
+    const show = scrollY > 360;
+    pill.classList.toggle('show', show);
+    if (show) setMega(false); else setPill(false);
+  };
+  addEventListener('scroll', onScroll, {passive:true}); onScroll();
+
+  // Logo track loop
+  const track = document.getElementById('track');
+  const n = track.children.length;
+  track.innerHTML += track.innerHTML;
+  [...track.children].forEach((s,i) => { if (i >= n){ s.alt=''; s.setAttribute('aria-hidden','true'); } });
+
+  // Stories reel arrows
+  const reel = document.getElementById('reel');
+  const stepReel = dir => reel.scrollBy({left: dir * (reel.querySelector('.story').offsetWidth + 16), behavior: reduce ? 'auto' : 'smooth'});
+  document.getElementById('reel-prev').addEventListener('click', () => stepReel(-1));
+  document.getElementById('reel-next').addEventListener('click', () => stepReel(1));
+
+  // Hero particle field: static first frame, gentle drift
+  const cv = document.getElementById('field');
+  if (cv) {
+  const ctx = cv.getContext('2d');
+  let W=0,H=0,pts=[];
+  const dpr=Math.min(devicePixelRatio||1,2);
+  function size(){
+    const r = cv.getBoundingClientRect(); W=r.width; H=r.height;
+    cv.width=W*dpr; cv.height=H*dpr; ctx.setTransform(dpr,0,0,dpr,0,0);
+    const count = Math.round(Math.min(140, W*H/9000));
+    pts = Array.from({length:count}, (_,i) => ({x:Math.random()*W, y:Math.random()*H, vx:(Math.random()-.5)*.25, vy:(Math.random()-.5)*.25, r:Math.random()*1.4+.6, hot:i%17===0}));
+  }
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    for (let i=0;i<pts.length;i++){
+      const a=pts[i];
+      for (let j=i+1;j<pts.length;j++){
+        const b=pts[j], dx=a.x-b.x, dy=a.y-b.y, d=dx*dx+dy*dy;
+        if (d<12000){ ctx.strokeStyle='rgba(180,198,255,'+(0.16*(1-d/12000))+')'; ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke(); }
+      }
+    }
+    for (const p of pts){
+      ctx.fillStyle = p.hot ? 'rgba(52,195,143,.95)' : 'rgba(220,230,255,.7)';
+      ctx.beginPath(); ctx.arc(p.x,p.y,p.hot?p.r+1.2:p.r,0,Math.PI*2); ctx.fill();
+    }
+  }
+  function frame(){
+    for (const p of pts){ p.x+=p.vx; p.y+=p.vy; if(p.x<0||p.x>W)p.vx*=-1; if(p.y<0||p.y>H)p.vy*=-1; }
+    draw(); requestAnimationFrame(frame);
+  }
+  size(); draw();
+  if (!reduce) requestAnimationFrame(frame);
+  addEventListener('resize', () => { size(); draw(); });
+  }
+
+  // Console runs (illustrative)
+  const RUNS = {
+    sf:{meta:'sprint 14 · UAT sandbox', release:['Sprint 14 · 37 changes','1-Click · 412 tests updated'], lines:[
+      ['Lead → Opportunity conversion','1.8s'],['Quote with CPQ discount approval','3.2s'],['Case escalation to Tier 2','2.1s'],
+      ['Lightning page layout · Account','0.9s','healed · field moved'],['Experience Cloud partner login','1.4s'],['Order sync → ERP integration','4.6s'],['Agentforce case summary','2.7s']]},
+    sn:{meta:'sprint 9 · test instance', release:['Sprint 9 · 22 changes','1-Click · 268 tests updated'], lines:[
+      ['Incident P1 → major incident','2.3s'],['Change request CAB approval','3.0s'],['Service Catalog · laptop request','1.6s'],
+      ['HR case onboarding journey','2.9s','healed · form updated'],['CMDB CI relationship check','1.2s'],['Salesforce case → ServiceNow incident','4.1s'],['Service Operations Workspace','1.7s']]}
+  };
+  const body=document.getElementById('c-body'), bar=document.getElementById('c-bar'), count=document.getElementById('c-count'), time=document.getElementById('c-time'), meta=document.getElementById('c-meta');
+  let timer=null;
+  function render(key, done){
+    const r=RUNS[key], n=r.lines.length;
+    meta.textContent=r.meta; body.setAttribute('aria-labelledby','tab-'+key);
+    body.innerHTML='<div class="c-release"><span>⚡ '+r.release[0]+'</span><span>'+r.release[1]+'</span></div>'+r.lines.map((l,i)=>{
+      const cls=i<done?'':(i===done?'running':'pending'), st=i<done?'✓':(i===done?'●':'○'), tm=i<done?l[1]:(i===done?'running':'');
+      const nm=l[0]+(l[2]&&i<done?' <span class="heal">· '+l[2]+'</span>':'');
+      return '<div class="c-line '+cls+'"><span class="st">'+st+'</span><span class="nm">'+nm+'</span><span class="tm">'+tm+'</span></div>';
+    }).join('');
+    bar.style.width=(Math.min(done,n)/n*100)+'%';
+    count.innerHTML=done>=n?'<b>'+n+' passed</b> · 0 failed':done+' / '+n+' complete';
+    time.textContent=r.lines.slice(0,done).reduce((a,l)=>a+parseFloat(l[1]),0).toFixed(1)+'s';
+  }
+  function selectTab(key){ document.querySelectorAll('.c-tab').forEach(t=>t.setAttribute('aria-selected', t.dataset.run===key)); }
+  function run(key){
+    clearTimeout(timer); selectTab(key);
+    const n=RUNS[key].lines.length;
+    if (reduce){ render(key,n); return; }
+    let i=0;
+    const s=()=>{ render(key,i); if(i<n){ i++; timer=setTimeout(s,650); } else timer=setTimeout(()=>run(key==='sf'?'sn':'sf'),4200); };
+    s();
+  }
+  document.querySelectorAll('.c-tab').forEach(t=>t.addEventListener('click',()=>run(t.dataset.run)));
+  render('sf', RUNS.sf.lines.length);
+  if (!reduce) timer=setTimeout(()=>run('sf'),2200);
+
+  // Footer office pop-overs
+  const regionBtns = [...document.querySelectorAll('.regions button')];
+  const closeRegions = except => regionBtns.forEach(b => { if (b !== except){ b.setAttribute('aria-expanded','false'); document.getElementById(b.getAttribute('aria-controls')).hidden = true; } });
+  regionBtns.forEach(b => b.addEventListener('click', e => {
+    e.stopPropagation();
+    const pop = document.getElementById(b.getAttribute('aria-controls')), open = pop.hidden;
+    closeRegions(b); pop.hidden = !open; b.setAttribute('aria-expanded', open);
+  }));
+  document.addEventListener('click', e => { if (!e.target.closest('.regions')) closeRegions(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeRegions(); });
+
+  // Demo form
+  document.getElementById('demo-form').addEventListener('submit', e => {
+    e.preventDefault();
+    const email=document.getElementById('email'), note=document.getElementById('form-note');
+    if (!email.value || !email.checkValidity()){ note.textContent='Enter a work email address, like you@company.com.'; email.focus(); return; }
+    note.textContent='Thanks. A specialist will email '+email.value+' within one business day.';
+    email.value='';
+  });
+})();
+</script>
+</body>
+</html>
