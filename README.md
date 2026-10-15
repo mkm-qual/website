@@ -28,3 +28,14 @@ Then open http://127.0.0.1:4173. Open the page through a local server rather tha
 - `versions/` keeps earlier design iterations for reference.
 
 Brand colours are navy `#001630` and blue `#0095EB`.
+
+## Publishing changes
+
+Before committing a change to `assets/css/site.css` or `assets/js/site.js`, run:
+
+```bash
+python3 stamp-assets.py
+```
+
+It stamps each page's links to those files with a fingerprint of their contents (`site.js?v=…`), so visitors' browsers load the new version right away instead of a saved older copy.
+
