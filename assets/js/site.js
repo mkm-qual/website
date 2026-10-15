@@ -137,3 +137,38 @@
     email.value='';
   });
 })();
+
+/* 1-Click Generation page: journeys tick through once, then reset when the button is pressed */
+(function(){
+  const mock = document.getElementById('gen-mock');
+  if (!mock) return;
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const rows = [...mock.querySelectorAll('.mock-r')];
+  const status = document.getElementById('gen-status');
+  const btn = document.getElementById('gen-btn');
+  let t = null;
+  const label = r => r.children[1];                   // the status label on each row
+  const finalText = rows.map(r => label(r).textContent);
+  function show(done){
+    rows.forEach((r,i) => {
+      const s = label(r);
+      r.classList.toggle('pending', i > done);
+      s.className = i === done ? 'run' : 'ok';
+      s.textContent = i < done ? finalText[i] : (i === done ? 'generating' : '—');
+    });
+    status.textContent = done >= rows.length ? rows.length + ' journeys ready · 65 steps' : 'Generating ' + Math.min(done+1, rows.length) + ' of ' + rows.length;
+  }
+  function play(){
+    clearTimeout(t);
+    if (reduce){ show(rows.length); return; }
+    let i = 0;
+    const step = () => { show(i); if (i < rows.length){ i++; t = setTimeout(step, 700); } };
+    step();
+  }
+  show(rows.length);                                     // complete at rest
+  btn.addEventListener('click', play);
+  if (!reduce && 'IntersectionObserver' in window){
+    const io = new IntersectionObserver(es => { if (es[0].isIntersecting){ io.disconnect(); setTimeout(play, 400); } }, {threshold:.5});
+    io.observe(mock);
+  }
+})();
