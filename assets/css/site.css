@@ -347,7 +347,7 @@ p{margin:0}
 .cta-card::before{content:"";position:absolute;right:-10%;bottom:-30%;width:70%;aspect-ratio:1;border-radius:50%;background:radial-gradient(closest-side,rgba(0,149,235,.28),transparent);pointer-events:none}
 .cta-copy{display:flex;flex-direction:column;align-items:flex-start;gap:32px;padding-bottom:clamp(40px,6vw,96px);position:relative;min-width:0}
 .cta-card .display{max-width:13em}
-.cta-mascot{position:relative;justify-self:center;width:min(100%,400px);height:auto;display:block}
+.cta-mascot{position:relative;justify-self:center;width:min(100%,400px);height:auto;display:block;margin-bottom:clamp(24px,3vw,40px)}
 .cta form{display:flex;flex-direction:column;align-items:flex-start;gap:12px;width:100%;max-width:460px}
 .field{display:flex;gap:6px;width:100%;background:rgba(255,255,255,.1);border-radius:12px;padding:6px 6px 6px 16px}
 .field:focus-within{background:rgba(255,255,255,.16)}
@@ -1102,4 +1102,4 @@ fieldset.ct-f{border:0;margin:0;padding:0}
 @media (max-width:720px){ .regions{position:relative} .regions li{position:static} .office-pop{left:0;right:auto} }
 @media (max-width:720px){ .legal{flex-direction:column-reverse;align-items:center;text-align:center;gap:12px} .regions{justify-content:center} .office-pop{left:50%;transform:translateX(-50%);text-align:left} }
 @media (max-width:720px){ .hero-photo{object-position:right bottom} }
-@media (max-width:768px){ .cta-card{gap:20px} .cta-mascot{margin-bottom:32px} }
+@media (max-width:768px){ .cta-card{gap:20px} }
