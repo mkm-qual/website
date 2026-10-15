@@ -350,3 +350,39 @@
   media.addEventListener('change', sync);   // device switched while no choice is saved
   sync();
 })();
+
+/* Resources page: filter chips (also driven by #case-studies, #blogs, #podcasts, #videos and the old #caseStudy, #blog, #podcast, #video links)
+   and a click-to-play video that only loads YouTube when asked. */
+(function(){
+  const grid = document.getElementById('rs-grid');
+  if (grid){
+    const chips = [...document.querySelectorAll('.rs-filters button')];
+    const cards = [...grid.querySelectorAll('.rs-card')];
+    const empty = document.getElementById('rs-empty');
+    const ALIAS = {casestudy:'case', 'case-studies':'case', 'case-study':'case', blog:'blog', blogs:'blog', podcast:'podcast', podcasts:'podcast', video:'video', videos:'video', all:'all'};
+    const HASH = {all:'', case:'case-studies', blog:'blogs', podcast:'podcasts', video:'videos'};
+    chips.forEach(c => { const n = c.dataset.filter === 'all' ? cards.length : cards.filter(k => k.dataset.type === c.dataset.filter).length; c.querySelector('span').textContent = n; });
+    function apply(f, updateHash){
+      chips.forEach(c => c.setAttribute('aria-pressed', c.dataset.filter === f));
+      let shown = 0;
+      cards.forEach(k => { const on = f === 'all' || k.dataset.type === f; k.hidden = !on; if (on) shown++; });
+      empty.hidden = shown > 0;
+      if (updateHash) history.replaceState(null, '', HASH[f] ? '#' + HASH[f] : location.pathname);
+    }
+    chips.forEach(c => c.addEventListener('click', () => apply(c.dataset.filter, true)));
+    const fromHash = () => ALIAS[(location.hash || '').slice(1).toLowerCase()] || 'all';
+    apply(fromHash(), false);
+    addEventListener('hashchange', () => apply(fromHash(), false));
+  }
+  document.querySelectorAll('[data-yt]').forEach(box => {
+    const btn = box.querySelector('button');
+    btn.addEventListener('click', () => {
+      const f = document.createElement('iframe');
+      f.src = `https://www.youtube-nocookie.com/embed/${box.dataset.yt}?autoplay=1&rel=0`;
+      f.title = btn.getAttribute('aria-label');
+      f.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+      f.allowFullscreen = true;
+      box.innerHTML = ''; box.appendChild(f);
+    });
+  });
+})();
