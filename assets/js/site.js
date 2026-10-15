@@ -469,7 +469,7 @@
   const toc = document.querySelector('.lg-toc');
   if (!toc) return;
   const links = [...toc.querySelectorAll('a')];
-  const heads = [...document.querySelectorAll('.lg-body h2[id]')];
+  const heads = [...document.querySelectorAll('.lg-body h2[id], .cs-article h2[id]')];
   const update = () => {
     let cur = null;
     heads.forEach(h => { if (h.getBoundingClientRect().top <= 140) cur = h; });
@@ -483,4 +483,13 @@
   };
   addEventListener('scroll', update, {passive: true});
   update();
+})();
+
+/* Draw-on-scroll charts */
+(() => {
+  const els = document.querySelectorAll('[data-draw]');
+  if (!els.length) return;
+  if (!('IntersectionObserver' in window)) { els.forEach(e => e.classList.add('in')); return; }
+  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), {threshold: .35});
+  els.forEach(e => io.observe(e));
 })();

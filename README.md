@@ -21,12 +21,13 @@ Then open http://127.0.0.1:4173. Open the page through a local server rather tha
 - `total-control.html` is the Total Control page, with the end-to-end app-screens walkthrough and the CI/CD pipeline simulator.
 - `resources.html` is the Resources page: case studies, blogs, podcasts and videos with filters.
 - `contact.html` is the Contact page with the demo request form. It validates and confirms in the browser, but submissions are not sent anywhere yet; connect it to your CRM or form service before launch.
+- `case-studies.html` lists the customer stories; `case-study-absli.html`, `case-study-qlik.html` and `case-study-abfl.html` are the three case studies. Article wording matches qualitia.ai; stats that were only in images are rebuilt as HTML, and the ABFL ROI chart is drawn from the stated figures (212 vs 3 person-days per cycle). Customers, Resources and the sitemap link to them.
 - `privacy-policy.html` is the Privacy Policy. Its wording matches qualitia.ai/privacy-policy word for word (last modified July 2024). Every footer's "Privacy Policy" link points to it.
 - `cookies-policy.html` is the Cookie Policy. Its wording matches qualitia.ai/cookies-policy word for word. Every footer's "Cookie Policy" link, and section 3 of the Privacy Policy, point to it.
 - `terms-of-service.html` is the Terms of Use. Its wording matches qualitia.ai/terms-of-service word for word (last modified November 2024); only the all-caps section headings are shown in normal capitalisation. Every footer's "Terms of Service" link points to it.
 - `eula.html` is the End User License Agreement. Its wording matches qualitia.ai/eula word for word; only the all-caps section headings are shown in normal capitalisation. The sitemap links to it.
 - `msla.html` is the Software License Agreement (MSLA) template, including the signature block and the Exhibit A order form. Its wording matches qualitia.ai/msla word for word; the in-text table of contents is replaced by the side navigation. The sitemap links to it.
-- `sitemap.html` lists every page, grouped into Platform, Company, Resources and Legal, plus all case studies and blog articles. Articles still link to qualitia.ai (marked ↗). Every footer's Legal column has a "Sitemap" link.
+- `sitemap.html` lists every page, grouped into Platform, Company, Resources and Legal, plus all case studies and blog articles. Blog articles still link to qualitia.ai (marked ↗). Every footer's Legal column has a "Sitemap" link.
 - `assets/css/site.css` and `assets/js/site.js` hold the styles and behaviour that both pages share.
 - `assets/hero/` holds the hero photo and a 1200px copy for phones.
 - `assets/brand/` holds the official Qualitia, Qualitia Boson and symbol logos as SVG, light and white.
