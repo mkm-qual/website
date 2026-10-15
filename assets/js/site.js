@@ -174,3 +174,196 @@
     }
   });
 })();
+
+/* Total Control: end-to-end journey illustration.
+   Drawn from data so it can lay out horizontally on wide screens and vertically on phones. */
+(function(){
+  const stage = document.getElementById('e2e-stage');
+  if (!stage) return;
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const caption = document.getElementById('e2e-caption');
+  const replay = document.getElementById('e2e-replay');
+  const STEPS = [
+    {sys:'Mobile app', step:'Customer files a claim', c:'#8FE3C0'},
+    {sys:'Salesforce', step:'Case created', c:'#7FB2FF'},
+    {sys:'ServiceNow', step:'Incident raised', c:'#9FE0C8'},
+    {sys:'REST API', step:'Order service called', c:'#C9B4FF'},
+    {sys:'SAP ERP', step:'Order updated', c:'#FFD08A'},
+    {sys:'PDF', step:'Invoice generated', c:'#FFB4A8'}
+  ];
+  const NS = 'http://www.w3.org/2000/svg';
+  const el = (tag, attrs, parent) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (parent) parent.appendChild(e); return e; };
+  let raf = null, built = null, layoutKey = '';
+
+  function build(){
+    const horizontal = stage.clientWidth >= 760;
+    const key = horizontal ? 'h' : 'v';
+    if (key === layoutKey && built) return;
+    layoutKey = key;
+    stage.innerHTML = '';
+    const W = horizontal ? 1200 : 360, NW = horizontal ? 176 : 214, NH = 84;
+    const pts = STEPS.map((_, i) => horizontal
+      ? {x: 110 + i * 196, y: i % 2 ? 300 : 110}
+      : {x: i % 2 ? 210 : 150, y: 70 + i * 128});
+    const hub = horizontal ? {x: 600, y: 470, w: 240, h: 64} : {x: 180, y: 70 + 6 * 128 + 10, w: 260, h: 64};
+    const H = hub.y + hub.h / 2 + 16;
+    const svg = el('svg', {viewBox: `0 0 ${W} ${H}`, 'aria-hidden': 'true'}, stage);
+    // orchestration lines from the hub to every system
+    STEPS.forEach((_, i) => el('line', {x1: hub.x, y1: hub.y - hub.h / 2, x2: pts[i].x, y2: pts[i].y + NH / 2, class: 'tc-orch'}, svg));
+    // the journey path, one segment per hop so we know where each system sits along it
+    let d = `M${pts[0].x} ${pts[0].y}`;
+    const segs = [];
+    for (let i = 1; i < pts.length; i++){
+      const a = pts[i - 1], b = pts[i];
+      const c = horizontal ? `C${(a.x + b.x) / 2} ${a.y} ${(a.x + b.x) / 2} ${b.y} ${b.x} ${b.y}` : `C${a.x} ${(a.y + b.y) / 2} ${b.x} ${(a.y + b.y) / 2} ${b.x} ${b.y}`;
+      segs.push(el('path', {d: `M${a.x} ${a.y} ${c}`, fill: 'none', stroke: 'none'}, svg));
+      d += ' ' + c;
+    }
+    el('path', {d, class: 'tc-path'}, svg);
+    const done = el('path', {d, class: 'tc-path-done'}, svg);
+    const total = done.getTotalLength();
+    const at = [0]; segs.reduce((acc, s) => { acc += s.getTotalLength(); at.push(acc); return acc; }, 0);
+    done.style.strokeDasharray = total; done.style.strokeDashoffset = 0;
+    // systems
+    const nodes = STEPS.map((s, i) => {
+      const g = el('g', {class: 'tc-node on', transform: `translate(${pts[i].x - NW / 2} ${pts[i].y - NH / 2})`}, svg);
+      el('rect', {class: 'box', width: NW, height: NH, rx: 14}, g);
+      el('circle', {cx: 26, cy: NH / 2, r: 13, fill: s.c}, g);
+      el('text', {class: 'num', x: 26, y: NH / 2 + 4, 'text-anchor': 'middle'}, g).textContent = i + 1;
+      el('text', {class: 'sys', x: 50, y: NH / 2 - 6}, g).textContent = s.sys;
+      el('text', {class: 'step', x: 50, y: NH / 2 + 14}, g).textContent = s.step;
+      const tick = el('g', {class: 'tick', transform: `translate(${NW - 14} -6)`}, g);
+      el('circle', {r: 11}, tick); el('path', {d: 'M-4.5 0.5l3 3 6-6'}, tick);
+      return g;
+    });
+    // hub
+    const hg = el('g', {class: 'tc-hub', transform: `translate(${hub.x - hub.w / 2} ${hub.y - hub.h / 2})`}, svg);
+    el('rect', {width: hub.w, height: hub.h, rx: 16}, hg);
+    const sym = el('svg', {x: 16, y: 14, width: 34, height: 36, viewBox: '0 0 35 36', style: 'color:#fff'}, hg);
+    el('use', {href: '#q-symbol'}, sym);
+    el('text', {class: 't1', x: 60, y: 29}, hg).textContent = 'Qualitia Boson';
+    el('text', {class: 't2', x: 60, y: 47}, hg).textContent = 'orchestrates every step';
+    const packet = el('circle', {class: 'tc-packet', r: 7, cx: pts[5].x, cy: pts[5].y}, svg);
+    built = {done, total, at, nodes, packet};
+    setCaption(STEPS.length);
+  }
+  function setCaption(n){
+    caption.innerHTML = n >= STEPS.length
+      ? '<b>Journey passed</b> · 6 systems validated end to end in one test'
+      : `Step <b>${n + 1} of ${STEPS.length}</b> · ${STEPS[n].sys} · ${STEPS[n].step}`;
+  }
+  function play(){
+    build();
+    cancelAnimationFrame(raf);
+    const {done, total, at, nodes, packet} = built;
+    if (reduce){ nodes.forEach(n => n.classList.add('on')); setCaption(STEPS.length); return; }
+    nodes.forEach(n => n.classList.remove('on'));
+    const T = 6200, start = performance.now();
+    const frame = now => {
+      const p = Math.min(1, (now - start) / T), len = p * total;
+      const pt = done.getPointAtLength(len);
+      packet.setAttribute('cx', pt.x); packet.setAttribute('cy', pt.y);
+      done.style.strokeDashoffset = total - len;
+      let reached = 0;
+      at.forEach((l, i) => { const on = len >= l - 1; nodes[i].classList.toggle('on', on); if (on) reached = i; });
+      setCaption(p >= 1 ? STEPS.length : reached);
+      if (p < 1) raf = requestAnimationFrame(frame);
+    };
+    raf = requestAnimationFrame(frame);
+  }
+  build();
+  replay.addEventListener('click', play);
+  let rt; addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { const k = stage.clientWidth >= 760 ? 'h' : 'v'; if (k !== layoutKey){ cancelAnimationFrame(raf); built = null; build(); } }, 150); });
+  if (!reduce && 'IntersectionObserver' in window){
+    const io = new IntersectionObserver(es => { if (es[0].isIntersecting){ io.disconnect(); setTimeout(play, 300); } }, {threshold: .4});
+    io.observe(stage);
+  }
+})();
+
+/* Total Control: CI/CD pipeline simulator (illustrative). */
+(function(){
+  const ci = document.getElementById('ci');
+  if (!ci) return;
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const TOOLS = {
+    ado: {name: 'Azure DevOps', report: 'Azure Test Plans', tracker: 'Azure Boards', bug: 'Bug 4821'},
+    gh:  {name: 'GitHub Actions', report: 'GitHub checks', tracker: 'Jira', bug: 'QA-1287'},
+    jk:  {name: 'Jenkins', report: 'Jenkins test report', tracker: 'Jira', bug: 'QA-1287'}
+  };
+  const LANES = [{n: 'Chrome', t: 142}, {n: 'Edge', t: 138}, {n: 'Mobile · Android', t: 64}];
+  const stages = [...ci.querySelectorAll('.tc-stages li')];
+  const lanes = [...ci.querySelectorAll('.tc-lane')];
+  const log = ci.querySelector('.tc-log');
+  const gate = ci.querySelector('.tc-gate b');
+  const runBtn = ci.querySelector('#ci-run');
+  const defect = ci.querySelector('#ci-defect');
+  const tabs = [...ci.querySelectorAll('.tc-tools button')];
+  let tool = 'ado', timers = [], running = false;
+  const fill = (k, v) => ci.querySelectorAll(`[data-fill="${k}"]`).forEach(e => e.textContent = v);
+  function setTool(k){
+    tool = k;
+    tabs.forEach(b => b.setAttribute('aria-selected', b.dataset.tool === k));
+    fill('tool', TOOLS[k].name); fill('report', TOOLS[k].report); fill('tracker', TOOLS[k].tracker);
+  }
+  const stageState = (i, s, time) => { stages[i].dataset.state = s; stages[i].querySelector('.tm').textContent = time || (s === 'waiting' ? 'queued' : s === 'running' ? 'running' : ''); };
+  const line = (cls, mark, text) => { const li = document.createElement('li'); li.innerHTML = `<span class="${cls}">${mark}</span><span></span>`; li.lastChild.textContent = text; log.appendChild(li); };
+  const lane = (i, done, fail) => { const l = LANES[i]; lanes[i].querySelector('i').style.width = (done / l.t * 100) + '%'; lanes[i].querySelector('.cnt').textContent = fail ? `${done - 1} passed · 1 failed` : `${done} / ${l.t}`; lanes[i].classList.toggle('has-fail', !!fail); };
+  function finalState(withDefect){
+    const T = TOOLS[tool];
+    ['0:04','1:12','2:31', withDefect ? '6:12' : '6:12','0:09','0:01'].forEach((t, i) => stageState(i, 'pass', t));
+    LANES.forEach((l, i) => lane(i, l.t, withDefect && i === 0));
+    log.innerHTML = '';
+    line('info', '›', `${T.name}: deploy to UAT finished, regression triggered`);
+    line('ok', '✓', 'Boson: 344 tests across 3 parallel lanes on BrowserStack');
+    if (withDefect){
+      stageState(3, 'fail', '6:12'); stageState(5, 'fail', 'blocked');
+      line('bad', '✕', 'Failed: Quote with CPQ discount approval (Chrome)');
+      line('ok', '✓', `JUnit XML published to ${T.report}`);
+      line('bad', '!', `${T.tracker}: ${T.bug} created with screenshots and steps`);
+      line('bad', '✕', 'Release gate: blocked until the defect is fixed');
+      gate.textContent = 'Blocked'; gate.className = 'blocked';
+    } else {
+      line('ok', '✓', '344 passed · 0 failed · 6m 12s');
+      line('ok', '✓', `JUnit XML published to ${T.report}`);
+      line('ok', '✓', 'Release gate: promoted to production');
+      gate.textContent = 'Promoted'; gate.className = '';
+    }
+  }
+  function run(){
+    if (running) return;
+    timers.forEach(clearTimeout); timers = [];
+    const withDefect = defect.checked, T = TOOLS[tool];
+    if (reduce){ finalState(withDefect); return; }
+    running = true; runBtn.disabled = true;
+    stages.forEach((_, i) => stageState(i, 'waiting'));
+    LANES.forEach((_, i) => lane(i, 0));
+    log.innerHTML = ''; gate.textContent = 'Waiting'; gate.className = '';
+    let t = 0;
+    const at = (ms, fn) => { t += ms; timers.push(setTimeout(fn, t)); };
+    at(100, () => { stageState(0, 'running'); line('info', '›', `${T.name}: commit pushed to release/sprint-14`); });
+    at(700, () => { stageState(0, 'pass', '0:04'); stageState(1, 'running'); });
+    at(800, () => { stageState(1, 'pass', '1:12'); stageState(2, 'running'); line('info', '›', 'Deploying build 14.2 to the UAT sandbox'); });
+    at(800, () => { stageState(2, 'pass', '2:31'); stageState(3, 'running'); line('info', '›', 'Boson: 344 tests started on 3 parallel lanes'); });
+    const STEPS = 12;
+    for (let s = 1; s <= STEPS; s++) at(200, () => LANES.forEach((l, i) => lane(i, Math.round(l.t * s / STEPS), withDefect && i === 0 && s === STEPS)));
+    at(200, () => {
+      if (withDefect){ stageState(3, 'fail', '6:12'); line('bad', '✕', 'Failed: Quote with CPQ discount approval (Chrome)'); }
+      else { stageState(3, 'pass', '6:12'); line('ok', '✓', '344 passed · 0 failed · 6m 12s'); }
+      stageState(4, 'running');
+    });
+    at(700, () => {
+      stageState(4, 'pass', '0:09'); line('ok', '✓', `JUnit XML published to ${T.report}`);
+      if (withDefect) line('bad', '!', `${T.tracker}: ${T.bug} created with screenshots and steps`);
+      stageState(5, 'running');
+    });
+    at(700, () => {
+      if (withDefect){ stageState(5, 'fail', 'blocked'); line('bad', '✕', 'Release gate: blocked until the defect is fixed'); gate.textContent = 'Blocked'; gate.className = 'blocked'; }
+      else { stageState(5, 'pass', '0:01'); line('ok', '✓', 'Release gate: promoted to production'); gate.textContent = 'Promoted'; gate.className = ''; }
+      running = false; runBtn.disabled = false;
+    });
+  }
+  tabs.forEach(b => b.addEventListener('click', () => { if (running) return; setTool(b.dataset.tool); finalState(defect.checked && false); }));
+  runBtn.addEventListener('click', run);
+  setTool('ado');
+  finalState(false);              // complete at rest: the last run passed
+})();
