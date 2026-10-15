@@ -436,12 +436,12 @@ footer{padding:clamp(56px,7vw,96px) var(--g) 32px;font-size:var(--t-small)}
 .case:hover span{color:var(--ink)}
 
 .stat-grid{display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(2,minmax(200px,1fr));gap:var(--g);padding:0 var(--g)}
-.st{border-radius:var(--r);background:var(--surface);padding:20px;display:flex;flex-direction:column;justify-content:space-between;gap:24px;min-width:0}
-.st.hi{background:var(--cta);color:#001630}
-.st small{font-size:var(--t-small)}
-.st b{font-size:clamp(44px,4.6vw,64px);font-weight:300;letter-spacing:-0.03em;line-height:1;font-variant-numeric:tabular-nums}
-.st.art{grid-column:3;grid-row:1 / span 2;padding:0;justify-content:flex-end;align-items:center;overflow:hidden;background:radial-gradient(70% 55% at 50% 62%,rgba(0,149,235,.22),transparent 70%),color-mix(in srgb,var(--brand) 8%,var(--surface))}
-.st.art img{width:86%;height:auto;max-height:92%;object-fit:contain;object-position:bottom}
+.kpi{border-radius:var(--r);background:var(--surface);padding:20px;display:flex;flex-direction:column;justify-content:space-between;gap:24px;min-width:0}
+.kpi.hi{background:var(--cta);color:#001630}
+.kpi small{font-size:var(--t-small)}
+.kpi b{font-size:clamp(44px,4.6vw,64px);font-weight:300;letter-spacing:-0.03em;line-height:1;font-variant-numeric:tabular-nums}
+.kpi.art{grid-column:3;grid-row:1 / span 2;padding:0;justify-content:flex-end;align-items:center;overflow:hidden;background:radial-gradient(70% 55% at 50% 62%,rgba(0,149,235,.22),transparent 70%),color-mix(in srgb,var(--brand) 8%,var(--surface))}
+.kpi.art img{width:86%;height:auto;max-height:92%;object-fit:contain;object-position:bottom}
 
 .quotes-row{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--g);padding:0 var(--g);align-items:stretch}
 .qt{margin:0;background:var(--surface);border-radius:var(--r);padding:clamp(20px,2.4vw,28px);display:flex;flex-direction:column;justify-content:space-between;gap:32px;min-width:0}
@@ -465,7 +465,7 @@ footer{padding:clamp(56px,7vw,96px) var(--g) 32px;font-size:var(--t-small)}
 @media (max-width:1024px){
   .cases,.quotes-row{grid-template-columns:1fr 1fr}
   .stat-grid{grid-template-columns:1fr 1fr;grid-template-rows:none;grid-auto-rows:170px}
-  .st.art{grid-column:1 / -1;grid-row:span 2}
+  .kpi.art{grid-column:1 / -1;grid-row:span 2}
 }
 @media (max-width:768px){
   .logo-grid{grid-template-columns:1fr 1fr}
