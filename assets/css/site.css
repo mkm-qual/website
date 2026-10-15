@@ -407,8 +407,11 @@ footer{padding:clamp(56px,7vw,96px) var(--side) 32px;font-size:var(--t-small)}
   .media{aspect-ratio:auto;min-height:300px}
   .media.mascot{display:flex}
   .media.mascot .mascot-img{display:none}
-  .feat-text{position:relative;top:auto;padding-right:112px;min-height:112px}
-  .mascot-mini{display:block;position:absolute;top:0;right:0;width:104px;height:112px;object-fit:contain;object-position:center bottom}
+  .feat-text{position:relative;top:auto}
+  .feat-text:has(.mascot-mini){display:grid;grid-template-columns:minmax(0,1fr) 96px;column-gap:12px;align-items:end}
+  .feat-text:has(.mascot-mini)>:not(.mascot-mini){grid-column:1}
+  .feat-text .chip,.feat-text .ov-link{justify-self:start}
+  .mascot-mini{display:block;grid-column:2;grid-row:1 / span 2;align-self:end;width:96px;height:auto;max-height:132px;object-fit:contain;object-position:center bottom}
   .cta-card{grid-template-columns:1fr}
   .cta-copy{padding-bottom:0}
   .cta-mascot{width:min(70%,280px)}
