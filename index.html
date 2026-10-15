@@ -119,31 +119,37 @@ p{margin:0}
 
 /* Hero: text left, live console right */
 .hero{padding:clamp(16px,2.5vw,40px) var(--g) var(--g)}
-.hero-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--g);align-items:stretch}
-.hero-grid > *{min-width:0}
-.hero-text{display:flex;flex-direction:column;justify-content:center;padding:clamp(40px,6vw,96px) clamp(0px,2vw,32px) clamp(40px,6vw,96px) 0}
-.hero-tag{display:inline-flex;gap:8px;align-items:center;font-size:var(--t-small);color:var(--ink-soft);align-self:flex-start;padding:4px 10px 4px 4px;border-radius:8px;background:var(--surface)}
-.hero-tag:hover{color:var(--ink)}
+.hero-card{position:relative;overflow:hidden;border-radius:var(--r);background:#001630;color:#fff;min-height:clamp(520px,78vh,720px);display:flex;flex-direction:column;justify-content:flex-end}
+.hero-photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:60% 40%}
+.hero-card::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(0deg,rgba(0,22,48,.92) 0%,rgba(0,22,48,.62) 34%,rgba(0,22,48,.12) 68%,rgba(0,22,48,0) 100%),linear-gradient(90deg,rgba(0,22,48,.35),transparent 55%)}
+.hero-tag{position:absolute;z-index:1;top:clamp(20px,2.4vw,32px);left:clamp(20px,2.4vw,32px);display:inline-flex;gap:8px;align-items:center;font-size:var(--t-small);color:#fff;padding:4px 12px 4px 4px;border-radius:10px;background:rgba(0,22,48,.55);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.hero-tag:hover{background:rgba(0,22,48,.7)}
 .hero-tag .chip{background:var(--cta);color:#001630}
-.hero h1{font-size:var(--t-display);line-height:1.05;letter-spacing:-0.01em;font-weight:300;margin-top:28px;max-width:11em}
-.hero h1 span{color:var(--ink-soft)}
-.hero .lede{color:var(--ink-soft);max-width:30em;margin-top:24px}
-.hero .row{display:flex;gap:8px;flex-wrap:wrap;margin-top:32px}
-.hero-notes{display:flex;gap:20px;flex-wrap:wrap;margin-top:40px;font-size:var(--t-small);color:var(--ink-soft)}
+.hero-in{position:relative;z-index:1;display:grid;grid-template-columns:1.2fr 1fr;gap:32px;align-items:end;padding:clamp(20px,2.4vw,32px)}
+.hero-in > *{min-width:0}
+.hero h1{font-size:var(--t-display);line-height:1.05;letter-spacing:-0.01em;font-weight:300;max-width:12em}
+.hero h1 span{color:rgba(255,255,255,.62)}
+.hero-side{display:flex;flex-direction:column;gap:20px;justify-self:end;max-width:30em}
+.hero-side .lede{color:rgba(255,255,255,.86)}
+.hero-side .row{display:flex;gap:8px;flex-wrap:wrap}
+.hero .btn-soft{background:rgba(255,255,255,.14);color:#fff}
+.hero .btn-soft:hover{background:rgba(255,255,255,.22)}
+.hero-notes{display:flex;gap:18px;flex-wrap:wrap;font-size:13px;color:rgba(255,255,255,.7)}
 .hero-notes span{display:inline-flex;align-items:center;gap:8px}
 .dot{width:7px;height:7px;flex:none;aspect-ratio:1;border-radius:50%;background:var(--pass);display:inline-block}
 .dot.sn{background:var(--brand)}
-.hero-media{position:relative;overflow:hidden;border-radius:var(--r);background:#001630;min-height:clamp(520px,72vh,680px);display:flex;align-items:center;justify-content:center;padding:clamp(20px,3vw,48px)}
-.hero-media .c-meta{display:none}
-.hero-media canvas{position:absolute;inset:0;width:100%;height:100%}
-.hero-media .console{position:relative;z-index:1;width:100%;max-width:600px;border-radius:14px;box-shadow:0 40px 80px -30px rgba(0,0,0,.6),0 0 0 1px rgba(201,211,227,.1)}
+
+/* Product frame: the live console gets its own stage below the intro */
+.frame-wrap{padding:clamp(40px,5vw,72px) var(--g) 0}
+.frame{background:var(--surface);border-radius:var(--r);padding:clamp(24px,5vw,80px) clamp(16px,5vw,80px) 0;overflow:hidden}
+.frame .console{max-width:1080px;margin-inline:auto;border-radius:14px 14px 0 0;box-shadow:0 40px 80px -40px rgba(0,22,48,.5)}
 
 /* Logos */
 .logos{padding-block:clamp(32px,4vw,64px);overflow:hidden;mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);-webkit-mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent)}
-.track{display:flex;gap:clamp(40px,4.5vw,72px);width:max-content;animation:scroll 70s linear infinite;align-items:center}
+.track{display:flex;gap:clamp(56px,6vw,96px);width:max-content;animation:scroll 70s linear infinite;align-items:center}
 .logos:hover .track{animation-play-state:paused}
 /* Vector logos in a fixed box so wide and tall marks read at a similar weight; mono at rest, brand colour on hover */
-.track img{display:block;width:140px;height:36px;object-fit:contain;filter:grayscale(1) contrast(1.1);opacity:.6;transition:filter .25s,opacity .25s}
+.track img{display:block;width:100px;height:26px;object-fit:contain;filter:grayscale(1) contrast(1.1);opacity:.6;transition:filter .25s,opacity .25s}
 .track img:hover{filter:none;opacity:1}
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .track img{filter:grayscale(1) invert(1) brightness(1.4);opacity:.7} :root:not([data-theme="light"]) .track img:hover{filter:none;opacity:1} }
 :root[data-theme="dark"] .track img{filter:grayscale(1) invert(1) brightness(1.4);opacity:.7}
@@ -371,9 +377,8 @@ footer{padding:clamp(56px,7vw,96px) var(--g) 32px;font-size:var(--t-small)}
   .hide-md{display:none!important}
   .mega{grid-template-columns:1fr 1fr}
   .mega .story-col{display:none}
-  .hero-grid{grid-template-columns:1fr}
-  .hero-text{padding:48px 0 32px}
-  .hero-media{min-height:0}
+  .hero-in{grid-template-columns:1fr}
+  .hero-side{justify-self:start}
   .stats{grid-template-columns:1fr 1fr;row-gap:40px}
   .secure-card{grid-template-columns:1fr}
   .foot{grid-template-columns:1fr 1fr 1fr}
@@ -386,6 +391,7 @@ footer{padding:clamp(56px,7vw,96px) var(--g) 32px;font-size:var(--t-small)}
   .hdr-l .lnk{display:none}
   .mega{grid-template-columns:1fr}
   .pillars{grid-template-columns:1fr 1fr;row-gap:32px}
+  .hero-card{min-height:600px}
   .feat{grid-template-columns:1fr;gap:20px}
   .feat-text{position:static}
   .compare,.plat-grid{grid-template-columns:1fr}
@@ -509,35 +515,22 @@ footer{padding:clamp(56px,7vw,96px) var(--g) 32px;font-size:var(--t-small)}
 <main>
   <!-- Hero -->
   <section class="hero">
-    <div class="hero-grid">
-      <div class="hero-text">
-        <a class="hero-tag" href="#platforms"><span class="chip">New</span>1-Click testing, now for ServiceNow</a>
+    <div class="hero-card">
+      <img class="hero-photo" src="assets/hero/team-at-work.jpg" srcset="assets/hero/team-at-work-1200.jpg 1200w, assets/hero/team-at-work.jpg 2000w" sizes="100vw" alt="Two engineers working at their desks, one reviewing code on a monitor" width="2000" height="1333" fetchpriority="high">
+      <a class="hero-tag" href="#platforms"><span class="chip">New</span>1-Click testing, now for ServiceNow</a>
+      <div class="hero-in">
         <h1>One click. <span>Regression in hours, not weeks.</span></h1>
-        <p class="lede">Qualitia Boson generates your end-to-end test automation for Salesforce and ServiceNow in one click. When the next sprint lands, one more click updates every affected test.</p>
-        <div class="row">
-          <a class="btn btn-cta" href="#demo">Book a demo</a>
-          <a class="btn btn-soft" href="#feat-generate">See how 1-Click works</a>
-        </div>
-        <div class="hero-notes">
-          <span><i class="dot"></i>Salesforce · all clouds</span>
-          <span><i class="dot"></i>100% no-code</span>
-          <span><i class="dot sn"></i>ServiceNow · early access</span>
-        </div>
-      </div>
-      <div class="hero-media">
-        <canvas id="field" aria-hidden="true"></canvas>
-        <div class="console" aria-label="Example Qualitia Boson test run">
-          <div class="c-head">
-            <div class="dots" aria-hidden="true"><i></i><i></i><i></i></div>
-            <div class="c-tabs" role="tablist">
-              <button class="c-tab" role="tab" aria-selected="true" data-run="sf" id="tab-sf">Salesforce</button>
-              <button class="c-tab" role="tab" aria-selected="false" data-run="sn" id="tab-sn">ServiceNow</button>
-            </div>
-            <span class="c-meta" id="c-meta"></span>
+        <div class="hero-side">
+          <p class="lede">Qualitia Boson generates your test automation for Salesforce and ServiceNow in one click, and updates it in one click every sprint.</p>
+          <div class="row">
+            <a class="btn btn-cta" href="#demo">Book a demo</a>
+            <a class="btn btn-soft" href="#feat-generate">See how 1-Click works</a>
           </div>
-          <div class="bar"><i id="c-bar"></i></div>
-          <div class="c-body" id="c-body" role="tabpanel"></div>
-          <div class="c-foot"><span id="c-count"></span><span id="c-time"></span></div>
+          <div class="hero-notes">
+            <span><i class="dot"></i>Salesforce · all clouds</span>
+            <span><i class="dot"></i>100% no-code</span>
+            <span><i class="dot sn"></i>ServiceNow · early access</span>
+          </div>
         </div>
       </div>
     </div>
@@ -565,6 +558,25 @@ footer{padding:clamp(56px,7vw,96px) var(--g) 32px;font-size:var(--t-small)}
       <div><span class="chip">Integrate</span><p>Tests that cross systems</p></div>
     </div>
   </section>
+
+  <!-- Product frame -->
+  <div class="frame-wrap">
+    <div class="frame">
+      <div class="console" aria-label="Example Qualitia Boson test run">
+        <div class="c-head">
+          <div class="dots" aria-hidden="true"><i></i><i></i><i></i></div>
+          <div class="c-tabs" role="tablist">
+            <button class="c-tab" role="tab" aria-selected="true" data-run="sf" id="tab-sf">Salesforce</button>
+            <button class="c-tab" role="tab" aria-selected="false" data-run="sn" id="tab-sn">ServiceNow</button>
+          </div>
+          <span class="c-meta" id="c-meta"></span>
+        </div>
+        <div class="bar"><i id="c-bar"></i></div>
+        <div class="c-body" id="c-body" role="tabpanel"></div>
+        <div class="c-foot"><span id="c-count"></span><span id="c-time"></span></div>
+      </div>
+    </div>
+  </div>
 
   <!-- Statement -->
   <section class="statement">
@@ -896,7 +908,9 @@ footer{padding:clamp(56px,7vw,96px) var(--g) 32px;font-size:var(--t-small)}
   document.getElementById('reel-next').addEventListener('click', () => stepReel(1));
 
   // Hero particle field: static first frame, gentle drift
-  const cv = document.getElementById('field'), ctx = cv.getContext('2d');
+  const cv = document.getElementById('field');
+  if (cv) {
+  const ctx = cv.getContext('2d');
   let W=0,H=0,pts=[];
   const dpr=Math.min(devicePixelRatio||1,2);
   function size(){
@@ -926,6 +940,7 @@ footer{padding:clamp(56px,7vw,96px) var(--g) 32px;font-size:var(--t-small)}
   size(); draw();
   if (!reduce) requestAnimationFrame(frame);
   addEventListener('resize', () => { size(); draw(); });
+  }
 
   // Console runs (illustrative)
   const RUNS = {
