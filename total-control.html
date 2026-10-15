@@ -138,17 +138,15 @@
     <p class="lede">Real customer journeys do not stop at Salesforce. Boson follows one journey across every app, service and document it touches, and validates each hand-off on the way.</p>
   </section>
   <div class="tc-e2e">
-    <div class="tc-e2e-stage" id="e2e-stage"></div>
-    <ol class="sr-only">
-      <li>Mobile app: customer files a claim</li>
-      <li>Salesforce: case created</li>
-      <li>ServiceNow: incident raised</li>
-      <li>REST API: order service called</li>
-      <li>SAP ERP: order updated</li>
-      <li>PDF: invoice generated</li>
-    </ol>
+    <div class="e2e" id="e2e-walk">
+      <ol class="e2e-steps" aria-label="Journey steps"></ol>
+      <div class="e2e-right">
+        <div class="e2e-prog" aria-hidden="true"></div>
+        <div class="e2e-stage"></div>
+      </div>
+    </div>
     <div class="tc-e2e-bar">
-      <p class="tc-caption" id="e2e-caption" aria-live="polite"><b>Journey passed</b> · 6 systems validated end to end in one test</p>
+      <p class="tc-caption" id="e2e-caption" aria-live="polite">Step <b>1 of 6</b> · Mobile app · Customer files a claim</p>
       <button class="btn btn-soft" type="button" id="e2e-replay" style="background:var(--paper)">Replay the journey</button>
     </div>
   </div>

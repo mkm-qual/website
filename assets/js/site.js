@@ -175,153 +175,65 @@
   });
 })();
 
-/* Total Control: end-to-end journey illustration.
-   Drawn from data so it can lay out horizontally on wide screens and vertically on phones. */
+/* Total Control: end-to-end walkthrough. One claim travels through six systems, shown as miniature app screens.
+   Auto-advances once it scrolls into view; clicking a step pauses it; Replay starts again. */
 (function(){
-  const stage = document.getElementById('e2e-stage');
-  if (!stage) return;
+  const root = document.getElementById('e2e-walk');
+  if (!root) return;
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const caption = document.getElementById('e2e-caption');
-  const replay = document.getElementById('e2e-replay');
   const STEPS = [
-    {sys:'Mobile app', step:'Customer files a claim', c:'#8FE3C0'},
-    {sys:'Salesforce', step:'Case created', c:'#7FB2FF'},
-    {sys:'ServiceNow', step:'Incident raised', c:'#9FE0C8'},
-    {sys:'REST API', step:'Order service called', c:'#C9B4FF'},
-    {sys:'SAP ERP', step:'Order updated', c:'#FFD08A'},
-    {sys:'PDF', step:'Invoice generated', c:'#FFB4A8'}
+    {sys:'Mobile app', step:'Customer files a claim', c:'#8FE3C0', head:'#1f8a68'},
+    {sys:'Salesforce', step:'Case created', c:'#7FB2FF', head:'#0b5cab'},
+    {sys:'ServiceNow', step:'Incident raised', c:'#9FE0C8', head:'#2f4a3f'},
+    {sys:'REST API', step:'Order service called', c:'#C9B4FF', head:'#3b2f73'},
+    {sys:'SAP ERP', step:'Order updated', c:'#FFD08A', head:'#1d3a5f'},
+    {sys:'PDF', step:'Invoice generated', c:'#FFB4A8', head:'#6b2b24'}
   ];
-  const NS = 'http://www.w3.org/2000/svg';
-  const el = (tag, attrs, parent) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (parent) parent.appendChild(e); return e; };
-  let raf = null, built = null, layoutKey = '';
-
-  function build(){
-    const horizontal = stage.clientWidth >= 760;
-    const key = horizontal ? 'h' : 'v';
-    if (key === layoutKey && built) return;
-    layoutKey = key;
-    stage.innerHTML = '';
-    const W = horizontal ? 1200 : 360, NW = horizontal ? 180 : 220, NH = 92;
-    const pts = STEPS.map((_, i) => horizontal
-      ? {x: 112 + i * 195, y: i % 2 ? 300 : 110}
-      : {x: i % 2 ? 210 : 150, y: 70 + i * 128});
-    const hub = horizontal ? {x: 600, y: 470, w: 240, h: 64} : {x: 180, y: 70 + 6 * 128 + 10, w: 260, h: 64};
-    const H = hub.y + hub.h / 2 + 16;
-    const svg = el('svg', {viewBox: `0 0 ${W} ${H}`, 'aria-hidden': 'true'}, stage);
-    // orchestration lines from the hub to every system
-    STEPS.forEach((_, i) => el('line', {x1: hub.x, y1: hub.y - hub.h / 2, x2: pts[i].x, y2: pts[i].y + NH / 2, class: 'tc-orch'}, svg));
-    // the journey path, one segment per hop so we know where each system sits along it
-    let d = `M${pts[0].x} ${pts[0].y}`;
-    const segs = [];
-    for (let i = 1; i < pts.length; i++){
-      const a = pts[i - 1], b = pts[i];
-      const c = horizontal ? `C${(a.x + b.x) / 2} ${a.y} ${(a.x + b.x) / 2} ${b.y} ${b.x} ${b.y}` : `C${a.x} ${(a.y + b.y) / 2} ${b.x} ${(a.y + b.y) / 2} ${b.x} ${b.y}`;
-      segs.push(el('path', {d: `M${a.x} ${a.y} ${c}`, fill: 'none', stroke: 'none'}, svg));
-      d += ' ' + c;
-    }
-    el('path', {d, class: 'tc-path'}, svg);
-    const done = el('path', {d, class: 'tc-path-done'}, svg);
-    const total = done.getTotalLength();
-    const at = [0]; segs.reduce((acc, s) => { acc += s.getTotalLength(); at.push(acc); return acc; }, 0);
-    done.style.strokeDasharray = total; done.style.strokeDashoffset = 0;
-    // the marker sits under the system boxes, so it slides into each box rather than covering its label
-    const packet = el('circle', {class: 'tc-packet', r: 7, cx: pts[0].x, cy: pts[0].y, style: 'opacity:0'}, svg);
-    // systems
-    const nodes = STEPS.map((s, i) => {
-      const g = el('g', {class: 'tc-node on', transform: `translate(${pts[i].x - NW / 2} ${pts[i].y - NH / 2})`}, svg);
-      el('rect', {class: 'box', width: NW, height: NH, rx: 14}, g);
-      el('circle', {cx: 26, cy: NH / 2, r: 13, fill: s.c}, g);
-      el('text', {class: 'num', x: 26, y: NH / 2 + 4, 'text-anchor': 'middle'}, g).textContent = i + 1;
-      const sys = el('text', {class: 'sys', x: 50}, g); sys.textContent = s.sys;
-      const step = el('text', {class: 'step', x: 50}, g);
-      const lines = fitText(step, s.step, NW - 50 - 14);
-      // centre the label block vertically in the box
-      const block = 14 + 6 + lines * 18, top = (NH - block) / 2;
-      sys.setAttribute('y', top + 11);
-      [...step.children].forEach((t, k) => t.setAttribute('y', top + 14 + 6 + 13 + k * 18));
-      const tick = el('g', {class: 'tick', transform: `translate(${NW - 14} -6)`}, g);
-      el('circle', {r: 11}, tick); el('path', {d: 'M-4.5 0.5l3 3 6-6'}, tick);
-      return g;
-    });
-    // hub
-    const hg = el('g', {class: 'tc-hub', transform: `translate(${hub.x - hub.w / 2} ${hub.y - hub.h / 2})`}, svg);
-    el('rect', {width: hub.w, height: hub.h, rx: 16}, hg);
-    const sym = el('svg', {x: 16, y: 14, width: 34, height: 36, viewBox: '0 0 35 36', style: 'color:#fff'}, hg);
-    el('use', {href: '#q-symbol'}, sym);
-    el('text', {class: 't1', x: 60, y: 29}, hg).textContent = 'Qualitia Boson';
-    el('text', {class: 't2', x: 60, y: 47}, hg).textContent = 'orchestrates every step';
-    built = {done, total, at, nodes, packet};
-    setCaption(STEPS.length);
+  const fld = (a, b) => `<div class="e2e-fld"><span>${a}</span><span>${b}</span></div>`;
+  const chk = (...c) => `<div class="e2e-chk">${c.map(x => `<span>✓ ${x}</span>`).join('')}</div>`;
+  const head = (i, title, sys) => `<div class="e2e-app-h" style="background:${STEPS[i].head}">${title}${sys ? `<small>${sys}</small>` : ''}</div>`;
+  const SCREENS = [
+    `<div class="e2e-phone"><div class="e2e-app">${head(0,'File a claim')}<div class="e2e-app-b">${fld('Policy','HM-88310')}${fld('Claim','CLM-2041')}${fld('Amount','$1,240.00')}<div class="e2e-btn">Submit claim</div>${chk('submitted')}</div></div></div>`,
+    `<div class="e2e-app">${head(1,'Case 00012871','Salesforce')}<div class="e2e-app-b">${fld('Claim','CLM-2041')}${fld('Amount','$1,240.00')}${fld('Status','New')}${fld('Owner','Claims queue')}${chk('claim ID matches','amount matches')}</div></div>`,
+    `<div class="e2e-app">${head(2,'INC0021457','ServiceNow')}<div class="e2e-app-b">${fld('Short description','Claim CLM-2041 review')}${fld('Priority','3 · Moderate')}${fld('Linked case','00012871')}${chk('case linked','claim ID matches')}</div></div>`,
+    `<div class="e2e-json">POST /orders/claims<br>{<br>&nbsp;&nbsp;<span class="k">"claimId"</span>: <span class="s">"CLM-2041"</span>,<br>&nbsp;&nbsp;<span class="k">"amount"</span>: <span class="v">1240.00</span>,<br>&nbsp;&nbsp;<span class="k">"currency"</span>: <span class="s">"USD"</span><br>}<br><span class="s">200 OK</span> · 184 ms</div><div class="e2e-under">${chk('status 200','payload matches')}</div>`,
+    `<div class="e2e-app">${head(4,'Sales order 4500128','SAP ERP')}<div class="e2e-app-b">${fld('Reference','CLM-2041')}${fld('Net value','1,240.00 USD')}${fld('Status','Updated')}${chk('order updated','amount matches')}</div></div>`,
+    `<div class="e2e-pdf"><h5>Invoice INV-77120</h5><div style="color:#5b6573">Claim CLM-2041</div><div class="ln" style="width:90%"></div><div class="ln" style="width:70%"></div><div class="ln" style="width:80%"></div><div class="tot"><span>Total</span><span>$1,240.00</span></div>${chk('PDF generated','total matches')}</div>`
+  ];
+  const stepsEl = root.querySelector('.e2e-steps'), prog = root.querySelector('.e2e-prog'), stage = root.querySelector('.e2e-stage');
+  const caption = document.getElementById('e2e-caption'), replay = document.getElementById('e2e-replay');
+  STEPS.forEach((s, i) => {
+    const li = document.createElement('li');
+    li.innerHTML = `<button type="button"><span class="e2e-n" style="background:${s.c}">${i + 1}</span><span class="e2e-t"><small>${s.sys}</small><b>${s.step}</b></span><span class="e2e-d">✓</span></button>`;
+    li.querySelector('button').addEventListener('click', () => go(i, true));
+    stepsEl.appendChild(li);
+    prog.insertAdjacentHTML('beforeend', '<i><b></b></i>');
+    const scr = document.createElement('div'); scr.className = 'e2e-scr'; scr.setAttribute('aria-hidden', 'true'); scr.innerHTML = SCREENS[i]; stage.appendChild(scr);
+  });
+  const lis = [...stepsEl.children], bars = [...prog.children], screens = [...stage.children];
+  let timer = null;
+  const DWELL = 2600;
+  function go(i, manual){
+    clearTimeout(timer);
+    screens.forEach((s, k) => { s.classList.toggle('on', k === i); s.classList.toggle('out', k < i); s.setAttribute('aria-hidden', k !== i); });
+    lis.forEach((li, k) => { li.classList.toggle('done', k <= i); const b = li.querySelector('button'); if (k === i) b.setAttribute('aria-current', 'step'); else b.removeAttribute('aria-current'); });
+    bars.forEach((b, k) => { const f = b.firstChild; f.style.transition = 'none'; f.style.width = k < i ? '100%' : '0'; });
+    // keep the current step visible in the scrolling row on phones, without scrolling the page
+    const btn = lis[i].querySelector('button');
+    if (stepsEl.scrollWidth > stepsEl.clientWidth) stepsEl.scrollTo({left: btn.offsetLeft - stepsEl.clientWidth / 2 + btn.offsetWidth / 2, behavior: reduce ? 'auto' : 'smooth'});
+    caption.innerHTML = i === STEPS.length - 1
+      ? '<b>Journey passed</b> · claim CLM-2041 checked in all 6 systems'
+      : `Step <b>${i + 1} of ${STEPS.length}</b> · ${STEPS[i].sys} · ${STEPS[i].step}`;
+    const fill = bars[i].firstChild;
+    if (manual || reduce || i === STEPS.length - 1){ fill.style.width = '100%'; return; }
+    void fill.offsetWidth; fill.style.transition = `width ${DWELL}ms linear`; fill.style.width = '100%';
+    timer = setTimeout(() => go(i + 1), DWELL + 100);
   }
-  // Wrap a label into at most two lines that fit maxW; shrink the type only if a single word is too wide.
-  function fitText(textEl, str, maxW){
-    for (let size = 15; size >= 11; size--){
-      textEl.style.fontSize = size + 'px';
-      textEl.textContent = '';
-      const words = str.split(' '), lines = [];
-      let cur = '';
-      const probe = el('tspan', {x: textEl.getAttribute('x')}, textEl);
-      let ok = true;
-      for (const w of words){
-        const test = cur ? cur + ' ' + w : w;
-        probe.textContent = test;
-        if (probe.getComputedTextLength() <= maxW) cur = test;
-        else { if (!cur){ ok = false; break; } lines.push(cur); cur = w; probe.textContent = w; if (probe.getComputedTextLength() > maxW){ ok = false; break; } }
-      }
-      probe.remove();
-      if (cur) lines.push(cur);
-      if (ok && lines.length <= 2){
-        lines.forEach(line => { const t = el('tspan', {x: textEl.getAttribute('x')}, textEl); t.textContent = line; });
-        return lines.length;
-      }
-    }
-    textEl.textContent = '';
-    const t = el('tspan', {x: textEl.getAttribute('x')}, textEl); t.textContent = str;
-    return 1;
-  }
-  function setCaption(n){
-    caption.innerHTML = n >= STEPS.length
-      ? '<b>Journey passed</b> · 6 systems validated end to end in one test'
-      : `Step <b>${n + 1} of ${STEPS.length}</b> · ${STEPS[n].sys} · ${STEPS[n].step}`;
-  }
-  const ease = x => x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;   // ease-in-out cubic
-  function play(){
-    build();
-    cancelAnimationFrame(raf);
-    const {done, total, at, nodes, packet} = built;
-    if (reduce){ nodes.forEach(n => n.classList.add('on')); packet.style.opacity = 0; setCaption(STEPS.length); return; }
-    nodes.forEach((n, i) => n.classList.toggle('on', i === 0));
-    // timeline: short dwell on the first system, then for each hop an eased move followed by a dwell
-    const MOVE = 1000, DWELL = 420, hops = at.length - 1;
-    const T = DWELL + hops * (MOVE + DWELL);
-    const lenAt = ms => {
-      if (ms <= DWELL) return 0;
-      const k = ms - DWELL, hop = Math.min(hops - 1, Math.floor(k / (MOVE + DWELL)));
-      const local = k - hop * (MOVE + DWELL);
-      const f = local >= MOVE ? 1 : ease(local / MOVE);
-      return at[hop] + (at[hop + 1] - at[hop]) * f;
-    };
-    packet.style.transition = 'none'; packet.style.opacity = 1;
-    const start = performance.now();
-    const frame = now => {
-      const ms = Math.min(T, now - start), len = lenAt(ms);
-      const pt = done.getPointAtLength(len);
-      packet.setAttribute('cx', pt.x); packet.setAttribute('cy', pt.y);
-      done.style.strokeDashoffset = total - len;
-      let reached = 0;
-      at.forEach((l, i) => { const on = len >= l - 0.5; nodes[i].classList.toggle('on', on); if (on) reached = i; });
-      if (ms < T){ setCaption(reached); raf = requestAnimationFrame(frame); }
-      else { setCaption(STEPS.length); packet.style.transition = 'opacity .7s ease'; packet.style.opacity = 0; }
-    };
-    done.style.strokeDashoffset = total;
-    raf = requestAnimationFrame(frame);
-  }
-  build();
-  replay.addEventListener('click', play);
-  let rt; addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { const k = stage.clientWidth >= 760 ? 'h' : 'v'; if (k !== layoutKey){ cancelAnimationFrame(raf); built = null; build(); } }, 150); });
+  go(0, true);                                    // first screen visible at rest
+  replay.addEventListener('click', () => go(0, reduce));
   if (!reduce && 'IntersectionObserver' in window){
-    const io = new IntersectionObserver(es => { if (es[0].isIntersecting){ io.disconnect(); setTimeout(play, 300); } }, {threshold: .4});
-    io.observe(stage);
+    const io = new IntersectionObserver(es => { if (es[0].isIntersecting){ io.disconnect(); go(0); } }, {threshold: .4});
+    io.observe(root);
   }
 })();
 
