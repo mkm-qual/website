@@ -125,6 +125,7 @@
     closeRegions(b); pop.hidden = !open; b.setAttribute('aria-expanded', open);
   }));
   document.addEventListener('click', e => { if (!e.target.closest('.regions')) closeRegions(); });
+  if (matchMedia('(hover: hover) and (pointer: fine)').matches) regionBtns.forEach(b => b.parentElement.addEventListener('mouseenter', () => closeRegions(b)));
   document.addEventListener('keydown', e => { if (e.key === 'Escape') closeRegions(); });
 
   // Demo form
