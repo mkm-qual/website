@@ -1079,3 +1079,10 @@ fieldset.ct-f{border:0;margin:0;padding:0}
 }
 @media (max-width:900px){ .bl-related{grid-template-columns:repeat(2,minmax(0,1fr))} }
 @media (max-width:560px){ .bl-related{grid-template-columns:minmax(0,1fr)} }
+.bl-cto{margin:8px 0 24px}
+.bl-mr .bl-card p{font-size:clamp(18px,1.6vw,21px);line-height:1.4;font-weight:300}
+.bl-qs{list-style:none;counter-reset:q;padding:0;margin:12px 0 20px;display:flex;flex-direction:column;gap:10px}
+.bl-qs li{counter-increment:q;display:grid;grid-template-columns:36px minmax(0,1fr);gap:14px;align-items:center;background:var(--surface);border-radius:var(--r);padding:16px 18px;font-size:17px}
+.bl-qs li::before{content:"Q" counter(q);display:grid;place-items:center;width:36px;height:36px;border-radius:50%;background:var(--cta);color:#001630;font:500 12px var(--mono)}
+.cs-article .bl-pull a{color:var(--brand);text-decoration:underline;text-underline-offset:3px}
+.bl-mr .bl-card.hi p{color:var(--deep-fg)}
