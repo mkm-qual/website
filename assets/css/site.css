@@ -440,7 +440,7 @@ footer{padding:clamp(56px,7vw,96px) var(--g) 32px;font-size:var(--t-small)}
 .kpi.hi{background:var(--cta);color:#001630}
 .kpi small{font-size:var(--t-small)}
 .kpi b{font-size:clamp(44px,4.6vw,64px);font-weight:300;letter-spacing:-0.03em;line-height:1;font-variant-numeric:tabular-nums}
-.kpi.art{grid-column:3;grid-row:1 / span 2;padding:0;justify-content:flex-end;align-items:center;overflow:hidden;background:radial-gradient(70% 55% at 50% 62%,rgba(0,149,235,.22),transparent 70%),color-mix(in srgb,var(--brand) 8%,var(--surface))}
+.kpi.art{grid-column:3;grid-row:1 / span 2;padding:0 0 12%;justify-content:center;align-items:center;overflow:hidden;background:radial-gradient(70% 55% at 50% 50%,rgba(0,149,235,.22),transparent 70%),color-mix(in srgb,var(--brand) 8%,var(--surface))}
 .kpi.art img{width:86%;height:auto;max-height:92%;object-fit:contain;object-position:bottom}
 
 .quotes-row{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--g);padding:0 var(--g);align-items:stretch}
