@@ -1089,3 +1089,4 @@ fieldset.ct-f{border:0;margin:0;padding:0}
 .bl-qs li::before{content:"Q" counter(q);display:grid;place-items:center;width:36px;height:36px;border-radius:50%;background:var(--cta);color:#001630;font:500 12px var(--mono)}
 .cs-article .bl-pull a{color:var(--brand);text-decoration:underline;text-underline-offset:3px}
 .bl-mr .bl-card.hi p{color:var(--deep-fg)}
+@media (max-width:720px){ .reel-nav{padding-bottom:48px} }
