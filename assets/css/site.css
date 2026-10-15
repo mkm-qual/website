@@ -74,9 +74,16 @@ p{margin:0}
 
 /* Header */
 .site-header{position:relative;z-index:50;background:var(--paper)}
-.hdr{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;height:50px;padding-inline:var(--g)}
-.hdr-l,.hdr-r{display:flex;align-items:center;gap:4px}
-.hdr-r{justify-content:flex-end}
+.hdr{display:flex;justify-content:space-between;align-items:center;gap:16px;height:50px;padding-inline:var(--g)}
+.hdr-r{display:flex;align-items:center;gap:4px}
+/* Day / night switch */
+.theme-btn{all:unset;box-sizing:border-box;cursor:pointer;width:38px;height:38px;border-radius:8px;display:grid;place-items:center;color:var(--ink);flex:none}
+.theme-btn:hover{background:var(--surface)}
+.theme-btn:focus-visible{outline:2px solid var(--ink)}
+.theme-btn svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.theme-btn .sun{display:none}
+.theme-btn[data-mode="dark"] .sun{display:block}
+.theme-btn[data-mode="dark"] .moon{display:none}
 .logo{display:inline-flex;align-items:center;color:var(--ink)}
 .logo svg{display:block;height:auto}
 .logo-full{width:118px}
@@ -98,10 +105,11 @@ p{margin:0}
 .new{font-size:10px;font-weight:500;font-style:normal;padding:3px 5px;border-radius:5px;background:var(--cta);color:#001630;margin-left:6px;vertical-align:1px}
 
 /* Floating pill nav */
-.pill-nav{position:fixed;left:50%;top:calc(16px + env(safe-area-inset-top,0px));z-index:60;width:460px;max-width:calc(100vw - 32px);display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:8px;border-radius:16px;background:color-mix(in srgb,var(--paper) 94%,transparent);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);box-shadow:0 8px 30px -8px rgba(11,31,58,.22),0 0 0 1px var(--ink-faint);transform:translate(-50%,-160%);transition:transform .35s cubic-bezier(.2,.8,.2,1)}
+.pill-nav{position:fixed;left:50%;top:calc(16px + env(safe-area-inset-top,0px));z-index:60;width:460px;max-width:calc(100vw - 32px);display:flex;justify-content:space-between;gap:6px;align-items:center;padding:8px;border-radius:16px;background:color-mix(in srgb,var(--paper) 94%,transparent);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);box-shadow:0 8px 30px -8px rgba(11,31,58,.22),0 0 0 1px var(--ink-faint);transform:translate(-50%,-160%);transition:transform .35s cubic-bezier(.2,.8,.2,1)}
 .pill-nav.show{transform:translate(-50%,0)}
 .pill-nav .btn{padding:10px}
-.pill-nav .r{justify-self:end}
+.pill-r{display:flex;align-items:center;gap:6px}
+.pill-nav .logo{padding-left:6px}
 .pill-nav .mega-float{position:absolute;top:calc(100% + 8px);left:0;right:0;background:var(--paper);border-radius:var(--r);box-shadow:0 24px 48px -16px rgba(11,31,58,.3),0 0 0 1px var(--ink-faint);padding:12px;display:flex;flex-direction:column;gap:2px}
 .pill-nav .mega-float[hidden]{display:none!important}
 .pill-nav .mega-float a{padding:10px;border-radius:8px;font-size:var(--t-small);display:flex;justify-content:space-between;gap:12px}
@@ -385,10 +393,7 @@ footer{padding:clamp(56px,7vw,96px) var(--side) 32px;font-size:var(--t-small)}
   .foot > :first-child{grid-column:1 / -1}
 }
 @media (max-width:768px){
-  .hdr{grid-template-columns:auto 1fr auto}
-  .hdr .logo{order:-1;justify-self:start}
-  .hdr-l{justify-content:flex-end}
-  .hdr-l .lnk{display:none}
+  .hdr-r .lnk{display:none}
   .mega{grid-template-columns:1fr}
   .hero-card{min-height:600px}
   .feat{grid-template-columns:1fr;gap:20px}
@@ -408,6 +413,11 @@ footer{padding:clamp(56px,7vw,96px) var(--side) 32px;font-size:var(--t-small)}
   .cta-mascot{width:min(70%,280px)}
 }
 @media (max-width:480px){
+  .hdr{gap:8px}
+  .hdr .logo-full{width:96px}
+  .hdr-r{gap:2px}
+  .hdr-r .btn{padding:10px 8px;font-size:13px}
+  .hdr .theme-btn{width:34px;height:34px}
   .badges img{height:40px}
   .sec-items,.stats{grid-template-columns:1fr}
   .foot{grid-template-columns:1fr 1fr}
@@ -660,4 +670,10 @@ footer{padding:clamp(56px,7vw,96px) var(--side) 32px;font-size:var(--t-small)}
   .tc-lanes{grid-template-columns:1fr}
   .tc-ci-head{flex-direction:column;align-items:stretch}
   .tc-tools{overflow-x:auto}
+}
+@media (max-width:359px){
+  .hdr{padding-inline:12px}
+  .hdr .logo-full{width:84px}
+  .hdr-r .btn{padding:8px 6px;font-size:12.5px}
+  .hdr .theme-btn{width:30px;height:30px}
 }

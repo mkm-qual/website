@@ -324,3 +324,29 @@
   setTool('ado');
   finalState(false);              // complete at rest: the last run passed
 })();
+
+/* Day / night switch. Follows the device setting until the visitor picks one; the choice is remembered on this device. */
+(function(){
+  const btns = [...document.querySelectorAll('[data-theme-toggle]')];
+  if (!btns.length) return;
+  const root = document.documentElement;
+  const media = matchMedia('(prefers-color-scheme: dark)');
+  const current = () => root.getAttribute('data-theme') || (media.matches ? 'dark' : 'light');
+  function sync(){
+    const mode = current();
+    btns.forEach(b => {
+      b.dataset.mode = mode;
+      b.setAttribute('aria-label', mode === 'dark' ? 'Switch to day mode' : 'Switch to night mode');
+      b.title = b.getAttribute('aria-label');
+    });
+  }
+  btns.forEach(b => b.addEventListener('click', e => {
+    e.stopPropagation();
+    const next = current() === 'dark' ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try { localStorage.setItem('q-theme', next); } catch(err){}
+    sync();
+  }));
+  media.addEventListener('change', sync);   // device switched while no choice is saved
+  sync();
+})();
