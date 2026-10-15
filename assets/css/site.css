@@ -797,3 +797,34 @@ fieldset.ct-f{border:0;margin:0;padding:0}
 @media (max-width:560px){
   .ct-row,.ct-offices{grid-template-columns:1fr}
 }
+
+/* ---------- Legal pages (lg-) ---------- */
+.lg-head{padding:clamp(32px,5vw,72px) var(--side) clamp(24px,3vw,40px);display:flex;flex-direction:column;gap:16px;align-items:flex-start;border-bottom:1px solid var(--ink-faint)}
+.lg-head h1{font-size:var(--t-h1);line-height:1.1;letter-spacing:-0.015em;font-weight:300}
+.lg-head p{color:var(--ink-soft);font-size:var(--t-small)}
+.lg{display:grid;grid-template-columns:minmax(0,260px) minmax(0,1fr);gap:clamp(32px,6vw,96px);padding:clamp(32px,4vw,56px) var(--side) 0;align-items:start}
+.lg-toc{position:sticky;top:96px;font-size:var(--t-small)}
+.lg-toc b{display:block;font-size:12px;font-weight:500;color:var(--ink-soft);margin-bottom:12px}
+.lg-toc ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px;border-left:1px solid var(--ink-faint)}
+.lg-toc a{display:block;padding:6px 12px;margin-left:-1px;border-left:2px solid transparent;color:var(--ink-soft);line-height:1.35}
+.lg-toc a:hover{color:var(--ink)}
+.lg-toc a.on{color:var(--ink);border-left-color:var(--brand)}
+.lg-body{max-width:70ch;font-size:16.5px;line-height:1.7}
+.lg-body p{margin:0 0 16px}
+.lg-body h2{font-size:24px;font-weight:400;letter-spacing:-0.01em;margin:48px 0 14px;scroll-margin-top:90px;display:flex;gap:12px;align-items:baseline}
+.lg-body h2 span{font:500 13px var(--mono);color:var(--ink-soft)}
+.lg-body ol.roman{list-style:lower-roman;padding-left:28px;margin:0 0 16px}
+.lg-body ol.roman li{margin-bottom:10px;padding-left:4px}
+.lg-body a{color:var(--brand);text-decoration:underline;text-underline-offset:3px}
+.lg-body strong{font-weight:500}
+.lg-note{background:var(--surface);border-radius:var(--r);padding:20px 22px;margin:0 0 16px;font-size:13.5px;line-height:1.65;letter-spacing:.01em;color:var(--ink-soft)}
+.lg-note p:last-child{margin-bottom:0}
+.lg-address{border-top:1px solid var(--ink-faint);padding-top:16px;margin-top:24px;color:var(--ink-soft)}
+@media (max-width:900px){
+  .lg{grid-template-columns:1fr}
+  .lg-toc{position:static;background:var(--surface);border-radius:var(--r);padding:16px}
+  .lg-toc ol{columns:2;display:block;border-left:0}
+  .lg-toc a{border-left:0;padding:4px 0}
+  .lg-toc a.on{color:var(--ink-soft)}
+}
+@media (max-width:480px){ .lg-toc ol{columns:1} }

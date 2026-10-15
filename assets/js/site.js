@@ -463,3 +463,18 @@
     done.querySelector('h2').focus();
   });
 })();
+
+/* Legal pages: highlight the table-of-contents entry for the section being read. */
+(function(){
+  const toc = document.querySelector('.lg-toc');
+  if (!toc) return;
+  const links = [...toc.querySelectorAll('a')];
+  const heads = [...document.querySelectorAll('.lg-body h2[id]')];
+  const update = () => {
+    let cur = null;
+    heads.forEach(h => { if (h.getBoundingClientRect().top <= 140) cur = h; });
+    links.forEach(a => a.classList.toggle('on', !!cur && a.getAttribute('href') === '#' + cur.id));
+  };
+  addEventListener('scroll', update, {passive: true});
+  update();
+})();
