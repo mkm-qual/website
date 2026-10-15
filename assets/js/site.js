@@ -201,9 +201,9 @@
     if (key === layoutKey && built) return;
     layoutKey = key;
     stage.innerHTML = '';
-    const W = horizontal ? 1200 : 360, NW = horizontal ? 176 : 214, NH = 84;
+    const W = horizontal ? 1200 : 360, NW = horizontal ? 180 : 220, NH = 92;
     const pts = STEPS.map((_, i) => horizontal
-      ? {x: 110 + i * 196, y: i % 2 ? 300 : 110}
+      ? {x: 112 + i * 195, y: i % 2 ? 300 : 110}
       : {x: i % 2 ? 210 : 150, y: 70 + i * 128});
     const hub = horizontal ? {x: 600, y: 470, w: 240, h: 64} : {x: 180, y: 70 + 6 * 128 + 10, w: 260, h: 64};
     const H = hub.y + hub.h / 2 + 16;
@@ -224,14 +224,21 @@
     const total = done.getTotalLength();
     const at = [0]; segs.reduce((acc, s) => { acc += s.getTotalLength(); at.push(acc); return acc; }, 0);
     done.style.strokeDasharray = total; done.style.strokeDashoffset = 0;
+    // the marker sits under the system boxes, so it slides into each box rather than covering its label
+    const packet = el('circle', {class: 'tc-packet', r: 7, cx: pts[0].x, cy: pts[0].y, style: 'opacity:0'}, svg);
     // systems
     const nodes = STEPS.map((s, i) => {
       const g = el('g', {class: 'tc-node on', transform: `translate(${pts[i].x - NW / 2} ${pts[i].y - NH / 2})`}, svg);
       el('rect', {class: 'box', width: NW, height: NH, rx: 14}, g);
       el('circle', {cx: 26, cy: NH / 2, r: 13, fill: s.c}, g);
       el('text', {class: 'num', x: 26, y: NH / 2 + 4, 'text-anchor': 'middle'}, g).textContent = i + 1;
-      el('text', {class: 'sys', x: 50, y: NH / 2 - 6}, g).textContent = s.sys;
-      el('text', {class: 'step', x: 50, y: NH / 2 + 14}, g).textContent = s.step;
+      const sys = el('text', {class: 'sys', x: 50}, g); sys.textContent = s.sys;
+      const step = el('text', {class: 'step', x: 50}, g);
+      const lines = fitText(step, s.step, NW - 50 - 14);
+      // centre the label block vertically in the box
+      const block = 14 + 6 + lines * 18, top = (NH - block) / 2;
+      sys.setAttribute('y', top + 11);
+      [...step.children].forEach((t, k) => t.setAttribute('y', top + 14 + 6 + 13 + k * 18));
       const tick = el('g', {class: 'tick', transform: `translate(${NW - 14} -6)`}, g);
       el('circle', {r: 11}, tick); el('path', {d: 'M-4.5 0.5l3 3 6-6'}, tick);
       return g;
@@ -243,32 +250,70 @@
     el('use', {href: '#q-symbol'}, sym);
     el('text', {class: 't1', x: 60, y: 29}, hg).textContent = 'Qualitia Boson';
     el('text', {class: 't2', x: 60, y: 47}, hg).textContent = 'orchestrates every step';
-    const packet = el('circle', {class: 'tc-packet', r: 7, cx: pts[5].x, cy: pts[5].y}, svg);
     built = {done, total, at, nodes, packet};
     setCaption(STEPS.length);
+  }
+  // Wrap a label into at most two lines that fit maxW; shrink the type only if a single word is too wide.
+  function fitText(textEl, str, maxW){
+    for (let size = 15; size >= 11; size--){
+      textEl.style.fontSize = size + 'px';
+      textEl.textContent = '';
+      const words = str.split(' '), lines = [];
+      let cur = '';
+      const probe = el('tspan', {x: textEl.getAttribute('x')}, textEl);
+      let ok = true;
+      for (const w of words){
+        const test = cur ? cur + ' ' + w : w;
+        probe.textContent = test;
+        if (probe.getComputedTextLength() <= maxW) cur = test;
+        else { if (!cur){ ok = false; break; } lines.push(cur); cur = w; probe.textContent = w; if (probe.getComputedTextLength() > maxW){ ok = false; break; } }
+      }
+      probe.remove();
+      if (cur) lines.push(cur);
+      if (ok && lines.length <= 2){
+        lines.forEach(line => { const t = el('tspan', {x: textEl.getAttribute('x')}, textEl); t.textContent = line; });
+        return lines.length;
+      }
+    }
+    textEl.textContent = '';
+    const t = el('tspan', {x: textEl.getAttribute('x')}, textEl); t.textContent = str;
+    return 1;
   }
   function setCaption(n){
     caption.innerHTML = n >= STEPS.length
       ? '<b>Journey passed</b> · 6 systems validated end to end in one test'
       : `Step <b>${n + 1} of ${STEPS.length}</b> · ${STEPS[n].sys} · ${STEPS[n].step}`;
   }
+  const ease = x => x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;   // ease-in-out cubic
   function play(){
     build();
     cancelAnimationFrame(raf);
     const {done, total, at, nodes, packet} = built;
-    if (reduce){ nodes.forEach(n => n.classList.add('on')); setCaption(STEPS.length); return; }
-    nodes.forEach(n => n.classList.remove('on'));
-    const T = 6200, start = performance.now();
+    if (reduce){ nodes.forEach(n => n.classList.add('on')); packet.style.opacity = 0; setCaption(STEPS.length); return; }
+    nodes.forEach((n, i) => n.classList.toggle('on', i === 0));
+    // timeline: short dwell on the first system, then for each hop an eased move followed by a dwell
+    const MOVE = 1000, DWELL = 420, hops = at.length - 1;
+    const T = DWELL + hops * (MOVE + DWELL);
+    const lenAt = ms => {
+      if (ms <= DWELL) return 0;
+      const k = ms - DWELL, hop = Math.min(hops - 1, Math.floor(k / (MOVE + DWELL)));
+      const local = k - hop * (MOVE + DWELL);
+      const f = local >= MOVE ? 1 : ease(local / MOVE);
+      return at[hop] + (at[hop + 1] - at[hop]) * f;
+    };
+    packet.style.transition = 'none'; packet.style.opacity = 1;
+    const start = performance.now();
     const frame = now => {
-      const p = Math.min(1, (now - start) / T), len = p * total;
+      const ms = Math.min(T, now - start), len = lenAt(ms);
       const pt = done.getPointAtLength(len);
       packet.setAttribute('cx', pt.x); packet.setAttribute('cy', pt.y);
       done.style.strokeDashoffset = total - len;
       let reached = 0;
-      at.forEach((l, i) => { const on = len >= l - 1; nodes[i].classList.toggle('on', on); if (on) reached = i; });
-      setCaption(p >= 1 ? STEPS.length : reached);
-      if (p < 1) raf = requestAnimationFrame(frame);
+      at.forEach((l, i) => { const on = len >= l - 0.5; nodes[i].classList.toggle('on', on); if (on) reached = i; });
+      if (ms < T){ setCaption(reached); raf = requestAnimationFrame(frame); }
+      else { setCaption(STEPS.length); packet.style.transition = 'opacity .7s ease'; packet.style.opacity = 0; }
     };
+    done.style.strokeDashoffset = total;
     raf = requestAnimationFrame(frame);
   }
   build();
