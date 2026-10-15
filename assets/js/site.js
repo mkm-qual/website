@@ -474,6 +474,12 @@
     let cur = null;
     heads.forEach(h => { if (h.getBoundingClientRect().top <= 140) cur = h; });
     links.forEach(a => a.classList.toggle('on', !!cur && a.getAttribute('href') === '#' + cur.id));
+    const on = toc.querySelector('a.on');
+    if (on && toc.scrollHeight > toc.clientHeight) {
+      const r = on.getBoundingClientRect(), box = toc.getBoundingClientRect();
+      if (r.top < box.top) toc.scrollTop -= box.top - r.top + 8;
+      else if (r.bottom > box.bottom) toc.scrollTop += r.bottom - box.bottom + 8;
+    }
   };
   addEventListener('scroll', update, {passive: true});
   update();
