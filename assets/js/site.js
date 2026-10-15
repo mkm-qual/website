@@ -43,48 +43,13 @@
     nav.querySelector('[data-dir="1"]').addEventListener('click', () => stepReel(1));
   });
 
-  // Hero particle field: static first frame, gentle drift
-  const cv = document.getElementById('field');
-  if (cv) {
-  const ctx = cv.getContext('2d');
-  let W=0,H=0,pts=[];
-  const dpr=Math.min(devicePixelRatio||1,2);
-  function size(){
-    const r = cv.getBoundingClientRect(); W=r.width; H=r.height;
-    cv.width=W*dpr; cv.height=H*dpr; ctx.setTransform(dpr,0,0,dpr,0,0);
-    const count = Math.round(Math.min(140, W*H/9000));
-    pts = Array.from({length:count}, (_,i) => ({x:Math.random()*W, y:Math.random()*H, vx:(Math.random()-.5)*.25, vy:(Math.random()-.5)*.25, r:Math.random()*1.4+.6, hot:i%17===0}));
-  }
-  function draw(){
-    ctx.clearRect(0,0,W,H);
-    for (let i=0;i<pts.length;i++){
-      const a=pts[i];
-      for (let j=i+1;j<pts.length;j++){
-        const b=pts[j], dx=a.x-b.x, dy=a.y-b.y, d=dx*dx+dy*dy;
-        if (d<12000){ ctx.strokeStyle='rgba(180,198,255,'+(0.16*(1-d/12000))+')'; ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke(); }
-      }
-    }
-    for (const p of pts){
-      ctx.fillStyle = p.hot ? 'rgba(52,195,143,.95)' : 'rgba(220,230,255,.7)';
-      ctx.beginPath(); ctx.arc(p.x,p.y,p.hot?p.r+1.2:p.r,0,Math.PI*2); ctx.fill();
-    }
-  }
-  function frame(){
-    for (const p of pts){ p.x+=p.vx; p.y+=p.vy; if(p.x<0||p.x>W)p.vx*=-1; if(p.y<0||p.y>H)p.vy*=-1; }
-    draw(); requestAnimationFrame(frame);
-  }
-  size(); draw();
-  if (!reduce) requestAnimationFrame(frame);
-  addEventListener('resize', () => { size(); draw(); });
-  }
-
   // Console runs (illustrative), only on pages that have the console
   if (document.getElementById('c-body')) {
   const RUNS = {
-    sf:{meta:'sprint 14 · UAT sandbox', release:['Sprint 14 · 37 changes','Instant update · 412 tests'], lines:[
+    sf:{meta:'sprint 14 · UAT sandbox', release:['Sprint 14 · 37 changes','Instant Update · 412 tests'], lines:[
       ['Lead → Opportunity conversion','1.8s'],['Quote with CPQ discount approval','3.2s'],['Case escalation to Tier 2','2.1s'],
       ['Lightning page layout · Account','0.9s','healed · field moved'],['Experience Cloud partner login','1.4s'],['Order sync → ERP integration','4.6s'],['Agentforce case summary','2.7s']]},
-    sn:{meta:'sprint 9 · test instance', release:['Sprint 9 · 22 changes','Instant update · 268 tests'], lines:[
+    sn:{meta:'sprint 9 · test instance', release:['Sprint 9 · 22 changes','Instant Update · 268 tests'], lines:[
       ['Incident P1 → major incident','2.3s'],['Change request CAB approval','3.0s'],['Service Catalog · laptop request','1.6s'],
       ['HR case onboarding journey','2.9s','healed · form updated'],['CMDB CI relationship check','1.2s'],['Salesforce case → ServiceNow incident','4.1s'],['Service Operations Workspace','1.7s']]}
   };
