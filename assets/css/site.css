@@ -45,6 +45,7 @@
 }
 
 *{box-sizing:border-box}
+[hidden]{display:none!important}
 html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
 body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:var(--t-body);line-height:1.5;-webkit-font-smoothing:antialiased;padding-bottom:env(safe-area-inset-bottom,0px)}
 img{max-width:100%}
@@ -742,4 +743,57 @@ footer{padding:clamp(56px,7vw,96px) var(--side) 32px;font-size:var(--t-small)}
   .rs-loop{grid-template-columns:1fr}
   .rs-loop img{justify-self:center;width:180px}
   .rs-loop-text{padding-bottom:0}
+}
+
+/* ---------- Contact page (ct-) ---------- */
+.ct{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);gap:clamp(24px,4vw,64px);align-items:start;padding:clamp(24px,4vw,56px) var(--side) 0}
+.ct-text{display:flex;flex-direction:column;gap:24px;position:sticky;top:96px}
+.ct-text .chip{align-self:flex-start}
+.ct-text h1{font-size:var(--t-display);line-height:1.05;letter-spacing:-0.01em;font-weight:300;max-width:11em}
+.ct-text h1 span{color:var(--ink-soft)}
+.ct-text .lede{color:var(--ink-soft);max-width:30em}
+.ct-next{list-style:none;margin:8px 0 0;padding:0;border-top:1px solid var(--ink-faint)}
+.ct-next li{display:grid;grid-template-columns:32px 1fr;gap:14px;padding:16px 0;border-bottom:1px solid var(--ink-faint)}
+.ct-next .n{width:28px;height:28px;border-radius:50%;background:var(--chip);display:grid;place-items:center;font:500 13px var(--sans)}
+.ct-next b{font-weight:500;display:block;margin-bottom:2px}
+.ct-next span{color:var(--ink-soft);font-size:15px}
+.ct-offices{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:8px}
+.ct-offices div{font-size:13px;line-height:1.5;color:var(--ink-soft);min-width:0}
+.ct-offices b{display:block;color:var(--ink);font-weight:500;font-size:14px;margin-bottom:4px}
+.ct-card{background:var(--paper);border-radius:20px;box-shadow:0 30px 70px -40px rgba(0,22,48,.4),0 0 0 1px var(--ink-faint);padding:clamp(22px,3vw,40px)}
+.ct-card h2{font-size:28px;font-weight:300;letter-spacing:-0.01em;margin-bottom:6px}
+#ct-head p{color:var(--ink-soft);font-size:15px;margin-bottom:24px}
+.ct-form{display:flex;flex-direction:column;gap:18px}
+.ct-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.ct-f{display:flex;flex-direction:column;gap:6px;min-width:0}
+.ct-f label,.ct-legend{font-size:13px;font-weight:500}
+.ct-f label i,.ct-legend i{font-style:normal;color:var(--ink-soft);font-weight:400}
+.ct-in{font:inherit;font-size:15px;color:var(--ink);background:var(--surface);border:1px solid transparent;border-radius:10px;padding:12px 14px;width:100%;box-sizing:border-box;transition:border-color .15s,background .15s}
+.ct-in:focus{outline:none;border-color:var(--brand);background:var(--paper)}
+.ct-in::placeholder{color:var(--ink-soft)}
+textarea.ct-in{min-height:110px;resize:vertical}
+.ct-f.err .ct-in{border-color:#E5484D}
+.ct-msg{font-size:12.5px;color:#D93D42;min-height:0}
+.ct-phone{display:grid;grid-template-columns:auto 1fr;gap:8px}
+.ct-phone select{padding-right:8px}
+fieldset.ct-f{border:0;margin:0;padding:0}
+.ct-slots{display:flex;flex-wrap:wrap;gap:8px}
+.ct-slots label{position:relative}
+.ct-slots input{position:absolute;opacity:0;pointer-events:none}
+.ct-slots span{display:inline-block;padding:9px 12px;border-radius:8px;background:var(--surface);font:500 13px var(--mono);cursor:pointer;border:1px solid transparent;font-variant-numeric:tabular-nums}
+.ct-slots input:checked + span{background:var(--ink);color:var(--paper)}
+.ct-slots input:focus-visible + span{outline:2px solid var(--brand)}
+.ct-tz{font-size:12.5px;color:var(--ink-soft)}
+.ct-submit{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;margin-top:4px}
+.ct-submit small{color:var(--ink-soft);font-size:12.5px;max-width:28em}
+.ct-done{display:flex;flex-direction:column;align-items:center;text-align:center;gap:14px;padding:12px 0}
+.ct-done img{width:180px;height:auto}
+.ct-done h2{margin:0}
+.ct-done p{color:var(--ink-soft);max-width:26em}
+@media (max-width:1024px){
+  .ct{grid-template-columns:1fr}
+  .ct-text{position:static}
+}
+@media (max-width:560px){
+  .ct-row,.ct-offices{grid-template-columns:1fr}
 }

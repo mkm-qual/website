@@ -386,3 +386,80 @@
     });
   });
 })();
+
+/* Demo panels on every page: carry the typed email to the contact form (via session storage, not the URL). */
+(function(){
+  document.querySelectorAll('#demo-form').forEach(form => {
+    if (document.getElementById('contact-form')) return;
+    form.addEventListener('submit', e => {
+      const email = form.querySelector('input[type=email]');
+      if (!email || !email.value || !email.checkValidity()) return;   // the existing handler shows the error
+      e.stopImmediatePropagation(); e.preventDefault();
+      try { sessionStorage.setItem('q-demo-email', email.value); } catch(err){}
+      location.href = 'contact.html';
+    }, true);
+  });
+})();
+
+/* Contact page: weekday date picker, local time slots, country code guess, validation and confirmation. */
+(function(){
+  const form = document.getElementById('contact-form');
+  if (!form) return;
+  const $ = id => document.getElementById(id);
+  const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
+  // prefill from a demo panel elsewhere on the site
+  try { const e = sessionStorage.getItem('q-demo-email'); if (e){ $('ct-email').value = e; sessionStorage.removeItem('q-demo-email'); } } catch(err){}
+  // country code from the visitor's region
+  const cc = /^Australia/.test(tz) ? '+61' : /Kolkata|Calcutta/.test(tz) ? '+91' : /^Europe\/London/.test(tz) ? '+44' : /Singapore/.test(tz) ? '+65' : /Dubai/.test(tz) ? '+971' : /^Pacific\/Auckland/.test(tz) ? '+64' : '+1';
+  $('ct-cc').value = cc;
+  $('ct-tz').textContent = 'Times shown in your time zone' + (tz ? ' (' + tz.replace(/_/g, ' ') + ')' : '');
+  // earliest date: next weekday
+  const d = new Date(); d.setDate(d.getDate() + 1);
+  while (d.getDay() === 0 || d.getDay() === 6) d.setDate(d.getDate() + 1);
+  const iso = x => x.getFullYear() + '-' + String(x.getMonth() + 1).padStart(2, '0') + '-' + String(x.getDate()).padStart(2, '0');
+  $('ct-date').min = iso(d);
+  const max = new Date(); max.setDate(max.getDate() + 60); $('ct-date').max = iso(max);
+
+  const rules = {
+    'ct-name':    v => v.trim() ? '' : 'Enter your name.',
+    'ct-company': v => v.trim() ? '' : 'Enter your company name.',
+    'ct-email':   v => !v.trim() ? 'Enter your work email.' : (/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.trim()) ? '' : 'Enter a valid email, like you@company.com.'),
+    'ct-phone':   v => !v.trim() || /^[0-9 ()-]{6,}$/.test(v.trim()) ? '' : 'Enter digits only, for example 212 555 0142.',
+    'ct-date':    v => {
+      if (!v) return 'Pick a date for your demo.';
+      const day = new Date(v + 'T12:00:00').getDay();
+      if (day === 0 || day === 6) return 'Pick a weekday; demos run Monday to Friday.';
+      if (v < $('ct-date').min) return 'Pick a date from tomorrow onwards.';
+      return '';
+    }
+  };
+  function check(id){
+    const el = $(id), wrap = el.closest('.ct-f'), msg = wrap.querySelector('.ct-msg');
+    const m = rules[id](el.value);
+    wrap.classList.toggle('err', !!m); msg.textContent = m;
+    el.setAttribute('aria-invalid', !!m);
+    return !m;
+  }
+  Object.keys(rules).forEach(id => $(id).addEventListener('blur', () => check(id)));
+  Object.keys(rules).forEach(id => $(id).addEventListener('input', () => { if ($(id).closest('.ct-f').classList.contains('err')) check(id); }));
+
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    const ok = Object.keys(rules).map(check).every(Boolean);
+    const slot = form.querySelector('input[name=slot]:checked');
+    const slotMsg = $('ct-slot-msg');
+    slotMsg.textContent = slot ? '' : 'Pick a time.';
+    if (!ok || !slot){
+      const first = form.querySelector('.err .ct-in') || (!slot && form.querySelector('input[name=slot]'));
+      if (first) first.focus();
+      return;
+    }
+    const first = $('ct-name').value.trim().split(/\s+/)[0];
+    const when = new Date($('ct-date').value + 'T12:00:00').toLocaleDateString(undefined, {weekday:'short', day:'numeric', month:'short'});
+    const done = $('ct-done');
+    done.querySelector('h2').textContent = 'Thanks, ' + first + '.';
+    done.querySelector('p').textContent = `We'll confirm your demo on ${when} at ${slot.value} by email at ${$('ct-email').value.trim()}. A specialist will reply within one business day.`;
+    form.hidden = true; $('ct-head').hidden = true; done.hidden = false;
+    done.querySelector('h2').focus();
+  });
+})();
