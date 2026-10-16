@@ -200,13 +200,14 @@ p{margin:0}
 .c-foot b{color:var(--pass);font-weight:500}
 
 /* Statement */
-/* Statement panel: same left/right edges and radius as the hero card */
-.statement{margin:0 var(--g);padding:clamp(64px,9vw,144px) max(calc(var(--side) - var(--g)),16px);text-align:center;border-radius:var(--r);background:radial-gradient(70% 90% at 50% 0%,color-mix(in srgb,var(--brand) 12%,transparent),transparent 70%),var(--surface)}
+.statement{padding:var(--sec) var(--side);text-align:center}
+/* Homepage statement panel: same left/right edges and radius as the hero card, holds the features */
+.statement.panel{margin:0 var(--g);padding:clamp(64px,9vw,144px) max(calc(var(--side) - var(--g)),16px);text-align:center;border-radius:var(--r);background:radial-gradient(70% 90% at 50% 0%,color-mix(in srgb,var(--brand) 12%,transparent),transparent 70%),var(--surface)}
 .statement .display{max-width:16em;margin-inline:auto}
 .statement .soft{display:block}
-.statement .features{margin-top:clamp(64px,8vw,128px);text-align:left;gap:clamp(32px,4vw,56px)}
-.statement .media{background:var(--paper)}
-.statement .node{background:var(--surface)}
+.statement.panel .features{margin-top:clamp(64px,8vw,128px);text-align:left;gap:clamp(32px,4vw,56px)}
+.statement.panel .media{background:var(--paper)}
+.statement.panel .node{background:var(--surface)}
 
 /* Feature rows (sticky text left, media right) */
 .features{padding:0;display:flex;flex-direction:column;gap:var(--g)}
@@ -1107,7 +1108,7 @@ fieldset.ct-f{border:0;margin:0;padding:0}
 @media (max-width:720px){
   .hero-photo{object-position:right bottom}
   .reel-nav{padding-bottom:48px}
-  .statement .features{gap:40px}
+  .statement.panel .features{gap:40px}
   .media.mascot:has(.flow){justify-content:center}
   .media.mascot .flow.col{margin:0 auto}
   .legal{flex-direction:column-reverse;align-items:center;text-align:center;gap:12px}
