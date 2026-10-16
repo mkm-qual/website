@@ -362,13 +362,13 @@ footer{padding:clamp(56px,7vw,96px) var(--side) 32px;font-size:var(--t-small)}
 .foot a:hover{color:var(--ink)}
 .foot-trust{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:32px;margin-top:64px;padding-top:32px;border-top:1px solid var(--ink-faint)}
 .badges{display:flex;align-items:center;gap:clamp(12px,1.5vw,20px);flex-wrap:wrap;list-style:none;margin:0;padding:0}
-.badges img{display:block;height:40px;width:auto}
-.socials{display:flex;gap:6px;list-style:none;margin:0;padding:0}
-.socials a{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;background:color-mix(in srgb,var(--brand) 14%,var(--paper));color:var(--ink);transition:background .2s,transform .2s}
+.badges img{display:block;height:52px;width:auto}
+.socials{display:flex;gap:10px;list-style:none;margin:0;padding:0}
+.socials a{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:color-mix(in srgb,var(--brand) 14%,var(--paper));color:var(--ink);transition:background .2s,transform .2s}
 .socials a:hover{background:var(--cta);color:#001630;transform:translateY(-1px)}
-.socials svg{width:10px;height:10px;fill:currentColor}
+.socials svg{width:13px;height:13px;fill:currentColor}
 .legal{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;margin-top:32px;color:var(--ink-soft);font-size:13px}
-.regions{display:flex;gap:4px;list-style:none;margin:0;padding:0}
+.regions{display:flex;gap:20px;list-style:none;margin:0;padding:0}
 .regions li{position:relative}
 .regions button{all:unset;cursor:pointer;padding:6px 8px;border-radius:8px;color:var(--ink-soft);font-size:13px;display:inline-flex;align-items:center;gap:7px}
 .regions .flag{height:11px;width:auto;border-radius:2px;box-shadow:0 0 0 1px var(--ink-faint);flex:none}
@@ -422,7 +422,7 @@ footer{padding:clamp(56px,7vw,96px) var(--side) 32px;font-size:var(--t-small)}
   .hdr-r{gap:2px}
   .hdr-r .btn{padding:10px 8px;font-size:13px}
   .hdr .theme-btn{width:34px;height:34px}
-  .badges img{height:40px}
+  .badges img{height:46px}
   .sec-items,.stats{grid-template-columns:1fr}
   .foot{grid-template-columns:1fr 1fr}
   .c-release span:last-child{display:none}
@@ -1106,7 +1106,7 @@ fieldset.ct-f{border:0;margin:0;padding:0}
   .media.mascot:has(.flow){justify-content:center}
   .media.mascot .flow.col{margin:0 auto}
   .legal{flex-direction:column-reverse;align-items:center;text-align:center;gap:12px}
-  .regions{position:relative;justify-content:center}
+  .regions{position:relative;justify-content:center;gap:12px}
   .regions li{position:static}
   .office-pop{left:50%;right:auto;transform:translateX(-50%);text-align:left}
 }
