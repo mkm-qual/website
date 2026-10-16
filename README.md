@@ -21,7 +21,7 @@ Then open http://127.0.0.1:4173. Open the pages through a local server rather th
 - `total-control.html`: Total Control, with the end-to-end app-screens walkthrough and the CI/CD pipeline simulator.
 
 **Customers and resources**
-- `customers.html`: logo grid, case studies, stats and testimonials.
+- `customers.html`: logo grid, industry segments (tabbed, `ind-` classes), case studies, stats and testimonials.
 - `case-studies.html`: the customer stories list.
 - `case-study-absli.html`, `case-study-qlik.html`, `case-study-abfl.html`: the three case studies.
   - The article wording matches qualitia.ai.
@@ -50,7 +50,7 @@ Product names are written as **1-Click Generation**, **Instant Update** and **To
 ## Assets
 
 - `assets/css/site.css`, `assets/js/site.js`: styles and behaviour shared by all pages.
-  - Page-specific classes use a prefix: `pp-` product, `tc-` Total Control, `e2e-` walkthrough, `rs-` resources, `ct-` contact, `lg-` legal, `cs-` case studies, `bl-` blog, `sm-` sitemap.
+  - Page-specific classes use a prefix: `pp-` product, `tc-` Total Control, `e2e-` walkthrough, `rs-` resources, `ct-` contact, `lg-` legal, `cs-` case studies, `bl-` blog, `sm-` sitemap, `ind-` industry segments.
 - `assets/hero/`: the hero photo and a 1200px copy for phones.
 - `assets/brand/`: the official Qualitia, Qualitia Boson and symbol logos as SVG, light and white. The pages use an inline copy; these are the source files.
 - `assets/clients/`: customer logos as SVG.
