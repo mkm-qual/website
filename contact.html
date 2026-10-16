@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@100..700&family=Geist+Mono:wght@400;500&display=swap">
 <script>try{var t=localStorage.getItem("q-theme");if(t==="light"||t==="dark")document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
-<link rel="stylesheet" href="assets/css/site.css?v=7c2782b2">
+<link rel="stylesheet" href="assets/css/site.css?v=2d2b9e9b">
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -148,7 +148,7 @@
         </div>
         <div class="ct-f"><label for="ct-notes">Your current challenges <i>(optional)</i></label><textarea class="ct-in" id="ct-notes" name="challenges" placeholder="For example: regression takes two weeks every sprint, and our Selenium suite breaks after each Salesforce release."></textarea><span class="ct-msg"></span></div>
         <div class="ct-row">
-          <div class="ct-f"><label for="ct-date">Preferred demo date</label><input class="ct-in" id="ct-date" name="date" type="date" required><span class="ct-msg" aria-live="polite"></span></div>
+          <div class="ct-f"><label for="ct-date-btn">Preferred demo date</label><div class="ct-date"><button type="button" class="ct-in ct-date-btn" id="ct-date-btn" aria-haspopup="dialog" aria-expanded="false" aria-controls="ct-cal"><span id="ct-date-label">Pick a date</span><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg></button><input type="hidden" id="ct-date" name="date"><div class="ct-cal" id="ct-cal" role="dialog" aria-label="Choose a demo date" hidden><div class="ct-cal-head"><button type="button" class="ct-cal-nav" data-step="-1" aria-label="Previous month"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button><b id="ct-cal-month" aria-live="polite"></b><button type="button" class="ct-cal-nav" data-step="1" aria-label="Next month"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button></div><div class="ct-cal-week" aria-hidden="true"><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span><span>Su</span></div><div class="ct-cal-grid" id="ct-cal-grid"></div><p class="ct-cal-note">Demos run Monday to Friday.</p></div></div><span class="ct-msg" aria-live="polite"></span></div>
           <fieldset class="ct-f">
             <legend class="ct-legend">Preferred time</legend>
             <div class="ct-slots"><label><input type="radio" name="slot" value="09:00" id="ct-slot-0"><span>09:00</span></label><label><input type="radio" name="slot" value="10:30" id="ct-slot-1"><span>10:30</span></label><label><input type="radio" name="slot" value="12:00" id="ct-slot-2"><span>12:00</span></label><label><input type="radio" name="slot" value="14:00" id="ct-slot-3"><span>14:00</span></label><label><input type="radio" name="slot" value="15:30" id="ct-slot-4"><span>15:30</span></label><label><input type="radio" name="slot" value="17:00" id="ct-slot-5"><span>17:00</span></label></div>
@@ -226,6 +226,6 @@
   </div>
 </footer>
 
-<script src="assets/js/site.js?v=4be3acfb"></script>
+<script src="assets/js/site.js?v=c1e53d73"></script>
 </body>
 </html>

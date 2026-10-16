@@ -383,8 +383,9 @@
   const d = new Date(); d.setDate(d.getDate() + 1);
   while (d.getDay() === 0 || d.getDay() === 6) d.setDate(d.getDate() + 1);
   const iso = x => x.getFullYear() + '-' + String(x.getMonth() + 1).padStart(2, '0') + '-' + String(x.getDate()).padStart(2, '0');
-  $('ct-date').min = iso(d);
-  const max = new Date(); max.setDate(max.getDate() + 60); $('ct-date').max = iso(max);
+  const minISO = iso(d);
+  const maxDate = new Date(); maxDate.setDate(maxDate.getDate() + 60);
+  const maxISO = iso(maxDate);
 
   const rules = {
     'ct-name':    v => v.trim() ? '' : 'Enter your name.',
@@ -395,7 +396,7 @@
       if (!v) return 'Pick a date for your demo.';
       const day = new Date(v + 'T12:00:00').getDay();
       if (day === 0 || day === 6) return 'Pick a weekday; demos run Monday to Friday.';
-      if (v < $('ct-date').min) return 'Pick a date from tomorrow onwards.';
+      if (v < minISO || v > maxISO) return 'Pick a weekday within the next 60 days.';
       return '';
     }
   };
@@ -404,9 +405,65 @@
     const m = rules[id](el.value);
     wrap.classList.toggle('err', !!m); msg.textContent = m;
     el.setAttribute('aria-invalid', !!m);
+    if (id === 'ct-date') $('ct-date-btn').setAttribute('aria-invalid', !!m);
     return !m;
   }
   Object.keys(rules).forEach(id => $(id).addEventListener('blur', () => check(id)));
+
+  // Date picker: a calendar card in the site's style, writing an ISO date into the hidden #ct-date
+  const btn = $('ct-date-btn'), cal = $('ct-cal'), grid = $('ct-cal-grid'), monthEl = $('ct-cal-month'), label = $('ct-date-label');
+  const todayISO = iso(new Date());
+  let view = new Date(d.getFullYear(), d.getMonth(), 1), focusISO = minISO;
+  const fromISO = v => new Date(v + 'T12:00:00');
+  const allowed = v => v >= minISO && v <= maxISO && ![0, 6].includes(fromISO(v).getDay());
+  function render(){
+    monthEl.textContent = view.toLocaleDateString(undefined, {month: 'long', year: 'numeric'});
+    const y = view.getFullYear(), m = view.getMonth(), days = new Date(y, m + 1, 0).getDate();
+    const lead = (new Date(y, m, 1).getDay() + 6) % 7;            // Monday-first
+    let html = '<span class="pad"></span>'.repeat(lead);
+    for (let n = 1; n <= days; n++){
+      const v = iso(new Date(y, m, n)), ok = allowed(v);
+      const name = fromISO(v).toLocaleDateString(undefined, {weekday: 'long', day: 'numeric', month: 'long'});
+      html += `<button type="button" data-v="${v}" class="${v === todayISO ? 'today' : ''}" aria-label="${name}" aria-pressed="${v === $('ct-date').value}" tabindex="${v === focusISO ? 0 : -1}"${ok ? '' : ' disabled'}>${n}</button>`;
+    }
+    grid.innerHTML = html;
+    cal.querySelector('[data-step="-1"]').disabled = iso(new Date(y, m, 0)) < minISO;
+    cal.querySelector('[data-step="1"]').disabled = iso(new Date(y, m + 1, 1)) > maxISO;
+  }
+  function moveFocus(v){
+    let t = fromISO(v);
+    if (iso(t) < minISO) t = fromISO(minISO);
+    if (iso(t) > maxISO) t = fromISO(maxISO);
+    focusISO = iso(t);
+    if (t.getMonth() !== view.getMonth() || t.getFullYear() !== view.getFullYear()){ view = new Date(t.getFullYear(), t.getMonth(), 1); render(); }
+    else grid.querySelectorAll('button').forEach(b => b.tabIndex = b.dataset.v === focusISO ? 0 : -1);
+    const b = grid.querySelector(`[data-v="${focusISO}"]`); if (b) b.focus();
+  }
+  function open(){
+    const cur = $('ct-date').value;
+    focusISO = cur || minISO; const f = fromISO(focusISO); view = new Date(f.getFullYear(), f.getMonth(), 1);
+    render(); cal.hidden = false; btn.setAttribute('aria-expanded', 'true');
+    (grid.querySelector('[tabindex="0"]:not(:disabled)') || grid.querySelector('button:not(:disabled)'))?.focus();
+  }
+  function close(refocus){ cal.hidden = true; btn.setAttribute('aria-expanded', 'false'); if (refocus) btn.focus(); }
+  function pick(v){
+    $('ct-date').value = v;
+    label.textContent = fromISO(v).toLocaleDateString(undefined, {weekday: 'short', day: 'numeric', month: 'short', year: 'numeric'});
+    btn.classList.add('has-value');
+    close(true); check('ct-date');
+  }
+  btn.addEventListener('click', () => cal.hidden ? open() : close(false));
+  cal.querySelectorAll('.ct-cal-nav').forEach(n => n.addEventListener('click', () => { view = new Date(view.getFullYear(), view.getMonth() + (+n.dataset.step), 1); render(); }));
+  grid.addEventListener('click', e => { const b = e.target.closest('button'); if (b && !b.disabled) pick(b.dataset.v); });
+  grid.addEventListener('keydown', e => {
+    const b = e.target.closest('button'); if (!b) return;
+    const t = fromISO(b.dataset.v), step = {ArrowLeft: -1, ArrowRight: 1, ArrowUp: -7, ArrowDown: 7}[e.key];
+    if (step){ e.preventDefault(); t.setDate(t.getDate() + step); moveFocus(iso(t)); }
+    else if (e.key === 'PageUp' || e.key === 'PageDown'){ e.preventDefault(); t.setMonth(t.getMonth() + (e.key === 'PageUp' ? -1 : 1)); moveFocus(iso(t)); }
+    else if (e.key === 'Home' || e.key === 'End'){ e.preventDefault(); t.setDate(t.getDate() - (t.getDay() + 6) % 7 + (e.key === 'End' ? 6 : 0)); moveFocus(iso(t)); }
+  });
+  cal.addEventListener('keydown', e => { if (e.key === 'Escape'){ e.stopPropagation(); close(true); } });
+  document.addEventListener('click', e => { if (!cal.hidden && !e.target.closest('.ct-date')) close(false); });
   Object.keys(rules).forEach(id => $(id).addEventListener('input', () => { if ($(id).closest('.ct-f').classList.contains('err')) check(id); }));
 
   form.addEventListener('submit', e => {

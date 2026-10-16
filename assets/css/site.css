@@ -1164,3 +1164,32 @@ fieldset.ct-f{border:0;margin:0;padding:0}
   .ind-panel,.ind-panel.has-case{grid-template-columns:minmax(0,1fr)}
 }
 @media (prefers-reduced-motion:reduce){ .ind-panel{animation:none} }
+
+/* ---------- Contact: custom date picker ---------- */
+.ct-date{position:relative}
+.ct-date-btn{display:flex;align-items:center;justify-content:space-between;gap:10px;text-align:left;cursor:pointer;color:var(--ink-soft)}
+.ct-date-btn.has-value{color:var(--ink)}
+.ct-date-btn svg{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;color:var(--ink-soft)}
+.ct-date-btn[aria-expanded="true"]{border-color:var(--brand);background:var(--paper)}
+.ct-f.err .ct-date-btn{border-color:#E5484D}
+.ct-cal{position:absolute;z-index:20;top:calc(100% + 8px);left:0;width:min(312px,calc(100vw - 48px));background:var(--paper);border-radius:14px;padding:14px;box-shadow:0 18px 40px -20px rgba(0,22,48,.28),0 0 0 1px var(--ink-faint);animation:ct-cal-in .18s cubic-bezier(.2,.8,.2,1)}
+.ct-cal[hidden]{display:none}
+@keyframes ct-cal-in{from{opacity:0;transform:translateY(-4px)}}
+.ct-cal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.ct-cal-head b{font-size:15px;font-weight:500}
+.ct-cal-nav{all:unset;cursor:pointer;width:32px;height:32px;border-radius:50%;display:grid;place-items:center;background:var(--surface);transition:background .2s}
+.ct-cal-nav:hover{background:var(--logo-hover)}
+.ct-cal-nav:disabled{opacity:.35;cursor:default;background:var(--surface)}
+.ct-cal-nav:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+.ct-cal-nav svg{width:16px;height:16px;fill:none;stroke:var(--ink);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.ct-cal-week,.ct-cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.ct-cal-week span{font:500 11px var(--mono);color:var(--ink-soft);text-align:center;padding:4px 0}
+.ct-cal-grid button{all:unset;box-sizing:border-box;cursor:pointer;aspect-ratio:1;border-radius:10px;display:grid;place-items:center;font-size:14px;font-variant-numeric:tabular-nums;transition:background .15s,color .15s}
+.ct-cal-grid button:hover:not(:disabled){background:var(--logo-hover)}
+.ct-cal-grid button:focus-visible{outline:2px solid var(--brand);outline-offset:1px}
+.ct-cal-grid button.today{box-shadow:inset 0 0 0 1px var(--brand)}
+.ct-cal-grid button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+.ct-cal-grid button:disabled{cursor:default;color:color-mix(in srgb,var(--ink) 26%,transparent)}
+.ct-cal-grid .pad{aspect-ratio:1}
+.ct-cal-note{margin:10px 2px 0;font-size:12px;color:var(--ink-soft)}
+@media (prefers-reduced-motion:reduce){ .ct-cal{animation:none} }
