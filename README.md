@@ -21,7 +21,7 @@ Then open http://127.0.0.1:4173. Open the pages through a local server rather th
 - `total-control.html`: Total Control, with the end-to-end app-screens walkthrough and the CI/CD pipeline simulator.
 
 **Customers and resources**
-- `customers.html`: logo grid, industry segments (tabbed, `ind-` classes), case studies, stats and testimonials.
+- `customers.html`: one customers section where industry tabs filter the logo grid and show that industry's panel (`ind-` classes; `#industry-banking`, `#industry-insurance` and so on preselect a tab), then case studies, stats and testimonials.
 - `case-studies.html`: the customer stories list.
 - `case-study-absli.html`, `case-study-qlik.html`, `case-study-abfl.html`: the three case studies.
   - The article wording matches qualitia.ai.

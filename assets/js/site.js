@@ -460,20 +460,23 @@
   els.forEach(e => io.observe(e));
 })();
 
-/* Customers: industry segment tabs (arrow keys move between tabs) */
+/* Customers: industry tabs filter the logo grid (matches tint, others fade) and show that industry's panel.
+   Arrow keys move between tabs; #industry-<key> in the URL preselects one. */
 (() => {
   const list = document.querySelector('.ind-tabs');
-  if (!list) return;
+  const grid = document.getElementById('customer-grid');
+  if (!list || !grid) return;
   const tabs = [...list.querySelectorAll('[role="tab"]')];
+  const tiles = [...grid.querySelectorAll('[data-ind]')];
+  const panels = [...document.querySelectorAll('.ind-panel')];
   const select = (t, focus) => {
-    tabs.forEach(b => {
-      const on = b === t;
-      b.setAttribute('aria-selected', on);
-      b.tabIndex = on ? 0 : -1;
-      document.getElementById(b.getAttribute('aria-controls')).hidden = !on;
-    });
+    const key = t.dataset.ind;
+    tabs.forEach(b => { const on = b === t; b.setAttribute('aria-selected', on); b.tabIndex = on ? 0 : -1; });
+    panels.forEach(p => { p.hidden = p.id !== 'ind-' + key; });
+    grid.classList.toggle('filtering', key !== 'all');
+    tiles.forEach(el => el.classList.toggle('match', key !== 'all' && el.dataset.ind.split(' ').includes(key)));
     if (focus) t.focus();
-    t.scrollIntoView({block: 'nearest', inline: 'nearest'});
+    if (list.scrollWidth > list.clientWidth) list.scrollTo({left: t.offsetLeft - list.offsetLeft - 16, behavior: 'smooth'});
   };
   tabs.forEach((t, i) => {
     t.addEventListener('click', () => select(t));
@@ -484,4 +487,7 @@
       if (e.key === 'End') { e.preventDefault(); select(tabs[tabs.length - 1], true); }
     });
   });
+  const m = location.hash.match(/^#industry-([\w-]+)/);
+  const start = m && tabs.find(t => t.dataset.ind === m[1]);
+  if (start) select(start);
 })();
