@@ -88,7 +88,7 @@ p{margin:0}
 .theme-btn[data-mode="dark"] .moon{display:none}
 .logo{display:inline-flex;align-items:center;color:var(--ink)}
 .logo svg{display:block;height:auto}
-.logo-full{width:118px}
+.logo-full{width:190px}
 .logo-sym{width:30px}
 .logo-boson{width:200px}
 /* Mega menu */
@@ -423,7 +423,7 @@ footer{padding:clamp(56px,7vw,96px) var(--side) 32px;font-size:var(--t-small)}
 }
 @media (max-width:480px){
   .hdr{gap:8px}
-  .hdr .logo-full{width:96px}
+  .hdr .logo-full{width:116px}
   .hdr-r{gap:2px}
   .hdr-r .btn{padding:10px 8px;font-size:13px}
   .hdr .theme-btn{width:34px;height:34px}
@@ -683,7 +683,7 @@ footer{padding:clamp(56px,7vw,96px) var(--side) 32px;font-size:var(--t-small)}
 }
 @media (max-width:359px){
   .hdr{padding-inline:12px}
-  .hdr .logo-full{width:84px}
+  .hdr .logo-full{width:102px}
   .hdr-r .btn{padding:8px 6px;font-size:12.5px}
   .hdr .theme-btn{width:30px;height:30px}
 }
@@ -1193,3 +1193,4 @@ fieldset.ct-f{border:0;margin:0;padding:0}
 .ct-cal-grid .pad{aspect-ratio:1}
 .ct-cal-note{margin:10px 2px 0;font-size:12px;color:var(--ink-soft)}
 @media (prefers-reduced-motion:reduce){ .ct-cal{animation:none} }
+@media (max-width:339px){ .hdr .logo-full{width:88px} }
