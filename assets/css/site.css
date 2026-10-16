@@ -141,7 +141,7 @@ p{margin:0}
 .dot.sn{background:var(--brand)}
 
 /* Logos */
-.logos{padding-block:0 clamp(32px,4vw,64px);padding-inline:var(--side);overflow:hidden;mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);-webkit-mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent)}
+.logos{padding-block:0 var(--g);padding-inline:var(--side);overflow:hidden;mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);-webkit-mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent)}
 .track{display:flex;gap:clamp(8px,2vw,32px);width:max-content;animation:scroll 70s linear infinite;align-items:center}
 .logos:hover .track{animation-play-state:paused}
 /* Vector logos in a fixed box so wide and tall marks read at a similar weight; mono always, the box tints on hover */
@@ -200,12 +200,13 @@ p{margin:0}
 .c-foot b{color:var(--pass);font-weight:500}
 
 /* Statement */
-.statement{padding:var(--sec) var(--side);text-align:center}
+/* Statement panel: same left/right edges and radius as the hero card */
+.statement{margin:0 var(--g);padding:clamp(64px,9vw,144px) var(--side);text-align:center;border-radius:var(--r);background:radial-gradient(70% 90% at 50% 0%,color-mix(in srgb,var(--brand) 12%,transparent),transparent 70%),var(--surface)}
 .statement .display{max-width:16em;margin-inline:auto}
 .statement .soft{display:block}
 
 /* Feature rows (sticky text left, media right) */
-.features{padding:0 var(--side) var(--sec);display:flex;flex-direction:column;gap:var(--g)}
+.features{padding:var(--sec) var(--side);display:flex;flex-direction:column;gap:var(--g)}
 .feat{display:grid;grid-template-columns:1fr 1fr;gap:var(--g);align-items:start}
 .feat > *{min-width:0}
 .feat-text{position:sticky;top:96px;padding-top:8px;display:flex;flex-direction:column;gap:20px}
