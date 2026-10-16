@@ -152,7 +152,7 @@ p{margin:0}
 @keyframes scroll{to{transform:translateX(-50%)}}
 
 /* Overview: claims on the left, the live console as proof on the right */
-.overview{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:var(--g);align-items:stretch;padding:clamp(48px,6vw,96px) var(--side) 0}
+.overview{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:var(--g);align-items:stretch;padding:clamp(48px,6vw,96px) var(--side) var(--sec)}
 .ov-text{display:flex;flex-direction:column;justify-content:center;gap:24px;padding-block:clamp(8px,2vw,24px);padding-right:clamp(0px,3vw,48px)}
 .ov-text .h1{max-width:12em}
 .ov-text .lede{color:var(--ink-soft);max-width:30em}
@@ -201,12 +201,15 @@ p{margin:0}
 
 /* Statement */
 /* Statement panel: same left/right edges and radius as the hero card */
-.statement{margin:0 var(--g);padding:clamp(64px,9vw,144px) var(--side);text-align:center;border-radius:var(--r);background:radial-gradient(70% 90% at 50% 0%,color-mix(in srgb,var(--brand) 12%,transparent),transparent 70%),var(--surface)}
+.statement{margin:0 var(--g);padding:clamp(64px,9vw,144px) max(calc(var(--side) - var(--g)),16px);text-align:center;border-radius:var(--r);background:radial-gradient(70% 90% at 50% 0%,color-mix(in srgb,var(--brand) 12%,transparent),transparent 70%),var(--surface)}
 .statement .display{max-width:16em;margin-inline:auto}
 .statement .soft{display:block}
+.statement .features{margin-top:clamp(64px,8vw,128px);text-align:left}
+.statement .media{background:var(--paper)}
+.statement .node{background:var(--surface)}
 
 /* Feature rows (sticky text left, media right) */
-.features{padding:var(--sec) var(--side);display:flex;flex-direction:column;gap:var(--g)}
+.features{padding:0;display:flex;flex-direction:column;gap:var(--g)}
 .feat{display:grid;grid-template-columns:1fr 1fr;gap:var(--g);align-items:start}
 .feat > *{min-width:0}
 .feat-text{position:sticky;top:96px;padding-top:8px;display:flex;flex-direction:column;gap:20px}

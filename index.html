@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@100..700&family=Geist+Mono:wght@400;500&display=swap">
 <script>try{var t=localStorage.getItem("q-theme");if(t==="light"||t==="dark")document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
-<link rel="stylesheet" href="assets/css/site.css?v=dfdff3af">
+<link rel="stylesheet" href="assets/css/site.css?v=723a5906">
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -137,9 +137,84 @@
     </div>
   </div>
 
-  <!-- Statement -->
+  <!-- Statement + features -->
   <section class="statement">
     <p class="display">Building automation is easy. <span class="soft">Keeping it current every sprint is the hard part.</span></p>
+    <div class="features" id="features">
+      <div class="feat" id="feat-generate">
+        <div class="feat-text">
+          <img class="mascot-mini" src="assets/mascot/presenting-trim.webp" alt="" width="593" height="960" loading="lazy">
+          <span class="chip">1-Click</span>
+          <h3>Generation<span>Complete end-to-end journeys, built from your own org.</span></h3>
+          <a class="ov-link" href="one-click-generation.html">Explore 1-Click Generation</a>
+        </div>
+        <div class="media mascot">
+          <img class="mascot-img" src="assets/mascot/presenting-trim.webp" alt="" width="593" height="960" loading="lazy">
+          <div class="mock">
+            <div class="mock-h">Generate automation <small>Sales Cloud · UAT</small></div>
+            <div class="mock-r"><span>Lead to Opportunity conversion</span><span class="ok">✓ 14 steps</span></div>
+            <div class="mock-r"><span>Quote with CPQ discount approval</span><span class="ok">✓ 22 steps</span></div>
+            <div class="mock-r"><span>Case escalation, Lightning console</span><span class="ok">✓ 11 steps</span></div>
+            <div class="mock-r"><span>OmniScript · Policy onboarding</span><span class="ok">✓ 18 steps</span></div>
+            <div class="mock-btn">Generate 4 journeys</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="feat" id="feat-update">
+        <div class="feat-text">
+          <img class="mascot-mini" src="assets/mascot/wrench.webp" alt="" width="1096" height="1524" loading="lazy">
+          <span class="chip">Instant</span>
+          <h3>Update<span>Boson finds what changed in the sprint and updates every affected test.</span></h3>
+          <a class="ov-link" href="instant-update.html">Explore Instant Update</a>
+        </div>
+        <div class="media mascot">
+          <img class="mascot-img" src="assets/mascot/wrench.webp" alt="" width="1096" height="1524" loading="lazy">
+          <div class="mock">
+            <div class="mock-h">Sprint 14 changes <small>37 found</small></div>
+            <div class="mock-r"><span>Opportunity · new picklist value</span><span class="chg">58 tests</span></div>
+            <div class="mock-r"><span>Account layout · field moved</span><span class="chg">121 tests</span></div>
+            <div class="mock-r"><span>Flow · approval step added</span><span class="chg">34 tests</span></div>
+            <div class="mock-r"><span>LWC · address component</span><span class="chg">199 tests</span></div>
+            <div class="mock-btn">Update 412 tests</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="feat" id="feat-heal">
+        <div class="feat-text">
+          <span class="chip">Patented</span>
+          <h3>Self-healing<span>Dynamic Lightning elements, iframes and shadow DOM, found every run.</span></h3>
+        </div>
+        <div class="media dark">
+          <div class="mock code">
+            <div class="c">// Account › Billing City</div>
+            <div class="del">xpath=//div[@id="input-2187"]/input</div>
+            <div class="add">healed → label "Billing City" · Address</div>
+            <div class="c">// run 8 of 8 · passed</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="feat" id="feat-integrate">
+        <div class="feat-text">
+          <img class="mascot-mini" src="assets/mascot/pointing.png" alt="" width="557" height="831" loading="lazy">
+          <span class="chip">End to end</span>
+          <h3>Integration testing<span>One flow across Salesforce, ServiceNow and the systems in between.</span></h3>
+          <a class="ov-link" href="total-control.html">Explore Total Control</a>
+        </div>
+        <div class="media mascot">
+          <img class="mascot-img" src="assets/mascot/pointing.png" alt="" width="557" height="831" loading="lazy">
+          <div class="flow col">
+            <div class="node"><small>Salesforce</small><b>Case created</b></div>
+            <i class="arrow" aria-hidden="true"></i>
+            <div class="node"><small>ServiceNow</small><b>Incident raised</b></div>
+            <i class="arrow" aria-hidden="true"></i>
+            <div class="node"><small>API · ERP</small><b>Order synced</b></div>
+          </div>
+        </div>
+      </div>
+    </div>
   </section>
 
   <!-- Overview -->
@@ -168,83 +243,6 @@
         <div class="bar"><i id="c-bar"></i></div>
         <div class="c-body" id="c-body" role="tabpanel"></div>
         <div class="c-foot"><span id="c-count"></span><span id="c-time"></span></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Features -->
-  <section class="features" id="features">
-    <div class="feat" id="feat-generate">
-      <div class="feat-text">
-        <img class="mascot-mini" src="assets/mascot/presenting-trim.webp" alt="" width="593" height="960" loading="lazy">
-        <span class="chip">1-Click</span>
-        <h3>Generation<span>Complete end-to-end journeys, built from your own org.</span></h3>
-        <a class="ov-link" href="one-click-generation.html">Explore 1-Click Generation</a>
-      </div>
-      <div class="media mascot">
-        <img class="mascot-img" src="assets/mascot/presenting-trim.webp" alt="" width="593" height="960" loading="lazy">
-        <div class="mock">
-          <div class="mock-h">Generate automation <small>Sales Cloud · UAT</small></div>
-          <div class="mock-r"><span>Lead to Opportunity conversion</span><span class="ok">✓ 14 steps</span></div>
-          <div class="mock-r"><span>Quote with CPQ discount approval</span><span class="ok">✓ 22 steps</span></div>
-          <div class="mock-r"><span>Case escalation, Lightning console</span><span class="ok">✓ 11 steps</span></div>
-          <div class="mock-r"><span>OmniScript · Policy onboarding</span><span class="ok">✓ 18 steps</span></div>
-          <div class="mock-btn">Generate 4 journeys</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="feat" id="feat-update">
-      <div class="feat-text">
-        <img class="mascot-mini" src="assets/mascot/wrench.webp" alt="" width="1096" height="1524" loading="lazy">
-        <span class="chip">Instant</span>
-        <h3>Update<span>Boson finds what changed in the sprint and updates every affected test.</span></h3>
-        <a class="ov-link" href="instant-update.html">Explore Instant Update</a>
-      </div>
-      <div class="media mascot">
-        <img class="mascot-img" src="assets/mascot/wrench.webp" alt="" width="1096" height="1524" loading="lazy">
-        <div class="mock">
-          <div class="mock-h">Sprint 14 changes <small>37 found</small></div>
-          <div class="mock-r"><span>Opportunity · new picklist value</span><span class="chg">58 tests</span></div>
-          <div class="mock-r"><span>Account layout · field moved</span><span class="chg">121 tests</span></div>
-          <div class="mock-r"><span>Flow · approval step added</span><span class="chg">34 tests</span></div>
-          <div class="mock-r"><span>LWC · address component</span><span class="chg">199 tests</span></div>
-          <div class="mock-btn">Update 412 tests</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="feat" id="feat-heal">
-      <div class="feat-text">
-        <span class="chip">Patented</span>
-        <h3>Self-healing<span>Dynamic Lightning elements, iframes and shadow DOM, found every run.</span></h3>
-      </div>
-      <div class="media dark">
-        <div class="mock code">
-          <div class="c">// Account › Billing City</div>
-          <div class="del">xpath=//div[@id="input-2187"]/input</div>
-          <div class="add">healed → label "Billing City" · Address</div>
-          <div class="c">// run 8 of 8 · passed</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="feat" id="feat-integrate">
-      <div class="feat-text">
-        <img class="mascot-mini" src="assets/mascot/pointing.png" alt="" width="557" height="831" loading="lazy">
-        <span class="chip">End to end</span>
-        <h3>Integration testing<span>One flow across Salesforce, ServiceNow and the systems in between.</span></h3>
-        <a class="ov-link" href="total-control.html">Explore Total Control</a>
-      </div>
-      <div class="media mascot">
-        <img class="mascot-img" src="assets/mascot/pointing.png" alt="" width="557" height="831" loading="lazy">
-        <div class="flow col">
-          <div class="node"><small>Salesforce</small><b>Case created</b></div>
-          <i class="arrow" aria-hidden="true"></i>
-          <div class="node"><small>ServiceNow</small><b>Incident raised</b></div>
-          <i class="arrow" aria-hidden="true"></i>
-          <div class="node"><small>API · ERP</small><b>Order synced</b></div>
-        </div>
       </div>
     </div>
   </section>
