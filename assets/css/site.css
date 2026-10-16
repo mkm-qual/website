@@ -152,7 +152,7 @@ p{margin:0}
 @keyframes scroll{to{transform:translateX(-50%)}}
 
 /* Overview: claims on the left, the live console as proof on the right */
-.overview{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:var(--g);align-items:stretch;padding:var(--sec) var(--side) 0}
+.overview{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:var(--g);align-items:stretch;padding:clamp(48px,6vw,96px) var(--side) 0}
 .ov-text{display:flex;flex-direction:column;justify-content:center;gap:24px;padding-block:clamp(8px,2vw,24px);padding-right:clamp(0px,3vw,48px)}
 .ov-text .h1{max-width:12em}
 .ov-text .lede{color:var(--ink-soft);max-width:30em}
