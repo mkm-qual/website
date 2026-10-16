@@ -768,7 +768,7 @@ footer{padding:clamp(56px,7vw,96px) var(--side) 32px;font-size:var(--t-small)}
 .ct-offices{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:8px}
 .ct-offices div{font-size:13px;line-height:1.5;color:var(--ink-soft);min-width:0}
 .ct-offices b{display:block;color:var(--ink);font-weight:500;font-size:14px;margin-bottom:4px}
-.ct-card{background:var(--paper);border-radius:20px;box-shadow:0 30px 70px -40px rgba(0,22,48,.4),0 0 0 1px var(--ink-faint);padding:clamp(22px,3vw,40px)}
+.ct-card{background:var(--paper);border-radius:20px;box-shadow:0 16px 40px -28px rgba(0,22,48,.22),0 0 0 1px var(--ink-faint);padding:clamp(22px,3vw,40px)}
 .ct-card h2{font-size:28px;font-weight:300;letter-spacing:-0.01em;margin-bottom:6px}
 #ct-head p{color:var(--ink-soft);font-size:15px;margin-bottom:24px}
 .ct-form{display:flex;flex-direction:column;gap:18px}
@@ -783,7 +783,8 @@ textarea.ct-in{min-height:110px;resize:vertical}
 .ct-f.err .ct-in{border-color:#E5484D}
 .ct-msg{font-size:12.5px;color:#D93D42;min-height:0}
 .ct-phone{display:grid;grid-template-columns:auto 1fr;gap:8px}
-.ct-phone select{padding-right:8px}
+select.ct-in{-webkit-appearance:none;appearance:none;cursor:pointer;padding-right:36px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236B7A90' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;background-size:14px}
+.ct-phone select{min-width:118px}
 fieldset.ct-f{border:0;margin:0;padding:0}
 .ct-slots{display:flex;flex-wrap:wrap;gap:8px}
 .ct-slots label{position:relative}
