@@ -1190,17 +1190,18 @@ fieldset.ct-f{border:0;margin:0;padding:0}
 
 /* ---------- Integration flow: scanning marker runs down a track and lights each system in turn ---------- */
 .flow.trk{--T:5.5s;position:relative;flex-direction:column;flex-wrap:nowrap;align-items:stretch;gap:18px;width:max-content;max-width:100%;padding:8px 0 8px 40px}
-.trk-marker{position:absolute;left:1px;top:0;width:22px;height:22px;margin-top:-11px;border-radius:50%;z-index:2;background:var(--brand) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M7 10l5 5 5-5'/%3E%3C/svg%3E") center/14px no-repeat;box-shadow:0 0 0 4px var(--paper),0 6px 14px -4px rgba(0,149,235,.5);animation:trk-scan var(--T) linear infinite}
+.trk-marker{position:absolute;left:1px;top:0;width:22px;height:22px;margin-top:-11px;border-radius:50%;z-index:2;background:var(--ink);box-shadow:0 0 0 4px var(--paper),0 6px 14px -6px rgba(0,22,48,.35);animation:trk-scan var(--T) linear infinite}
+.trk-marker::after{content:"";position:absolute;inset:0;background:var(--paper);-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M7 10l5 5 5-5'/%3E%3C/svg%3E") center/14px no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M7 10l5 5 5-5'/%3E%3C/svg%3E") center/14px no-repeat}
 /* travel for the first 80% of the loop, then hold with every system lit */
 @keyframes trk-scan{0%{top:0;opacity:0}5%{opacity:1}74%{opacity:1}80%{top:100%;opacity:0}100%{top:100%;opacity:0}}
 .trk-item{position:relative}
-.trk-dot{position:absolute;left:-34px;top:50%;width:12px;height:12px;margin-top:-6px;border-radius:50%;background:var(--paper);box-shadow:inset 0 0 0 2px color-mix(in srgb,var(--brand) 45%,transparent);transition:background .3s,box-shadow .3s}
-.trk-dot::after{content:"";position:absolute;inset:0;border-radius:50%;border:2px solid var(--brand);opacity:0}
+.trk-dot{position:absolute;left:-34px;top:50%;width:12px;height:12px;margin-top:-6px;border-radius:50%;background:var(--paper);box-shadow:inset 0 0 0 2px color-mix(in srgb,var(--ink) 22%,transparent);transition:background .3s,box-shadow .3s}
+.trk-dot::after{content:"";position:absolute;inset:0;border-radius:50%;border:2px solid var(--ink);opacity:0}
 .trk .node{position:relative;padding-right:44px;transition:transform .35s cubic-bezier(.2,.8,.2,1),box-shadow .35s}
-.trk-ok{position:absolute;top:50%;right:14px;width:18px;height:18px;margin-top:-9px;border-radius:50%;background:var(--pass) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 12.5l4 4 8-9'/%3E%3C/svg%3E") center/11px no-repeat;transform:scale(0);transition:transform .35s cubic-bezier(.3,1.6,.5,1)}
-.trk-item.hit .trk-dot{background:var(--brand);box-shadow:none}
+.trk-ok{position:absolute;top:50%;right:14px;width:16px;height:16px;margin-top:-8px;background:var(--pass);-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E") center/contain no-repeat;transform:scale(0);transition:transform .35s cubic-bezier(.3,1.6,.5,1)}
+.trk-item.hit .trk-dot{background:var(--ink);box-shadow:none}
 .trk-item.hit .trk-dot::after{animation:trk-ping 1s ease-out}
-.trk-item.hit .node{transform:translateX(4px);box-shadow:0 12px 24px -16px rgba(11,31,58,.35),0 0 0 1.5px color-mix(in srgb,var(--brand) 55%,transparent)}
+.trk-item.hit .node{transform:translateX(4px);box-shadow:0 12px 24px -16px rgba(11,31,58,.35),0 0 0 2px var(--cta)}
 .trk-item.hit .trk-ok{transform:scale(1)}
 @keyframes trk-ping{from{opacity:.75;transform:scale(.8)}to{opacity:0;transform:scale(3)}}
 @media (prefers-reduced-motion:reduce){ .trk-marker{display:none} .trk .node,.trk-ok,.trk-dot{transition:none} }
