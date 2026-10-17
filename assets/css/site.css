@@ -241,8 +241,6 @@ p{margin:0}
 .node{background:var(--paper);border-radius:10px;padding:14px 16px;font-size:14px;box-shadow:0 12px 24px -16px rgba(11,31,58,.35);display:flex;flex-direction:column;gap:2px;min-width:118px}
 .node small{color:var(--ink-soft);font-size:12px}
 .node b{font-weight:500}
-.arrow{width:28px;height:1px;background:var(--ink-soft);position:relative}
-.arrow::after{content:"";position:absolute;right:0;top:-3px;border:3.5px solid transparent;border-left:5px solid var(--ink-soft);border-right:0}
 
 /* Mascot inside feature cards: product mock on the left, character stands on the card floor at right */
 .media.mascot{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);grid-template-rows:minmax(0,1fr);gap:clamp(12px,2vw,28px);align-items:center;justify-content:stretch}
@@ -251,11 +249,6 @@ p{margin:0}
 .mascot-img{grid-column:2;grid-row:1;width:100%;height:100%;min-height:0;object-fit:contain;object-position:center bottom;pointer-events:none;filter:drop-shadow(0 18px 24px rgba(0,22,48,.12));transition:transform .5s cubic-bezier(.2,.8,.2,1)}
 .mascot-mini{display:none}
 .feat:hover .mascot-img{transform:translateY(-6px)}
-.flow.col{flex-direction:column;align-items:stretch;gap:0;width:max-content;max-width:100%}
-.flow.col .node{min-width:0}
-.flow.col .arrow{align-self:center;width:24px;height:40px;background:none;display:block}
-.flow.col .arrow::before{content:"";position:absolute;left:50%;top:0;bottom:0;width:2px;margin-left:-1px;border-radius:2px;background:linear-gradient(var(--brand),color-mix(in srgb,var(--brand) 35%,transparent));opacity:.55}
-.flow.col .arrow::after{left:50%;top:50%;right:auto;width:22px;height:22px;margin:-11px 0 0 -11px;border:0;border-radius:50%;background:var(--brand) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M7 10l5 5 5-5'/%3E%3C/svg%3E") center/14px no-repeat;box-shadow:0 0 0 4px var(--surface)}
 
 /* Turnaround */
 .turn{padding:0 var(--side) var(--sec)}
@@ -1111,7 +1104,7 @@ fieldset.ct-f{border:0;margin:0;padding:0}
   .reel-nav{padding-bottom:48px}
   .statement.panel .features{gap:40px}
   .media.mascot:has(.flow){justify-content:center}
-  .media.mascot .flow.col{margin:0 auto}
+  .media.mascot .flow.trk{margin:0 auto}
   .legal{flex-direction:column-reverse;align-items:center;text-align:center;gap:12px}
   .regions{position:relative;justify-content:center;gap:12px}
   .regions li{position:static}
@@ -1194,3 +1187,21 @@ fieldset.ct-f{border:0;margin:0;padding:0}
 .ct-cal-note{margin:10px 2px 0;font-size:12px;color:var(--ink-soft)}
 @media (prefers-reduced-motion:reduce){ .ct-cal{animation:none} }
 @media (max-width:339px){ .hdr .logo-full{width:88px} }
+
+/* ---------- Integration flow: scanning marker runs down a track and lights each system in turn ---------- */
+.flow.trk{--T:5.5s;position:relative;flex-direction:column;flex-wrap:nowrap;align-items:stretch;gap:18px;width:max-content;max-width:100%;padding:8px 0 8px 40px}
+.trk-line{position:absolute;left:11px;top:0;bottom:0;border-left:2px dashed color-mix(in srgb,var(--brand) 40%,transparent)}
+.trk-marker{position:absolute;left:1px;top:0;width:22px;height:22px;margin-top:-11px;border-radius:50%;z-index:2;background:var(--brand) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M7 10l5 5 5-5'/%3E%3C/svg%3E") center/14px no-repeat;box-shadow:0 0 0 4px var(--paper),0 6px 14px -4px rgba(0,149,235,.5);animation:trk-scan var(--T) linear infinite}
+/* travel for the first 80% of the loop, then hold with every system lit */
+@keyframes trk-scan{0%{top:0;opacity:0}5%{opacity:1}74%{opacity:1}80%{top:100%;opacity:0}100%{top:100%;opacity:0}}
+.trk-item{position:relative}
+.trk-dot{position:absolute;left:-34px;top:50%;width:12px;height:12px;margin-top:-6px;border-radius:50%;background:var(--paper);box-shadow:inset 0 0 0 2px color-mix(in srgb,var(--brand) 45%,transparent);transition:background .3s,box-shadow .3s}
+.trk-dot::after{content:"";position:absolute;inset:0;border-radius:50%;border:2px solid var(--brand);opacity:0}
+.trk .node{position:relative;padding-right:44px;transition:transform .35s cubic-bezier(.2,.8,.2,1),box-shadow .35s}
+.trk-ok{position:absolute;top:50%;right:14px;width:18px;height:18px;margin-top:-9px;border-radius:50%;background:var(--pass) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 12.5l4 4 8-9'/%3E%3C/svg%3E") center/11px no-repeat;transform:scale(0);transition:transform .35s cubic-bezier(.3,1.6,.5,1)}
+.trk-item.hit .trk-dot{background:var(--brand);box-shadow:none}
+.trk-item.hit .trk-dot::after{animation:trk-ping 1s ease-out}
+.trk-item.hit .node{transform:translateX(4px);box-shadow:0 12px 24px -16px rgba(11,31,58,.35),0 0 0 1.5px color-mix(in srgb,var(--brand) 55%,transparent)}
+.trk-item.hit .trk-ok{transform:scale(1)}
+@keyframes trk-ping{from{opacity:.75;transform:scale(.8)}to{opacity:0;transform:scale(3)}}
+@media (prefers-reduced-motion:reduce){ .trk-marker{display:none} .trk .node,.trk-ok,.trk-dot{transition:none} }

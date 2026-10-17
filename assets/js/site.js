@@ -548,3 +548,26 @@
   const start = m && tabs.find(t => t.dataset.ind === m[1]);
   if (start) select(start);
 })();
+
+/* Integration flow: the marker loops down the track (CSS); each system lights up as the marker reaches its dot */
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  document.querySelectorAll('.flow.trk').forEach(fl => {
+    const marker = fl.querySelector('.trk-marker'), items = [...fl.querySelectorAll('.trk-item')];
+    if (reduce || !marker) { items.forEach(i => i.classList.add('hit')); return; }
+    let timers = [];
+    const cycle = () => {
+      timers.forEach(clearTimeout); timers = [];
+      items.forEach(i => i.classList.remove('hit'));
+      const T = parseFloat(getComputedStyle(fl).getPropertyValue('--T')) * 1000;
+      const box = fl.getBoundingClientRect();
+      items.forEach(it => {
+        const d = it.querySelector('.trk-dot').getBoundingClientRect();
+        const f = (d.top + d.height / 2 - box.top) / box.height;
+        timers.push(setTimeout(() => it.classList.add('hit'), f * T * 0.8));   // marker travels during the first 80% of the loop
+      });
+    };
+    marker.addEventListener('animationstart', cycle);
+    marker.addEventListener('animationiteration', cycle);
+  });
+})();
