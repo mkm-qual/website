@@ -1205,3 +1205,18 @@ fieldset.ct-f{border:0;margin:0;padding:0}
 .trk-item.hit .trk-ok{transform:scale(1)}
 @keyframes trk-ping{from{opacity:.75;transform:scale(.8)}to{opacity:0;transform:scale(3)}}
 @media (prefers-reduced-motion:reduce){ .trk-marker{display:none} .trk .node,.trk-ok,.trk-dot{transition:none} }
+
+/* ---------- Hero video: blurs in at the start of each loop and out at the end ---------- */
+.hero-video{transform:scale(1.06);will-change:filter}
+.hero-pause{all:unset;box-sizing:border-box;cursor:pointer;position:absolute;z-index:2;top:clamp(20px,2.4vw,32px);right:clamp(20px,2.4vw,32px);width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:rgba(0,22,48,.45);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);color:#fff;transition:background .2s}
+.hero-pause:hover{background:rgba(0,22,48,.7)}
+.hero-pause:focus-visible{outline:2px solid #fff;outline-offset:2px}
+.hero-pause svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.hero-pause .i-play{fill:currentColor;stroke:none;display:none}
+.hero-pause[aria-pressed="true"] .i-pause{display:none}
+.hero-pause[aria-pressed="true"] .i-play{display:block}
+.hero-pause[hidden]{display:none}
+@media (max-width:720px){
+  .hero-video{object-position:62% center}
+  .hero-pause{top:auto;bottom:16px;right:16px;width:32px;height:32px}
+}

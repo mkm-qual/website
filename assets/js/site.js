@@ -571,3 +571,41 @@
     marker.addEventListener('animationiteration', cycle);
   });
 })();
+
+/* Hero video: load the right size, loop it, and blur it in/out over the first and last second of each loop.
+   Reduced motion or data saver keeps the still poster. The pause button stops the motion. */
+(() => {
+  const v = document.getElementById('hero-video');
+  if (!v) return;
+  const btn = document.getElementById('hero-pause');
+  const small = matchMedia('(max-width: 720px)').matches;
+  if (small && v.dataset.posterSm) v.poster = v.dataset.posterSm;
+  const saveData = navigator.connection && navigator.connection.saveData;
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches || saveData) { if (btn) btn.hidden = true; return; }
+  v.src = small ? v.dataset.srcSm : v.dataset.srcLg;
+  const EDGE = 0.9, MAX = 14;   // seconds of blur at each end, peak blur in px
+  const blurAt = t => {
+    const d = v.duration || 0;
+    if (!d) return MAX;
+    if (t < EDGE) return MAX * (1 - t / EDGE);
+    if (t > d - EDGE) return MAX * (1 - (d - t) / EDGE);
+    return 0;
+  };
+  const paint = () => { v.style.filter = 'blur(' + blurAt(v.currentTime).toFixed(2) + 'px)'; };
+  let pending = false;   // one frame loop at a time, even after pause/play
+  const tick = () => {
+    if (pending) return;
+    pending = true;
+    const next = () => { pending = false; paint(); if (!v.paused) tick(); };
+    v.requestVideoFrameCallback ? v.requestVideoFrameCallback(next) : requestAnimationFrame(next);
+  };
+  v.style.filter = 'blur(' + MAX + 'px)';
+  v.addEventListener('playing', () => { paint(); tick(); });
+  v.play().catch(() => { v.style.filter = ''; });
+  if (btn) btn.addEventListener('click', () => {
+    const pause = !v.paused;
+    if (pause) { v.pause(); v.style.filter = 'blur(' + blurAt(v.currentTime).toFixed(2) + 'px)'; } else v.play();
+    btn.setAttribute('aria-pressed', pause);
+    btn.setAttribute('aria-label', pause ? 'Play background video' : 'Pause background video');
+  });
+})();

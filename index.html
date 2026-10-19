@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@100..700&family=Geist+Mono:wght@400;500&display=swap">
 <script>try{var t=localStorage.getItem("q-theme");if(t==="light"||t==="dark")document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
-<link rel="stylesheet" href="assets/css/site.css?v=4c7b65d0">
+<link rel="stylesheet" href="assets/css/site.css?v=9220d073">
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -99,7 +99,8 @@
   <!-- Hero -->
   <section class="hero">
     <div class="hero-card">
-      <img class="hero-photo" src="assets/hero/team-at-work.jpg" srcset="assets/hero/team-at-work-1200.jpg 1200w, assets/hero/team-at-work.jpg 2000w" sizes="100vw" alt="Two engineers working at their desks, one reviewing code on a monitor" width="2000" height="1333" fetchpriority="high">
+      <video class="hero-photo hero-video" id="hero-video" muted loop playsinline preload="none" aria-hidden="true" poster="assets/hero/hero-loop-poster.jpg" data-poster-sm="assets/hero/hero-loop-poster-960.jpg" data-src-lg="assets/hero/hero-loop-1080.mp4" data-src-sm="assets/hero/hero-loop-540.mp4"></video>
+      <button class="hero-pause" type="button" id="hero-pause" aria-label="Pause background video" aria-pressed="false"><svg class="i-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14M16 5v14"/></svg><svg class="i-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg></button>
       <a class="hero-tag" href="#platforms"><span class="chip">New</span>1-Click testing, now for ServiceNow</a>
       <div class="hero-in">
         <h1>One click. <span>Regression in hours, not weeks.</span></h1>
@@ -446,6 +447,6 @@
   </div>
 </footer>
 
-<script src="assets/js/site.js?v=12407dee"></script>
+<script src="assets/js/site.js?v=5aac08c8"></script>
 </body>
 </html>
