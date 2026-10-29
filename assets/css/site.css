@@ -20,7 +20,6 @@
   --t-display:clamp(40px,4.4vw,60px);
   --t-h1:clamp(34px,3.4vw,48px);
   --t-h2:clamp(28px,2.6vw,36px);
-  --t-quote:clamp(28px,3vw,42px);
   --t-lede:18px;
   --t-body:16px;
   --t-small:14px;
@@ -279,11 +278,6 @@ p{margin:0}
 .legend i{display:inline-block;width:0;height:14px;border-left:1.5px dashed var(--ink)}
 
 /* Quote */
-.quote{padding:0 var(--side) var(--sec);text-align:center;display:flex;flex-direction:column;align-items:center;gap:32px;margin:0}
-.quote blockquote{margin:0;font-size:var(--t-quote);font-weight:275;line-height:1.2;letter-spacing:-0.01em;max-width:20em}
-.quote figcaption{font-size:var(--t-small)}
-.quote figcaption b{font-weight:500}
-.quote figcaption span{color:var(--ink-soft)}
 
 /* Results (dark, big card) */
 .results{padding:0 var(--side) var(--g)}
