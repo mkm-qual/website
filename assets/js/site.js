@@ -609,3 +609,60 @@
     btn.setAttribute('aria-label', pause ? 'Play background video' : 'Pause background video');
   });
 })();
+
+/* Pixel reveal: draw the Qualitia Boson logo (the Q symbol on narrow screens) as negative space in a field of
+   rounded pixels whose size shrinks from ~84px to fine over the final stretch of scroll. Static fine grid for reduced motion. */
+(() => {
+  const wrap = document.querySelector('.px-reveal'), boson = document.getElementById('q-boson'), qsym = document.getElementById('q-symbol');
+  if (!wrap || !boson) return;
+  const cv = wrap.querySelector('canvas'), ctx = cv.getContext('2d');
+  const BG = '#001630', FG = '#10305a', DENSITY = 0.6, COARSE = 84;
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)');
+  const toImg = (sym, vb) => { const i = new Image(); i.onload = () => { mask = null; queue(); };
+    i.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="' + vb + '">' + sym.innerHTML.replace(/currentColor|#0095EB/gi, '#fff') + '</svg>'); return i; };
+  const wordmark = toImg(boson, '0 0 250 36'), symbol = qsym ? toImg(qsym, '0 0 35 36') : null;
+  let mask = null, W = 0, H = 0, queued = false;
+  const narrow = () => W < 600 && symbol;
+  const fine = () => (narrow() ? 5 : 6);
+  const hash = (a, b) => { const n = 43758.5453123 * Math.sin(127.1 * a + 311.7 * b); return n - Math.floor(n); };
+  function buildMask(){
+    const img = narrow() ? symbol : wordmark;
+    if (!img.complete || !img.naturalWidth) return;
+    const off = document.createElement('canvas'); off.width = W; off.height = H;
+    const o = off.getContext('2d');
+    let lw, lh;
+    if (narrow()){ lh = H * 0.72; lw = lh * 35 / 36; }
+    else { lw = Math.min(W * 0.84, H * 0.62 * 250 / 36); lh = lw * 36 / 250; }
+    o.drawImage(img, (W - lw) / 2, (H - lh) / 2, lw, lh);
+    mask = o.getImageData(0, 0, W, H).data;
+  }
+  function cellSize(){
+    const f = fine();
+    if (reduce.matches) return f;
+    const max = Math.max(0, document.documentElement.scrollHeight - innerHeight);
+    if (max <= 0 || scrollY >= max - 1) return f;
+    const t = Math.max(0, Math.min(1, (scrollY - (max - H)) / H));
+    return Math.round(COARSE - (COARSE - f) * (t <= 0.35 ? 0 : (t - 0.35) / 0.65) ** 2);
+  }
+  function draw(){
+    queued = false;
+    const r = wrap.getBoundingClientRect(), w = Math.max(1, Math.floor(r.width)), h = Math.max(1, Math.floor(r.height));
+    if (w !== W || h !== H){ W = w; H = h; const dpr = Math.min(devicePixelRatio || 1, 2); cv.width = W * dpr; cv.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0); mask = null; }
+    if (!mask) buildMask();
+    const v = cellSize(), gap = v > 2 ? 1 : 0, rad = 1 + 3 * Math.max(0, Math.min(1, (v - fine()) / (COARSE - fine())));
+    ctx.fillStyle = BG; ctx.fillRect(0, 0, W, H); ctx.fillStyle = FG;
+    for (let y = 0; y < H; y += v) for (let x = 0; x < W; x += v){
+      const cx = Math.min(W - 1, x + (v >> 1)), cy = Math.min(H - 1, y + (v >> 1));
+      const inLogo = mask && mask[(cx + cy * W) * 4 + 3] > 128;
+      if (!inLogo && hash(x / v | 0, y / v | 0) < DENSITY){
+        if (ctx.roundRect){ ctx.beginPath(); ctx.roundRect(x, y, v - gap, v - gap, rad); ctx.fill(); } else ctx.fillRect(x, y, v - gap, v - gap);
+      }
+    }
+  }
+  function queue(){ if (!queued){ queued = true; requestAnimationFrame(draw); } }
+  const onScroll = () => { const max = document.documentElement.scrollHeight - innerHeight; if (scrollY >= max - H - 240) queue(); };
+  addEventListener('scroll', onScroll, {passive: true});
+  addEventListener('resize', queue, {passive: true});
+  reduce.addEventListener('change', queue);
+  queue();
+})();

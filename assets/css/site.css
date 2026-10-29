@@ -1220,3 +1220,12 @@ fieldset.ct-f{border:0;margin:0;padding:0}
   .hero-video{object-position:62% center}
   .hero-pause{top:auto;bottom:16px;right:16px;width:32px;height:32px}
 }
+
+/* ---------- Pixel reveal after the footer (after usepropane.ai) ----------
+   The page lifts away at the bottom to reveal a fixed navy panel. Rounded pixels resolve from big blocks
+   to a fine grid as you scroll the last stretch; the Qualitia Boson logo is the negative space. */
+:root{--px-h:clamp(220px,38vw,520px)}
+main,footer{position:relative;z-index:1;background:var(--paper)}
+.px-spacer{height:var(--px-h)}
+.px-reveal{position:fixed;left:0;right:0;bottom:0;height:var(--px-h);z-index:0;background:#001630}
+.px-reveal canvas{display:block;width:100%;height:100%}
