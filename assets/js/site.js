@@ -611,22 +611,22 @@
 })();
 
 /* Pixel reveal: draw the Qualitia wordmark (the Q symbol on narrow screens) as negative space in a dense field of
-   small Q tiles whose size shrinks from ~84px to fine over the final stretch of scroll. Static fine grid for reduced motion. */
+   rounded pixels whose size shrinks from ~84px to fine over the final stretch of scroll. Static fine grid for reduced motion. */
 (() => {
   const wrap = document.querySelector('.px-reveal'), qsym = document.getElementById('q-symbol');
   if (!wrap) return;
   const cv = wrap.querySelector('canvas'), ctx = cv.getContext('2d');
-  // the logo is negative space: a dense field of navy Q tiles around it, empty cells where the logo is
-  const BG = '#001630', FG = '#1a3d6e', DENSITY = 0.85, COARSE = 84;
+  // the logo is negative space: a dense navy pixel field around it, empty cells where the logo is
+  const BG = '#001630', FG = '#10305a', DENSITY = 0.85, COARSE = 84;
   const reduce = matchMedia('(prefers-reduced-motion: reduce)');
-  const toImg = (sym, vb, fill = '#fff') => { const i = new Image(); i.onload = () => { mask = null; queue(); };
-    i.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="' + vb + '">' + sym.innerHTML.replace(/currentColor|#0095EB/gi, fill) + '</svg>'); return i; };
+  const toImg = (sym, vb) => { const i = new Image(); i.onload = () => { mask = null; queue(); };
+    i.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="' + vb + '">' + sym.innerHTML.replace(/currentColor|#0095EB/gi, '#fff') + '</svg>'); return i; };
   const wordmark = new Image(); wordmark.onload = () => { mask = null; queue(); };
   wordmark.src = 'assets/brand/qualitia-logo-white.svg';
-  const symbol = qsym ? toImg(qsym, '0 0 35 36') : null, tile = qsym ? toImg(qsym, '0 0 35 36', FG) : null;
+  const symbol = qsym ? toImg(qsym, '0 0 35 36') : null;
   let mask = null, W = 0, H = 0, queued = false;
   const narrow = () => W < 600 && symbol;
-  const fine = () => (narrow() ? 8 : 10);
+  const fine = () => (narrow() ? 5 : 6);
   const hash = (a, b) => { const n = 43758.5453123 * Math.sin(127.1 * a + 311.7 * b); return n - Math.floor(n); };
   function buildMask(){
     const img = narrow() ? symbol : wordmark;
@@ -658,8 +658,7 @@
       const cx = Math.min(W - 1, x + (v >> 1)), cy = Math.min(H - 1, y + (v >> 1));
       const inLogo = mask && mask[(cx + cy * W) * 4 + 3] > 128;
       if (inLogo || hash(x / v | 0, y / v | 0) >= DENSITY) continue;
-      if (tile && tile.complete && tile.naturalWidth) ctx.drawImage(tile, x, y, (v - gap) * 35 / 36, v - gap);
-      else if (ctx.roundRect){ ctx.beginPath(); ctx.roundRect(x, y, v - gap, v - gap, rad); ctx.fill(); } else ctx.fillRect(x, y, v - gap, v - gap);
+      if (ctx.roundRect){ ctx.beginPath(); ctx.roundRect(x, y, v - gap, v - gap, rad); ctx.fill(); } else ctx.fillRect(x, y, v - gap, v - gap);
     }
   }
   function queue(){ if (!queued){ queued = true; requestAnimationFrame(draw); } }
