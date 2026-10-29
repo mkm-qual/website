@@ -610,17 +610,17 @@
   });
 })();
 
-/* Pixel reveal: draw the Qualitia Boson logo (the Q symbol on narrow screens) in bright pixels over a dim field of
+/* Pixel reveal: draw the Qualitia Boson logo (the Q symbol on narrow screens) as negative space in a dense field of
    rounded pixels whose size shrinks from ~84px to fine over the final stretch of scroll. Static fine grid for reduced motion. */
 (() => {
   const wrap = document.querySelector('.px-reveal'), boson = document.getElementById('q-boson'), qsym = document.getElementById('q-symbol');
   if (!wrap || !boson) return;
   const cv = wrap.querySelector('canvas'), ctx = cv.getContext('2d');
-  // background noise is dim and sparse; the logo is drawn in brighter, near-solid pixels, with the Q's tail in brand blue
-  const BG = '#001630', NOISE = '#0c2850', NOISE_DENSITY = 0.42, INK = '#3f5f94', INK_DENSITY = 0.94, ACCENT = '#0095EB', COARSE = 84;
+  // the logo is negative space: a dense navy pixel field around it, empty cells where the logo is
+  const BG = '#001630', FG = '#10305a', DENSITY = 0.85, COARSE = 84;
   const reduce = matchMedia('(prefers-reduced-motion: reduce)');
   const toImg = (sym, vb) => { const i = new Image(); i.onload = () => { mask = null; queue(); };
-    i.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="' + vb + '">' + sym.innerHTML.replace(/currentColor/gi, '#fff') + '</svg>'); return i; };
+    i.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="' + vb + '">' + sym.innerHTML.replace(/currentColor|#0095EB/gi, '#fff') + '</svg>'); return i; };
   const wordmark = toImg(boson, '0 0 250 36'), symbol = qsym ? toImg(qsym, '0 0 35 36') : null;
   let mask = null, W = 0, H = 0, queued = false;
   const narrow = () => W < 600 && symbol;
@@ -651,13 +651,11 @@
     if (w !== W || h !== H){ W = w; H = h; const dpr = Math.min(devicePixelRatio || 1, 2); cv.width = W * dpr; cv.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0); mask = null; }
     if (!mask) buildMask();
     const v = cellSize(), gap = v > 2 ? 1 : 0, rad = 1 + 3 * Math.max(0, Math.min(1, (v - fine()) / (COARSE - fine())));
-    ctx.fillStyle = BG; ctx.fillRect(0, 0, W, H);
+    ctx.fillStyle = BG; ctx.fillRect(0, 0, W, H); ctx.fillStyle = FG;
     for (let y = 0; y < H; y += v) for (let x = 0; x < W; x += v){
       const cx = Math.min(W - 1, x + (v >> 1)), cy = Math.min(H - 1, y + (v >> 1));
-      const i = (cx + cy * W) * 4, inLogo = mask && mask[i + 3] > 128;
-      const tail = inLogo && mask[i + 2] > 150 && mask[i] < 90;          // the blue tail of the Q
-      if (hash(x / v | 0, y / v | 0) >= (inLogo ? INK_DENSITY : NOISE_DENSITY)) continue;
-      ctx.fillStyle = tail ? ACCENT : inLogo ? INK : NOISE;
+      const inLogo = mask && mask[(cx + cy * W) * 4 + 3] > 128;
+      if (inLogo || hash(x / v | 0, y / v | 0) >= DENSITY) continue;
       if (ctx.roundRect){ ctx.beginPath(); ctx.roundRect(x, y, v - gap, v - gap, rad); ctx.fill(); } else ctx.fillRect(x, y, v - gap, v - gap);
     }
   }
