@@ -333,7 +333,7 @@ p{margin:0}
 .story.dark p{color:var(--deep-soft);font-size:var(--t-small)}
 .story .inds{display:flex;flex-wrap:wrap;gap:6px}
 .story .inds span{font-size:13px;padding:7px 10px;border-radius:8px;background:var(--paper)}
-.reel-nav{display:flex;justify-content:flex-end;gap:8px;padding:0 var(--side)}
+.reel-nav{display:flex;justify-content:flex-end;gap:8px;padding:0 var(--side) clamp(40px,4vw,64px)}
 .reel-nav button{width:40px;height:40px;border-radius:8px;border:0;background:var(--surface);cursor:pointer;font-size:16px}
 .reel-nav button:hover{background:var(--ink-faint)}
 

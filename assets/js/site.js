@@ -610,18 +610,20 @@
   });
 })();
 
-/* Pixel reveal: draw the Qualitia Boson logo (the Q symbol on narrow screens) as negative space in a dense field of
+/* Pixel reveal: draw the Qualitia wordmark (the Q symbol on narrow screens) as negative space in a dense field of
    rounded pixels whose size shrinks from ~84px to fine over the final stretch of scroll. Static fine grid for reduced motion. */
 (() => {
-  const wrap = document.querySelector('.px-reveal'), boson = document.getElementById('q-boson'), qsym = document.getElementById('q-symbol');
-  if (!wrap || !boson) return;
+  const wrap = document.querySelector('.px-reveal'), qsym = document.getElementById('q-symbol');
+  if (!wrap) return;
   const cv = wrap.querySelector('canvas'), ctx = cv.getContext('2d');
   // the logo is negative space: a dense navy pixel field around it, empty cells where the logo is
   const BG = '#001630', FG = '#10305a', DENSITY = 0.85, COARSE = 84;
   const reduce = matchMedia('(prefers-reduced-motion: reduce)');
   const toImg = (sym, vb) => { const i = new Image(); i.onload = () => { mask = null; queue(); };
     i.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="' + vb + '">' + sym.innerHTML.replace(/currentColor|#0095EB/gi, '#fff') + '</svg>'); return i; };
-  const wordmark = toImg(boson, '0 0 250 36'), symbol = qsym ? toImg(qsym, '0 0 35 36') : null;
+  const wordmark = new Image(); wordmark.onload = () => { mask = null; queue(); };
+  wordmark.src = 'assets/brand/qualitia-logo-white.svg';
+  const symbol = qsym ? toImg(qsym, '0 0 35 36') : null;
   let mask = null, W = 0, H = 0, queued = false;
   const narrow = () => W < 600 && symbol;
   const fine = () => (narrow() ? 5 : 6);
@@ -633,7 +635,7 @@
     const o = off.getContext('2d');
     let lw, lh;
     if (narrow()){ lh = H * 0.72; lw = lh * 35 / 36; }
-    else { lw = Math.min(W * 0.84, H * 0.62 * 250 / 36); lh = lw * 36 / 250; }
+    else { lw = Math.min(W * 0.84, H * 0.62 * 141 / 36); lh = lw * 36 / 141; }
     o.drawImage(img, (W - lw) / 2, (H - lh) / 2, lw, lh);
     mask = o.getImageData(0, 0, W, H).data;
   }
