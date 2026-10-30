@@ -141,30 +141,30 @@
   });
 })();
 
-/* Total Control: end-to-end walkthrough. One claim travels through six systems, shown as miniature app screens.
+/* Total Control: end-to-end walkthrough. One loan application travels through Salesforce, ServiceNow and an API, shown as miniature app screens.
    Auto-advances once it scrolls into view; clicking a step pauses it; Replay starts again. */
 (function(){
   const root = document.getElementById('e2e-walk');
   if (!root) return;
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const STEPS = [
-    {sys:'Mobile app', step:'Customer files a claim', c:'#8FE3C0', head:'#1f8a68'},
+    {sys:'Salesforce', step:'Customer requests a loan', c:'#7FB2FF', head:'#0b5cab'},
     {sys:'Salesforce', step:'Case created', c:'#7FB2FF', head:'#0b5cab'},
     {sys:'ServiceNow', step:'Incident raised', c:'#9FE0C8', head:'#2f4a3f'},
-    {sys:'REST API', step:'Order service called', c:'#C9B4FF', head:'#3b2f73'},
-    {sys:'SAP ERP', step:'Order updated', c:'#FFD08A', head:'#1d3a5f'},
-    {sys:'PDF', step:'Invoice generated', c:'#FFB4A8', head:'#6b2b24'}
+    {sys:'ServiceNow', step:'Incident closed', c:'#8FE3C0', head:'#2f4a3f'},
+    {sys:'REST API', step:'Email service called', c:'#C9B4FF', head:'#3b2f73'},
+    {sys:'Email', step:'Customer notified', c:'#FFD08A', head:'#1d3a5f'}
   ];
   const fld = (a, b) => `<div class="e2e-fld"><span>${a}</span><span>${b}</span></div>`;
   const chk = (...c) => `<div class="e2e-chk">${c.map(x => `<span>✓ ${x}</span>`).join('')}</div>`;
   const head = (i, title, sys) => `<div class="e2e-app-h" style="background:${STEPS[i].head}">${title}${sys ? `<small>${sys}</small>` : ''}</div>`;
   const SCREENS = [
-    `<div class="e2e-phone"><div class="e2e-app">${head(0,'File a claim')}<div class="e2e-app-b">${fld('Policy','HM-88310')}${fld('Claim','CLM-2041')}${fld('Amount','$1,240.00')}<div class="e2e-btn">Submit claim</div>${chk('submitted')}</div></div></div>`,
-    `<div class="e2e-app">${head(1,'Case 00012871','Salesforce')}<div class="e2e-app-b">${fld('Claim','CLM-2041')}${fld('Amount','$1,240.00')}${fld('Status','New')}${fld('Owner','Claims queue')}${chk('claim ID matches','amount matches')}</div></div>`,
-    `<div class="e2e-app">${head(2,'INC0021457','ServiceNow')}<div class="e2e-app-b">${fld('Short description','Claim CLM-2041 review')}${fld('Priority','3 · Moderate')}${fld('Linked case','00012871')}${chk('case linked','claim ID matches')}</div></div>`,
-    `<div class="e2e-json">POST /orders/claims<br>{<br>&nbsp;&nbsp;<span class="k">"claimId"</span>: <span class="s">"CLM-2041"</span>,<br>&nbsp;&nbsp;<span class="k">"amount"</span>: <span class="v">1240.00</span>,<br>&nbsp;&nbsp;<span class="k">"currency"</span>: <span class="s">"USD"</span><br>}<br><span class="s">200 OK</span> · 184 ms</div><div class="e2e-under">${chk('status 200','payload matches')}</div>`,
-    `<div class="e2e-app">${head(4,'Sales order 4500128','SAP ERP')}<div class="e2e-app-b">${fld('Reference','CLM-2041')}${fld('Net value','1,240.00 USD')}${fld('Status','Updated')}${chk('order updated','amount matches')}</div></div>`,
-    `<div class="e2e-pdf"><h5>Invoice INV-77120</h5><div style="color:#5b6573">Claim CLM-2041</div><div class="ln" style="width:90%"></div><div class="ln" style="width:70%"></div><div class="ln" style="width:80%"></div><div class="tot"><span>Total</span><span>$1,240.00</span></div>${chk('PDF generated','total matches')}</div>`
+    `<div class="e2e-phone"><div class="e2e-app">${head(0,'Apply for a loan','Experience Cloud')}<div class="e2e-app-b">${fld('Loan','LN-2041')}${fld('Amount','$25,000')}${fld('Term','36 months')}<div class="e2e-btn">Submit request</div>${chk('submitted')}</div></div></div>`,
+    `<div class="e2e-app">${head(1,'Case 00012871','Salesforce')}<div class="e2e-app-b">${fld('Loan','LN-2041')}${fld('Amount','$25,000')}${fld('Status','New')}${fld('Owner','Lending queue')}${chk('loan ID matches','amount matches')}</div></div>`,
+    `<div class="e2e-app">${head(2,'INC0021457','ServiceNow')}<div class="e2e-app-b">${fld('Short description','Credit check for LN-2041')}${fld('Priority','3 · Moderate')}${fld('Linked case','00012871')}${chk('case linked','loan ID matches')}</div></div>`,
+    `<div class="e2e-app">${head(3,'INC0021457','ServiceNow')}<div class="e2e-app-b">${fld('State','Closed')}${fld('Resolution','Credit check passed')}${fld('Linked case','00012871')}${chk('incident closed','case updated')}</div></div>`,
+    `<div class="e2e-json">POST /notifications/email<br>{<br>&nbsp;&nbsp;<span class="k">"loanId"</span>: <span class="s">"LN-2041"</span>,<br>&nbsp;&nbsp;<span class="k">"template"</span>: <span class="s">"loan-approved"</span>,<br>&nbsp;&nbsp;<span class="k">"amount"</span>: <span class="v">25000</span><br>}<br><span class="s">202 Accepted</span> · 142 ms</div><div class="e2e-under">${chk('status 202','payload matches')}</div>`,
+    `<div class="e2e-pdf"><h5>Your loan is approved</h5><div style="color:#5b6573">To: customer · Loan LN-2041</div><div class="ln" style="width:90%"></div><div class="ln" style="width:70%"></div><div class="ln" style="width:80%"></div><div class="tot"><span>Amount</span><span>$25,000</span></div>${chk('email delivered','amount matches')}</div>`
   ];
   const stepsEl = root.querySelector('.e2e-steps'), prog = root.querySelector('.e2e-prog'), stage = root.querySelector('.e2e-stage');
   const caption = document.getElementById('e2e-caption'), replay = document.getElementById('e2e-replay');
@@ -188,7 +188,7 @@
     const btn = lis[i].querySelector('button');
     if (stepsEl.scrollWidth > stepsEl.clientWidth) stepsEl.scrollTo({left: btn.offsetLeft - stepsEl.clientWidth / 2 + btn.offsetWidth / 2, behavior: reduce ? 'auto' : 'smooth'});
     caption.innerHTML = i === STEPS.length - 1
-      ? '<b>Journey passed</b> · claim CLM-2041 checked in all 6 systems'
+      ? '<b>Journey passed</b> · loan LN-2041 checked at all 6 steps'
       : `Step <b>${i + 1} of ${STEPS.length}</b> · ${STEPS[i].sys} · ${STEPS[i].step}`;
     const fill = bars[i].firstChild;
     if (manual || reduce || i === STEPS.length - 1){ fill.style.width = '100%'; return; }
@@ -203,7 +203,8 @@
   }
 })();
 
-/* Total Control: CI/CD pipeline simulator (illustrative). */
+/* Total Control: CI/CD pipeline simulator (illustrative). Plays on its own once it scrolls into view: a clean run, then a run
+   with an injected defect that Boson catches and the release gate blocks. The buttons replay it; reduced motion keeps it still. */
 (function(){
   const ci = document.getElementById('ci');
   if (!ci) return;
@@ -221,7 +222,7 @@
   const runBtn = ci.querySelector('#ci-run');
   const defect = ci.querySelector('#ci-defect');
   const tabs = [...ci.querySelectorAll('.tc-tools button')];
-  let tool = 'ado', timers = [], running = false;
+  let tool = 'ado', timers = [], running = false, onDone = null, autoTimer = null;
   const fill = (k, v) => ci.querySelectorAll(`[data-fill="${k}"]`).forEach(e => e.textContent = v);
   function setTool(k){
     tool = k;
@@ -252,8 +253,9 @@
       gate.textContent = 'Promoted'; gate.className = '';
     }
   }
-  function run(){
+  function run(done){
     if (running) return;
+    onDone = typeof done === 'function' ? done : null;
     timers.forEach(clearTimeout); timers = [];
     const withDefect = defect.checked, T = TOOLS[tool];
     if (reduce){ finalState(withDefect); return; }
@@ -283,12 +285,24 @@
       if (withDefect){ stageState(5, 'fail', 'blocked'); line('bad', '✕', 'Release gate: blocked until the defect is fixed'); gate.textContent = 'Blocked'; gate.className = 'blocked'; }
       else { stageState(5, 'pass', '0:01'); line('ok', '✓', 'Release gate: promoted to production'); gate.textContent = 'Promoted'; gate.className = ''; }
       running = false; runBtn.disabled = false;
+      if (onDone){ const f = onDone; onDone = null; f(); }
     });
   }
-  tabs.forEach(b => b.addEventListener('click', () => { if (running) return; setTool(b.dataset.tool); finalState(defect.checked && false); }));
-  runBtn.addEventListener('click', run);
+  const stopAuto = () => { clearTimeout(autoTimer); onDone = null; };
+  tabs.forEach(b => b.addEventListener('click', () => { if (running) return; stopAuto(); setTool(b.dataset.tool); finalState(defect.checked && false); }));
+  runBtn.addEventListener('click', () => { stopAuto(); run(); });
+  defect.addEventListener('change', stopAuto);
   setTool('ado');
   finalState(false);              // complete at rest: the last run passed
+  if (!reduce && 'IntersectionObserver' in window){
+    const io = new IntersectionObserver(es => {
+      if (!es[0].isIntersecting) return;
+      io.disconnect();
+      defect.checked = false;
+      run(() => { autoTimer = setTimeout(() => { defect.checked = true; run(); }, 1800); });
+    }, {threshold: .35});
+    io.observe(ci);
+  }
 })();
 
 /* Day / night switch. Follows the device setting until the visitor picks one; the choice is remembered on this device. */
@@ -544,9 +558,13 @@
       if (e.key === 'End') { e.preventDefault(); select(tabs[tabs.length - 1], true); }
     });
   });
-  const m = location.hash.match(/^#industry-([\w-]+)/);
-  const start = m && tabs.find(t => t.dataset.ind === m[1]);
-  if (start) select(start);
+  const fromHash = () => {
+    const m = location.hash.match(/^#industry-([\w-]+)/);
+    const t = m && tabs.find(t => t.dataset.ind === m[1]);
+    if (t){ select(t); list.scrollIntoView({block: 'start'}); }
+  };
+  fromHash();
+  addEventListener('hashchange', fromHash);     // Industries menu links while already on this page
 })();
 
 /* Integration flow: the marker loops down the track (CSS); each system lights up as the marker reaches its dot */

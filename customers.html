@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@100..700&family=Geist+Mono:wght@400;500&display=swap">
 <script>try{var t=localStorage.getItem("q-theme");if(t==="light"||t==="dark")document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
-<link rel="stylesheet" href="assets/css/site.css?v=9d0b83ec">
+<link rel="stylesheet" href="assets/css/site.css?v=54b8268d">
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -52,7 +52,7 @@
       <h4>Platforms</h4>
       <ul>
         <li><a href="index.html#platforms"><i class="orb" style="--c:#7FB2FF"></i><div><b>Salesforce</b><span>Every cloud, every customisation</span></div></a></li>
-        <li><a href="index.html#platforms"><i class="orb" style="--c:#8FE3C0"></i><div><b>ServiceNow<em class="new">New</em></b><span>1-Click testing for the Now Platform</span></div></a></li>
+        <li><a href="contact.html"><i class="orb" style="--c:#8FE3C0"></i><div><b>ServiceNow<em class="new">Early access</em></b><span>Using ServiceNow too? See it live</span></div></a></li>
         <li><a href="total-control.html"><i class="orb" style="--c:#C9B4FF"></i><div><b>Integrations</b><span>Azure DevOps, Jira, GitHub, Jenkins</span></div></a></li>
         <li><a href="index.html#secure"><i class="orb" style="--c:#FFD08A"></i><div><b>Enterprise &amp; security</b><span>Runs inside your network</span></div></a></li>
       </ul>
@@ -61,17 +61,29 @@
       <h4>Capabilities</h4>
       <ul>
         <li><a href="one-click-generation.html"><div><b>1-Click Generation</b><span>End-to-end journeys from your metadata</span></div></a></li>
+        <li><a href="index.html#feat-heal"><div><b>Self-healing</b><span>Heals from your metadata, in one click</span></div></a></li>
         <li><a href="instant-update.html"><div><b>Instant Update</b><span>Keep the suite current every sprint</span></div></a></li>
-        <li><a href="index.html#feat-heal"><div><b>Self-healing</b><span>Patented, for reliable runs</span></div></a></li>
-        <li><a href="total-control.html"><div><b>Integration testing</b><span>Web, mobile, API, PDF and legacy</span></div></a></li>
+        <li><a href="total-control.html"><div><b>End-to-end workflows</b><span>One business flow across Salesforce, ServiceNow, web, mobile and API</span></div></a></li>
         <li><a href="index.html#turnaround"><div><b>Turnaround</b><span>See the sprint-by-sprint difference</span></div></a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Industries</h4>
+      <ul>
+        <li><a href="#industry-banking"><div><b>Banking</b><span>Release risk under control, from onboarding to lending</span></div></a></li>
+        <li><a href="#industry-insurance"><div><b>Insurance</b><span>Policy and claims journeys tested every release</span></div></a></li>
+        <li><a href="#industry-fintech"><div><b>Fintech</b><span>Ship weekly without breaking onboarding or KYC</span></div></a></li>
+        <li><a href="#industry-technology"><div><b>High tech</b><span>Quote-to-cash across every connected system</span></div></a></li>
+        <li><a href="#industry-automotive"><div><b>Automotive</b><span>Dealer, warranty and service journeys</span></div></a></li>
+        <li><a href="#industry-telecom"><div><b>Telecom</b><span>More coverage without per-run cost</span></div></a></li>
+        <li><a href="#industry-government"><div><b>Government &amp; public sector</b><span>Casework and citizen portals, inside your network</span></div></a></li>
       </ul>
     </div>
     <div class="story-col">
       <h4>Results</h4>
       <a class="m-story" href="index.html#results">
-        <span class="num">5–7×</span>
-        <p>Average efficacy gain clients see from 1-Click generation and updates.</p>
+        <div class="m-stat"><span class="num">5–7×</span><p>Average efficacy gain from 1-Click generation and updates</p></div>
+        <div class="m-stat"><span class="num">40%</span><p>Faster Salesforce go-to-market</p></div><!-- TODO: validate (confirmed by Vrushank, 29 Oct) -->
       </a>
     </div>
   </div>
@@ -85,12 +97,13 @@
     <a class="btn btn-cta" href="contact.html">Book a demo</a>
   </div>
   <div class="mega-float" id="pill-list" hidden>
-    <a href="one-click-generation.html">1-Click generation <span>Capability</span></a>
+    <a href="one-click-generation.html">1-Click Generation <span>Capability</span></a>
     <a href="instant-update.html">Instant Update <span>Capability</span></a>
     <a href="total-control.html">Total Control <span>CI/CD</span></a>
     <a href="index.html#turnaround">Turnaround <span>Proof</span></a>
-    <a href="index.html#platforms">Salesforce &amp; ServiceNow <span>Platforms</span></a>
+    <a href="index.html#platforms">Salesforce <span>Platform</span></a>
     <a href="index.html#secure">Security <span>Enterprise</span></a>
+    <a href="#industries">Industries <span>By sector</span></a>
     <a href="customers.html">Customers <span>Stories</span></a>
   </div>
 </nav>
@@ -105,9 +118,9 @@
 
   <!-- Customers by industry -->
   <section class="ind" id="industries" aria-label="Customers by industry">
-    <div class="ind-tabs" role="tablist" aria-label="Filter customers by industry"><button type="button" role="tab" id="ind-tab-all" data-ind="all" aria-controls="customer-grid" aria-selected="true" tabindex="0">All industries<span>19</span></button><button type="button" role="tab" id="ind-tab-banking" data-ind="banking" aria-controls="ind-banking" aria-selected="false" tabindex="-1">Banking &amp; financial services<span>8</span></button><button type="button" role="tab" id="ind-tab-insurance" data-ind="insurance" aria-controls="ind-insurance" aria-selected="false" tabindex="-1">Insurance<span>4</span></button><button type="button" role="tab" id="ind-tab-technology" data-ind="technology" aria-controls="ind-technology" aria-selected="false" tabindex="-1">Technology &amp; software<span>3</span></button><button type="button" role="tab" id="ind-tab-healthcare" data-ind="healthcare" aria-controls="ind-healthcare" aria-selected="false" tabindex="-1">Healthcare &amp; life sciences<span>2</span></button><button type="button" role="tab" id="ind-tab-manufacturing" data-ind="manufacturing" aria-controls="ind-manufacturing" aria-selected="false" tabindex="-1">Manufacturing &amp; consumer goods<span>1</span></button><button type="button" role="tab" id="ind-tab-services" data-ind="services" aria-controls="ind-services" aria-selected="false" tabindex="-1">Professional services &amp; publishing<span>2</span></button></div>
+    <div class="ind-tabs" role="tablist" aria-label="Filter customers by industry"><button type="button" role="tab" id="ind-tab-all" data-ind="all" aria-controls="customer-grid" aria-selected="true" tabindex="0">All industries<span>19</span></button><button type="button" role="tab" id="ind-tab-banking" data-ind="banking" aria-controls="ind-banking" aria-selected="false" tabindex="-1">Banking &amp; financial services<span>8</span></button><button type="button" role="tab" id="ind-tab-insurance" data-ind="insurance" aria-controls="ind-insurance" aria-selected="false" tabindex="-1">Insurance<span>4</span></button><button type="button" role="tab" id="ind-tab-fintech" data-ind="fintech" aria-controls="ind-fintech" aria-selected="false" tabindex="-1">Fintech</button><button type="button" role="tab" id="ind-tab-technology" data-ind="technology" aria-controls="ind-technology" aria-selected="false" tabindex="-1">High tech &amp; software<span>3</span></button><button type="button" role="tab" id="ind-tab-healthcare" data-ind="healthcare" aria-controls="ind-healthcare" aria-selected="false" tabindex="-1">Healthcare &amp; life sciences<span>2</span></button><button type="button" role="tab" id="ind-tab-manufacturing" data-ind="manufacturing" aria-controls="ind-manufacturing" aria-selected="false" tabindex="-1">Manufacturing &amp; consumer goods<span>1</span></button><button type="button" role="tab" id="ind-tab-automotive" data-ind="automotive" aria-controls="ind-automotive" aria-selected="false" tabindex="-1">Automotive</button><button type="button" role="tab" id="ind-tab-telecom" data-ind="telecom" aria-controls="ind-telecom" aria-selected="false" tabindex="-1">Telecom</button><button type="button" role="tab" id="ind-tab-services" data-ind="services" aria-controls="ind-services" aria-selected="false" tabindex="-1">Professional services &amp; publishing<span>2</span></button><button type="button" role="tab" id="ind-tab-government" data-ind="government" aria-controls="ind-government" aria-selected="false" tabindex="-1">Government &amp; public sector</button></div>
     <div class="ind-panel has-case" role="tabpanel" id="ind-banking" aria-labelledby="ind-tab-banking" hidden>
-      <div class="ind-text"><h3>Banking &amp; financial services</h3><p>Banks, lenders and exchanges change Salesforce every sprint, and regulators expect zero surprises. Boson keeps onboarding, servicing and lending journeys covered as they change.</p><ul class="ind-plat" aria-label="Platforms"><li>Financial Services Cloud</li><li>Service Cloud</li><li>Experience Cloud</li></ul></div>
+      <div class="ind-text"><h3>Banking &amp; financial services</h3><p>Banks, lenders and exchanges change Salesforce every sprint, and regulators expect zero surprises. Boson keeps release risk under control by testing onboarding, servicing and lending journeys every time they change.</p><ul class="ind-plat" aria-label="Platforms"><li>Financial Services Cloud</li><li>Service Cloud</li><li>Experience Cloud</li></ul></div>
       <div class="ind-journeys"><h4>Typical journeys we automate</h4><ul class="ind-list"><li>Customer onboarding and KYC</li><li>Loan origination and servicing</li><li>Case management with SLA rules</li><li>Branch and partner portals</li></ul></div>
       <a class="ind-case" href="case-study-abfl.html"><small>Case study · Aditya Birla Finance</small><b>Regression cut from 3 weeks to 2 days</b><span>Read the story →</span></a>
     </div>
@@ -116,8 +129,13 @@
       <div class="ind-journeys"><h4>Typical journeys we automate</h4><ul class="ind-list"><li>Policy servicing requests</li><li>Claims intake and settlement</li><li>Case type and SLA variations</li><li>Agent and branch workflows</li></ul></div>
       <a class="ind-case" href="case-study-absli.html"><small>Case study · Aditya Birla Sun Life Insurance</small><b>On-time go-live with zero defect leakage</b><span>Read the story →</span></a>
     </div>
+    <div class="ind-panel has-case" role="tabpanel" id="ind-fintech" aria-labelledby="ind-tab-fintech" hidden>
+      <div class="ind-text"><h3>Fintech</h3><p>Payments, lending and wealth platforms ship on Salesforce every week. Boson keeps onboarding, KYC and servicing flows tested at the same pace, and runs them as every role and permission set you support.</p><ul class="ind-plat" aria-label="Platforms"><li>Financial Services Cloud</li><li>Experience Cloud</li><li>API</li></ul></div>
+      <div class="ind-journeys"><h4>Typical journeys we automate</h4><ul class="ind-list"><li>Digital onboarding and KYC</li><li>Payments and disputes</li><li>Partner and API integrations</li><li>Role and permission-set checks</li></ul></div>
+      <a class="ind-case" href="#demo"><small>Talk to us</small><b>See a fintech onboarding journey tested end to end</b><span>Book a demo →</span></a>
+    </div>
     <div class="ind-panel has-case" role="tabpanel" id="ind-technology" aria-labelledby="ind-tab-technology" hidden>
-      <div class="ind-text"><h3>Technology &amp; software</h3><p>Quote-to-cash spans Salesforce and the systems around it. Boson runs one script from quote to signature to ERP, across regions and products.</p><ul class="ind-plat" aria-label="Platforms"><li>Revenue Cloud</li><li>Sales Cloud</li><li>CPQ</li></ul></div>
+      <div class="ind-text"><h3>High tech &amp; software</h3><p>Quote-to-cash spans Salesforce and the systems around it. Boson runs one script from quote to signature to ERP, across regions and products.</p><ul class="ind-plat" aria-label="Platforms"><li>Revenue Cloud</li><li>Sales Cloud</li><li>CPQ</li></ul></div>
       <div class="ind-journeys"><h4>Typical journeys we automate</h4><ul class="ind-list"><li>CPQ quoting and approvals</li><li>Contracts and e-signature</li><li>ERP and billing sync</li><li>Region and product variations</li></ul></div>
       <a class="ind-case" href="case-study-qlik.html"><small>Case study · Qlik</small><b>Regression in under 6 hours, from 3 person days</b><span>Read the story →</span></a>
     </div>
@@ -131,10 +149,25 @@
       <div class="ind-journeys"><h4>Typical journeys we automate</h4><ul class="ind-list"><li>Warranty and service cases</li><li>Dealer and partner management</li><li>Order and inventory sync</li><li>Field service scheduling</li></ul></div>
       
     </div>
+    <div class="ind-panel has-case" role="tabpanel" id="ind-automotive" aria-labelledby="ind-tab-automotive" hidden>
+      <div class="ind-text"><h3>Automotive</h3><p>Dealer networks, warranty claims and connected services all run through Salesforce. Boson keeps those journeys tested across every region and model year.</p><ul class="ind-plat" aria-label="Platforms"><li>Automotive Cloud</li><li>Service Cloud</li><li>Experience Cloud</li></ul></div>
+      <div class="ind-journeys"><h4>Typical journeys we automate</h4><ul class="ind-list"><li>Dealer and partner portals</li><li>Warranty and recall cases</li><li>Vehicle and asset records</li><li>Lead and test-drive routing</li></ul></div>
+      <a class="ind-case" href="#demo"><small>Talk to us</small><b>See a dealer and warranty journey tested end to end</b><span>Book a demo →</span></a>
+    </div>
+    <div class="ind-panel has-case" role="tabpanel" id="ind-telecom" aria-labelledby="ind-tab-telecom" hidden>
+      <div class="ind-text"><h3>Telecom</h3><p>Telcos run thousands of plans, bundles and service journeys, so coverage and cost decide everything. Boson raises coverage without raising cost: you pay for authoring, not for every run.</p><ul class="ind-plat" aria-label="Platforms"><li>Communications Cloud</li><li>Service Cloud</li><li>API</li></ul></div>
+      <div class="ind-journeys"><h4>Typical journeys we automate</h4><ul class="ind-list"><li>Order capture and plan changes</li><li>Provisioning and number porting</li><li>Fault and service cases</li><li>Billing and API sync</li></ul></div>
+      <a class="ind-case" href="#demo"><small>Talk to us</small><b>See how far your coverage can go</b><span>Book a demo →</span></a>
+    </div>
     <div class="ind-panel" role="tabpanel" id="ind-services" aria-labelledby="ind-tab-services" hidden>
       <div class="ind-text"><h3>Professional services &amp; publishing</h3><p>Client engagement, subscriptions and content operations run on heavily customised orgs. Boson tests those customisations without code.</p><ul class="ind-plat" aria-label="Platforms"><li>Sales Cloud</li><li>Service Cloud</li><li>Experience Cloud</li></ul></div>
       <div class="ind-journeys"><h4>Typical journeys we automate</h4><ul class="ind-list"><li>Client and engagement management</li><li>Subscriptions and renewals</li><li>Content and author workflows</li><li>Finance system integrations</li></ul></div>
       
+    </div>
+    <div class="ind-panel has-case" role="tabpanel" id="ind-government" aria-labelledby="ind-tab-government" hidden>
+      <div class="ind-text"><h3>Government &amp; public sector</h3><p>A failed release in a public service reaches every citizen. Boson tests eligibility, casework and citizen portals inside your own network, with a full report for every run.</p><ul class="ind-plat" aria-label="Platforms"><li>Public Sector Solutions</li><li>Experience Cloud</li><li>Service Cloud</li></ul></div>
+      <div class="ind-journeys"><h4>Typical journeys we automate</h4><ul class="ind-list"><li>Citizen applications and eligibility</li><li>Case management and approvals</li><li>Grants and licensing</li><li>Release sign-off with run reports</li></ul></div>
+      <a class="ind-case" href="#demo"><small>Talk to us</small><b>See a casework journey tested inside your network</b><span>Book a demo →</span></a>
     </div>
   </section>
 
@@ -146,7 +179,7 @@
       <div class="tile" data-ind="insurance"><img src="assets/clients/prudential.svg" alt="Prudential" loading="lazy" style="--w:78%"></div>
       <div class="tile" data-ind="banking"><img src="assets/clients/cibc.svg" alt="CIBC" loading="lazy" style="--w:60%"></div>
       <div class="tile" data-ind="healthcare"><img src="assets/clients/ge-healthcare.svg" alt="GE HealthCare" loading="lazy" style="--w:84%"></div>
-      <div class="tile wide" data-ind="banking"><img src="assets/clients/hdfc-bank.svg" alt="HDFC Bank" loading="lazy" style="--w:48%"></div>
+      <div class="tile" data-ind="banking"><img src="assets/clients/hdfc-bank.svg" alt="HDFC Bank" loading="lazy" style="--w:86%"></div>
       <div class="tile" data-ind="manufacturing"><img src="assets/clients/whirlpool.svg" alt="Whirlpool" loading="lazy" style="--w:56%"></div>
       <div class="tile" data-ind="technology"><img src="assets/clients/pitney-bowes.svg" alt="Pitney Bowes" loading="lazy" style="--w:82%"></div>
       <div class="tile" data-ind="technology"><img src="assets/clients/ptc.svg" alt="PTC" loading="lazy" style="--w:52%"></div>
@@ -159,6 +192,7 @@
       <div class="tile" data-ind="banking"><img src="assets/clients/axis-bank.svg" alt="Axis Bank" loading="lazy" style="--w:59%"></div>
       <div class="tile" data-ind="banking insurance"><img src="assets/clients/aditya-birla-capital.svg" alt="Aditya Birla Capital" loading="lazy" style="--w:63%"></div>
       <div class="tile" data-ind="insurance"><img src="assets/clients/indiafirst-life.svg" alt="IndiaFirst Life" loading="lazy" style="--w:41%"></div>
+      <a class="tile tile-cta" href="#demo"><b>125+</b><span>Enterprises test with Boson. Book a demo →</span></a><!-- TODO: swap for a 20th customer logo once the file is supplied -->
   </section>
 
   <!-- Case studies -->
@@ -293,6 +327,6 @@
 <div class="px-spacer" aria-hidden="true"></div>
 <div class="px-reveal" aria-hidden="true"><canvas></canvas></div>
 
-<script src="assets/js/site.js?v=052c4c25"></script>
+<script src="assets/js/site.js?v=0fe1039a"></script>
 </body>
 </html>
