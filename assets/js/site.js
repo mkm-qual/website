@@ -1072,7 +1072,7 @@ gl_FragColor=vec4(col,1.);}`;
 /* Pixel reveal: draw the Qualitia wordmark (the Q symbol on narrow screens) as negative space in a dense field of
    colour pixels whose size shrinks from ~84px to fine over the final stretch of scroll. Each pixel takes its colour from
    the hero ribbon's palette as it sweeps across the panel (blue, violet, pink, amber), varies a little in brightness,
-   and is blurred so it dissolves into the panel's white ground (navy in dark mode). Static fine grid for reduced motion. */
+   and is a solid square whose edge alone feathers into the panel's white ground (navy in dark mode). Static fine grid for reduced motion. */
 (() => {
   const wrap = document.querySelector('.px-reveal'), qsym = document.getElementById('q-symbol');
   if (!wrap) return;
@@ -1088,16 +1088,14 @@ gl_FragColor=vec4(col,1.);}`;
   const sprites = COLS.map(() => document.createElement('canvas'));
   let spriteV = 0, spriteS = 0, spritePad = 0;
   function makeSprites(v, dpr){
-    // a blur all the way through: colour falls off smoothly from the centre (a Gaussian-like curve), no flat core;
-    // the blob is wider than its cell, so neighbours overlap and merge
-    const pad = v * .45, S = Math.ceil(v + pad * 2), r = S / 2;
-    const fall = [[0, 1], [.2, .86], [.4, .58], [.6, .3], [.8, .1], [1, 0]];
+    // a solid square tile whose edge alone feathers into the ground: the square is inset by the feather width
+    // and drawn as a lightly blurred shadow, so the middle stays solid colour and only a thin band at the edge fades
+    const f = Math.max(1, v * .1), pad = f, S = Math.ceil(v + pad * 2);
     sprites.forEach((c, i) => {
       c.width = c.height = Math.ceil(S * dpr);
       const g = c.getContext('2d'); g.setTransform(dpr, 0, 0, dpr, 0, 0);
-      const rgb = COLS[i].slice(4, -1), grd = g.createRadialGradient(r, r, 0, r, r, r);
-      fall.forEach(([o, a]) => grd.addColorStop(o, 'rgba(' + rgb + ',' + a + ')'));
-      g.fillStyle = grd; g.fillRect(0, 0, S, S);
+      g.shadowColor = COLS[i]; g.shadowBlur = f * 1.6 * dpr; g.shadowOffsetX = 4000 * dpr;   // only the blurred shadow lands on the sprite
+      g.fillStyle = '#000'; g.fillRect(pad + f - 4000, pad + f, v - 2 * f - 1, v - 2 * f - 1);
     });
     spriteV = v; spriteS = S; spritePad = pad;
   }
@@ -1136,7 +1134,7 @@ gl_FragColor=vec4(col,1.);}`;
     const r = wrap.getBoundingClientRect(), w = Math.max(1, Math.floor(r.width)), h = Math.max(1, Math.floor(r.height));
     if (w !== W || h !== H){ W = w; H = h; const dpr = Math.min(devicePixelRatio || 1, 2); cv.width = W * dpr; cv.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0); mask = null; }
     if (!mask) buildMask();
-    const v = cellSize(), gap = v > 2 ? 1 : 0, soft = v >= 3, dpr = Math.min(devicePixelRatio || 1, 2);
+    const v = cellSize(), gap = v > 2 ? 1 : 0, soft = v >= 8, dpr = Math.min(devicePixelRatio || 1, 2);
     if (soft && v !== spriteV) makeSprites(v, dpr);
     ctx.fillStyle = ground(); ctx.fillRect(0, 0, W, H);
     for (let y = 0; y < H; y += v) for (let x = 0; x < W; x += v){
