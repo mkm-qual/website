@@ -1343,7 +1343,7 @@ main,footer{position:relative;z-index:1;background:var(--paper)}
 /* Customisations and Clouds as small icon tiles, so they scan at a glance */
 .sf-tiles{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
 .sf-tiles li{display:flex;align-items:center;gap:10px;padding:10px;border-radius:var(--r-sm);background:var(--surface);font-size:var(--t-small);line-height:1.25;transition:background var(--dur)}
-.sf-tiles li:hover{background:var(--logo-hover)}
+
 .sf-tiles li:last-child:nth-child(odd){grid-column:1 / -1}
 .sf-tiles svg,.sec-ico{flex:none;width:30px;height:30px;padding:6px;border-radius:var(--r-xs);background:color-mix(in srgb,var(--brand) 12%,var(--paper));stroke:var(--brand);fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
 .sec-ico{width:36px;height:36px;padding:8px;margin-bottom:6px}
@@ -1623,3 +1623,21 @@ main,footer{position:relative;z-index:1;background:var(--paper)}
 :is(.diff,.pp-card) :is(.chip,.pp-icon){transition:background-color .25s var(--ease),color .25s var(--ease)}
 .diff:hover .chip,.pp-card:hover .pp-icon{background-color:#4F55E6;color:#fff}
 @media (hover:none),(prefers-reduced-motion:reduce){ :is(.diff,.story,.pp-card,.kpi,.qt,.bl-card,.ind-case,.tile,.pp-next a):hover,.case:hover .case-art{translate:none} }
+
+/* Built for Salesforce on hover: tiles lift onto white with a brand edge and their icon fills blue-violet; a column
+   takes a brand-tinted edge; the Salesforce → Web → Mobile → API chain lights up pill by pill, like a flow running;
+   the ServiceNow bar's link nudges forward */
+.sf-tiles li:not([data-rv]){transition:translate .35s var(--ease-spring),box-shadow .25s var(--ease),background-color var(--dur) var(--ease)}
+.sf-tiles li:hover{translate:0 -3px;background:var(--box);box-shadow:0 0 0 1px color-mix(in srgb,#5B4CF0 28%,transparent),0 14px 28px -16px rgba(10,37,64,.3)}
+.sf-tiles svg{transition:background-color .25s var(--ease),stroke .25s var(--ease),rotate .35s var(--ease-spring),scale .35s var(--ease-spring)}
+.sf-tiles li:hover svg{background-color:#4F55E6;stroke:#fff;rotate:-6deg;scale:1.08}
+.sf-col{transition:box-shadow .25s var(--ease)}
+.sf-col:hover{box-shadow:0 0 0 1px color-mix(in srgb,#5B4CF0 22%,transparent)}
+.sf-chain span{transition:background-color .25s var(--ease),color .25s var(--ease),translate .35s var(--ease-spring)}
+.sf-chain:hover li span{background-color:#4F55E6;color:#fff;translate:0 -2px}   /* li: outranks the first pill's own tint */
+.sf-chain:hover li:nth-child(2) span{transition-delay:.08s}.sf-chain:hover li:nth-child(3) span{transition-delay:.16s}.sf-chain:hover li:nth-child(4) span{transition-delay:.24s}
+.sf-chain li + li::before{transition:background-color .25s var(--ease)}
+.sf-chain:hover li + li::before{background-color:#5B4CF0}
+.sf-go{display:inline-block;transition:translate .3s var(--ease-spring)}
+.sf-sn:hover .sf-go{translate:4px 0}
+@media (hover:none),(prefers-reduced-motion:reduce){ .sf-tiles li:hover,.sf-chain:hover span{translate:none} .sf-tiles li:hover svg{rotate:none;scale:none} .sf-sn:hover .sf-go{translate:none} }
