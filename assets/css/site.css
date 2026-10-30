@@ -763,17 +763,15 @@ footer{padding:clamp(56px,7vw,96px) var(--side) 32px;font-size:var(--t-small)}
 }
 
 /* ---------- Contact page (ct-) ---------- */
-.ct{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);gap:clamp(24px,4vw,64px);align-items:start;padding:clamp(24px,4vw,56px) var(--side) 0}
+.ct{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);gap:clamp(24px,4vw,64px);align-items:start;padding:clamp(24px,4vw,56px) var(--side) clamp(48px,6vw,96px)}   /* room below the form card so the footer does not clip its edge */
 .ct-text{display:flex;flex-direction:column;gap:24px;position:sticky;top:96px}
-.ct-text .chip{align-self:flex-start}
 .ct-text h1{font-size:var(--t-display);line-height:1.05;letter-spacing:-0.01em;font-weight:300;max-width:11em}
 .ct-text h1 span{color:var(--ink-soft)}
 .ct-text .lede{color:var(--ink-soft);max-width:30em}
 .ct-next{list-style:none;margin:8px 0 0;padding:0;border-top:1px solid var(--ink-faint)}
-.ct-next li{display:grid;grid-template-columns:32px 1fr;gap:14px;padding:16px 0;border-bottom:1px solid var(--ink-faint)}
+.ct-next li{display:grid;grid-template-columns:32px 1fr;gap:14px;align-items:center;padding:14px 0;border-bottom:1px solid var(--ink-faint)}
 .ct-next .n{width:28px;height:28px;border-radius:50%;background:var(--chip);display:grid;place-items:center;font:500 var(--t-meta) var(--sans)}
-.ct-next b{font-weight:500;display:block;margin-bottom:2px}
-.ct-next span{color:var(--ink-soft);font-size:var(--t-list)}
+.ct-next b{font-weight:500}
 .ct-offices{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:8px}
 .ct-offices div{font-size:var(--t-meta);line-height:1.5;color:var(--ink-soft);min-width:0}
 .ct-offices b{display:block;color:var(--ink);font-weight:500;font-size:var(--t-small);margin-bottom:4px}
