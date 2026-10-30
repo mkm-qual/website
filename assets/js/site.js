@@ -525,7 +525,7 @@
 /* Scroll reveal: cards fade up once as they enter the viewport, staggered within their group. Skipped for reduced motion. */
 (() => {
   if (matchMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window)) return;
-  const els = [...document.querySelectorAll('.feat, .diff, .cmp, .sf-panel, .results-card, .secure-card, .pp-card, .kpi, .qt, .cs-card, .rs-card')]
+  const els = [...document.querySelectorAll('.diff, .cmp, .sf-panel, .results-card, .secure-card, .pp-card, .kpi, .qt, .cs-card, .rs-card')]
     .filter(el => el.getBoundingClientRect().top > innerHeight);   // leave anything already on screen alone
   if (!els.length) return;
   els.forEach(el => {
@@ -540,6 +540,32 @@
     el.addEventListener('transitionend', done);
   }), {rootMargin: '0px 0px -8% 0px'});
   els.forEach(el => io.observe(el));
+})();
+
+/* Homepage features: one value block in focus at a time. The block nearest the middle of the screen is at full strength;
+   the others fade back, and the focus moves on as you scroll. Reduced motion shows every block at full strength. */
+(() => {
+  const wrap = document.getElementById('features');
+  if (!wrap || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const feats = [...wrap.querySelectorAll('.feat')];
+  if (feats.length < 2) return;
+  wrap.classList.add('focus-mode');
+  let current = null, queued = false;
+  const update = () => {
+    queued = false;
+    const mid = innerHeight / 2;
+    let best = feats[0], dist = Infinity;
+    feats.forEach(f => {
+      const r = f.getBoundingClientRect();
+      const d = r.top > mid ? r.top - mid : r.bottom < mid ? mid - r.bottom : 0;   // 0 when the block spans the middle
+      if (d < dist){ dist = d; best = f; }
+    });
+    if (best !== current){ feats.forEach(f => f.classList.toggle('is-focus', f === best)); current = best; }
+  };
+  const queue = () => { if (!queued){ queued = true; requestAnimationFrame(update); } };
+  addEventListener('scroll', queue, {passive: true});
+  addEventListener('resize', queue, {passive: true});
+  update();
 })();
 
 /* Draw-on-scroll charts */

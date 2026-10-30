@@ -1341,3 +1341,6 @@ main,footer{position:relative;z-index:1;background:var(--paper)}
 .rv{opacity:0;translate:0 16px;transition:opacity .6s var(--ease),translate .6s var(--ease);transition-delay:calc(var(--rv-i,0) * 70ms)}
 .rv.in{opacity:1;translate:none}
 @media (prefers-reduced-motion:reduce){ .rv{opacity:1;translate:none} }
+/* Homepage features: the block in focus is full strength, the rest fade back (site.js adds .focus-mode and .is-focus) */
+.features.focus-mode .feat{opacity:.22;transition:opacity .5s var(--ease)}
+.features.focus-mode .feat.is-focus{opacity:1}
