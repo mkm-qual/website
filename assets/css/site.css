@@ -1531,11 +1531,19 @@ main,footer{position:relative;z-index:1;background:var(--paper)}
 /* Box glow (after stripe.com): the page stays white and the soft gradient light lives inside each content box, in its
    section's colours (site.js sets --ga core, --gb halo, --gx/--gy position on the section). The light sits on a taller
    layer that site.js slides against the scroll for parallax, under a very light grain. */
-.bx{position:relative;isolation:isolate;overflow:hidden}
-.bx::before{content:"";position:absolute;inset:-30% -10%;z-index:-1;pointer-events:none;background:radial-gradient(42% 38% at var(--gx,50%) var(--gy,60%),var(--ga,transparent),transparent 70%),radial-gradient(70% 60% at calc(100% - var(--gx,50%)) 78%,var(--gb,transparent),transparent 72%);transform:translate3d(0,var(--py,0px),0);will-change:transform}
-.bx::after{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .04 0 0 0 0 .14 0 0 0 0 .25 0 0 0 .05 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");background-size:160px}
-@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .bx::before{opacity:.6} }
-:root[data-theme="dark"] .bx::before{opacity:.6}
+.bx{position:relative;isolation:isolate;overflow:hidden;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .04 0 0 0 0 .14 0 0 0 0 .25 0 0 0 .05 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");background-size:160px}
+/* two layers of light: a bright core and a wide halo, each drifting, swelling and turning on its own loop;
+   the scroll adds parallax through `translate`, at two depths, while the loops run on `transform` */
+.bx::before,.bx::after{content:"";position:absolute;inset:-45%;z-index:-1;pointer-events:none;will-change:transform}
+.bx::before{background:radial-gradient(22% 26% at var(--gx,50%) var(--gy,60%),var(--ga,transparent),transparent 72%);translate:0 var(--py,0px);animation:bx-core 9s ease-in-out infinite alternate}
+.bx::after{background:radial-gradient(34% 34% at calc(100% - var(--gx,50%)) 62%,var(--gb,transparent),transparent 72%);translate:0 calc(var(--py,0px) * -.6);animation:bx-halo 13s ease-in-out infinite alternate}
+@keyframes bx-core{0%{transform:translate(-9%,6%) rotate(0deg) scale(1)}50%{transform:translate(8%,-5%) rotate(25deg) scale(1.22)}100%{transform:translate(3%,8%) rotate(-15deg) scale(.92)}}
+@keyframes bx-halo{0%{transform:translate(10%,-4%) rotate(0deg) scale(1.1)}50%{transform:translate(-8%,7%) rotate(-30deg) scale(.9)}100%{transform:translate(-2%,-8%) rotate(20deg) scale(1.2)}}
+.bx:nth-child(2n)::before{animation-delay:-5s}.bx:nth-child(3n)::before{animation-delay:-9s}
+.bx:nth-child(2n)::after{animation-delay:-7s}.bx:nth-child(3n)::after{animation-delay:-12s}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .bx::before,:root:not([data-theme="light"]) .bx::after{opacity:.6} }
+:root[data-theme="dark"] .bx::before,:root[data-theme="dark"] .bx::after{opacity:.6}
+@media (prefers-reduced-motion:reduce){ .bx::before,.bx::after{animation:none} }
 
 /* Content boxes are pure white in light mode (tokens --box, --box-edge). Plain selectors, so hover states keep working. */
 .media,.ov-media,.cmp,.diff,.sf-panel,.secure-card,.story:not(.dark),.tile:not(.tile-cta),.case-art,.kpi,.qt,.pp-card,.tc-e2e,.rs-art,.cs-feat,.cs-chart,.cs-ba>div,.bl-card:not(.hi),.bl-formula,.bl-end,.ind-panel,.lg-note,.sm-col{background-color:var(--box);box-shadow:var(--box-edge)}
