@@ -1289,7 +1289,8 @@ main,footer{position:relative;z-index:1;background:var(--paper)}
 .sf-tiles li{display:flex;align-items:center;gap:10px;padding:10px;border-radius:var(--r-sm);background:var(--surface);font-size:var(--t-small);line-height:1.25;transition:background var(--dur)}
 .sf-tiles li:hover{background:var(--logo-hover)}
 .sf-tiles li:last-child:nth-child(odd){grid-column:1 / -1}
-.sf-tiles svg{flex:none;width:30px;height:30px;padding:6px;border-radius:var(--r-xs);background:color-mix(in srgb,var(--brand) 12%,var(--paper));stroke:var(--brand);fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.sf-tiles svg,.sec-ico{flex:none;width:30px;height:30px;padding:6px;border-radius:var(--r-xs);background:color-mix(in srgb,var(--brand) 12%,var(--paper));stroke:var(--brand);fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.sec-ico{width:36px;height:36px;padding:8px;margin-bottom:6px}
 .sf-eco{font-size:var(--t-list);line-height:1.45;color:var(--ink-soft);margin-top:14px;max-width:24em}
 .sf-chain{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;align-items:center;gap:4px}
 .sf-chain li{display:flex;align-items:center;gap:4px}
@@ -1300,6 +1301,7 @@ main,footer{position:relative;z-index:1;background:var(--paper)}
 .sf-sn:hover{background:color-mix(in srgb,var(--brand) 15%,var(--surface))}
 .sf-sn-t{flex:1;min-width:16em;color:var(--ink-soft)}
 .sf-sn b{font-weight:500;color:var(--ink)}
+.sf-sn .chip{background:var(--ink);color:var(--paper)}   /* solid chip so it reads against the tinted bar */
 .sf-go{font-size:var(--t-small);font-weight:500;border-bottom:1px solid currentColor;padding-bottom:2px}
 @media (max-width:1024px){
   .sf-cols{grid-template-columns:1fr 1fr;gap:8px}
