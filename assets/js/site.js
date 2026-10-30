@@ -561,7 +561,6 @@
     app: sh.querySelector('.sh-app'),
     go: sh.querySelector('.sh-go'), goT: sh.querySelector('.sh-go-t'), ripple: sh.querySelector('.sh-ripple'),
     hand: sh.querySelector('.sh-hand'),
-    chips: [...sh.querySelectorAll('.sh-chip')],
     end: sh.querySelector('.sh-end'),
     tests: document.getElementById('sh-tests'), cov: document.getElementById('sh-cov'), time: document.getElementById('sh-time')
   };
@@ -616,9 +615,8 @@
       h.goT.textContent = state === 'done' ? '✓ 6 journeys ready' : state === 'run' ? 'Generating…' : 'Generate';
     }
 
-    // 5. release: the window settles, results float in, the call to action arrives
+    // 5. release: the window settles and the call to action arrives
     set(stick, '--z', ease(seg(p, .76, .9)));
-    h.chips.forEach((c, i) => set(c, '--c', ease(seg(p, .78 + i * .03, .84 + i * .03))));
     const e = ease(seg(p, .86, .95));
     set(h.end, '--e', e); h.end.classList.toggle('live', e > .5);
 
