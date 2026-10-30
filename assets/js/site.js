@@ -555,7 +555,7 @@
   const stick = sh && sh.querySelector('.sh-stick');
   const hero = sh && {
     lines: [...sh.querySelectorAll('.sh-line')],
-    rail: [...sh.querySelectorAll('.sh-rail li')],
+    steps: [...sh.querySelectorAll('.sh-steps li')],
     side: [...sh.querySelectorAll('.sh-side span')],
     rows: [...sh.querySelectorAll('.sh-row')],
     app: sh.querySelector('.sh-app'),
@@ -628,8 +628,11 @@
     const top = o.indexOf(Math.max(...o));
     if (top !== lastLine){ h.lines.forEach((l, i) => i === top ? l.removeAttribute('aria-hidden') : l.setAttribute('aria-hidden', 'true')); lastLine = top; }
 
+    // step bar: each segment fills across its own stretch of the story
+    const B = [0, .12, .3, .38, .74, 1];
     const stage = p < .12 ? 0 : p < .3 ? 1 : p < .38 ? 2 : p < .74 ? 3 : 4;
-    if (stage !== lastRail){ h.rail.forEach((li, i) => li.classList.toggle('on', i === stage)); lastRail = stage; }
+    h.steps.forEach((li, i) => set(li, '--sf', seg(p, B[i], B[i + 1])));
+    if (stage !== lastRail){ h.steps.forEach((li, i) => { li.classList.toggle('on', i === stage); li.classList.toggle('done', i < stage); }); lastRail = stage; }
   }
 
   if (!sh) return;
