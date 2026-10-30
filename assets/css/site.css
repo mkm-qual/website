@@ -3,15 +3,15 @@
 :root{
   --paper:#FFFFFF;
   --surface:#F1F4F8;        /* soft cool card ground */
-  --ink:#001630;            /* Qualitia navy (from brand files) */
+  --ink:#0A2540;            /* headings and primary text: deep navy, Stripe's text palette */
   --brand:#0095EB;          /* Qualitia blue, the symbol tail */
-  --ink-soft:rgba(0,22,48,.68);
-  --ink-faint:rgba(0,22,48,.12);
+  --ink-soft:#425466;       /* body copy and ledes: slate, 7.6:1 on white */
+  --ink-faint:rgba(10,37,64,.12);
   --cta:#B4C6FF;            /* periwinkle CTA, navy text */
   --chip:#E1E9FF;
   --deep:#001630;           /* dark media cards */
   --deep-fg:#EEF2F8;
-  --deep-soft:rgba(238,242,248,.66);
+  --deep-soft:#ADBDCC;      /* body copy on dark cards */
   --pass:#34C38F;
   --run:#E0A84A;
   --sans:"Archivo", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
@@ -40,18 +40,23 @@
   --dur:.2s;
   --logo-hover:color-mix(in srgb,var(--brand) 14%,var(--surface)); /* hover tint behind logos; adapts to light and dark */
   --sec:clamp(96px,13vw,200px);
+  /* the hero's colour, carried lightly through the site: a glow for dark cards (with grain) and a faint wash for light sections */
+  --grain:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .07 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  --aurora:radial-gradient(60% 85% at 0% 0%,rgba(0,149,235,.5),transparent 70%),radial-gradient(55% 80% at 100% 0%,rgba(122,92,255,.42),transparent 70%),radial-gradient(55% 80% at 100% 100%,rgba(0,212,232,.24),transparent 70%),radial-gradient(50% 75% at 0% 100%,rgba(255,92,157,.22),transparent 70%);
+  --wash-a:radial-gradient(40% 60% at 0% 10%,rgba(0,149,235,.08),transparent 70%),radial-gradient(35% 55% at 100% 0%,rgba(122,92,255,.07),transparent 70%);
+  --wash-b:radial-gradient(40% 60% at 100% 90%,rgba(0,212,232,.08),transparent 70%),radial-gradient(35% 55% at 0% 100%,rgba(255,92,157,.06),transparent 70%);
   color-scheme:light;
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
-    --paper:#070E1A; --surface:#0F1A2B; --ink:#E8EEF7; --ink-soft:rgba(232,238,247,.66); --ink-faint:rgba(232,238,247,.12);
-    --cta:#B4C6FF; --chip:#1D2B47; --deep:#122440; --deep-fg:#EEF2F8; --deep-soft:rgba(238,242,248,.66); --logo-hover:color-mix(in srgb,var(--brand) 30%,var(--surface));
+    --paper:#070E1A; --surface:#0F1A2B; --ink:#F6F9FC; --ink-soft:#ADBDCC; --ink-faint:rgba(232,238,247,.12);
+    --cta:#B4C6FF; --chip:#1D2B47; --deep:#122440; --deep-fg:#F6F9FC; --deep-soft:#ADBDCC; --logo-hover:color-mix(in srgb,var(--brand) 30%,var(--surface));
     color-scheme:dark;
   }
 }
 :root[data-theme="dark"]{
-  --paper:#070E1A; --surface:#0F1A2B; --ink:#E8EEF7; --ink-soft:rgba(232,238,247,.66); --ink-faint:rgba(232,238,247,.12);
-  --cta:#B4C6FF; --chip:#1D2B47; --deep:#122440; --deep-fg:#EEF2F8; --deep-soft:rgba(238,242,248,.66); --logo-hover:color-mix(in srgb,var(--brand) 30%,var(--surface));
+  --paper:#070E1A; --surface:#0F1A2B; --ink:#F6F9FC; --ink-soft:#ADBDCC; --ink-faint:rgba(232,238,247,.12);
+  --cta:#B4C6FF; --chip:#1D2B47; --deep:#122440; --deep-fg:#F6F9FC; --deep-soft:#ADBDCC; --logo-hover:color-mix(in srgb,var(--brand) 30%,var(--surface));
   color-scheme:dark;
 }
 
@@ -68,7 +73,8 @@ p{margin:0}
 .display{font-size:var(--t-display);line-height:1.05;letter-spacing:-0.01em;font-weight:300}
 .h1{font-size:var(--t-h1);line-height:1.15;letter-spacing:-0.015em;font-weight:300}
 .h2{font-size:var(--t-h2);line-height:1.15;letter-spacing:-0.01em;font-weight:300}
-.lede{font-size:var(--t-lede);line-height:1.25;letter-spacing:-0.005em}
+.lede{font-size:var(--t-lede);line-height:1.25;letter-spacing:-0.005em;color:var(--ink-soft)}
+:is(.results-card,.cta-card,.hero-card,.cx-cta-card,.story.dark,.media.dark,.bl-card.hi,.m-story) .lede{color:var(--deep-soft)}
 .soft{color:var(--ink-soft)}
 .chip{display:inline-block;font-size:var(--t-chip);font-weight:500;letter-spacing:.01em;line-height:1;padding:6px;border-radius:var(--r-xs);background:var(--chip);color:var(--ink)}
 
@@ -1510,3 +1516,8 @@ main,footer{position:relative;z-index:1;background:var(--paper)}
   .sh-stick{position:relative;height:auto;min-height:100svh;padding-bottom:40px}
   .sh-hand,.sh-hint,.sh-steps{display:none}
 }
+
+/* Hero theme, applied lightly: dark cards glow with the hero colours under a fine grain; a few light sections carry a faint wash */
+.results-card,.cta-card,.story.dark,.bl-card.hi,.mega .m-story{background-image:var(--grain),var(--aurora);background-size:160px,auto,auto,auto,auto}  /* one size per layer: the aurora is four gradients */
+.overview,.plats,.pp-hero{background-image:var(--wash-a)}
+.turn,.stories{background-image:var(--wash-b)}
