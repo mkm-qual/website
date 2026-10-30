@@ -611,12 +611,12 @@
     secs.forEach(S => {
       const s = (S.sec.querySelector('.hs-pin') || S.sec).getBoundingClientRect();   // a pinned section: light the pinned panel
       S.c = s.top + scrollY + s.height / 2;
-      // the core at (x, y) of the section, the halo opposite and lower; in each box's layer coordinates (layer = box + 60% each side)
+      // the core at (x, y) of the section, the halo opposite and lower; in each box's layer coordinates (layer = box + one box size each side)
       const cx = s.left + s.width * S.x, cy = s.top + s.height * S.y, hx = s.left + s.width * (1 - S.x), hy = s.top + s.height * .75;
       S.boxes.forEach(b => {
         // in the sideways reel, measure each card at rest: add back how far the reel has slid (--rx)
         const rx = parseFloat(getComputedStyle(b).getPropertyValue('--rx')) || 0;
-        const r = b.getBoundingClientRect(), ox = r.left + rx - r.width * .6, oy = r.top - r.height * .6;
+        const r = b.getBoundingClientRect(), ox = r.left + rx - r.width, oy = r.top - r.height;   // the layer reaches one box size past each edge
         b.style.setProperty('--cx', (cx - ox).toFixed(0) + 'px'); b.style.setProperty('--cy', (cy - oy).toFixed(0) + 'px');
         b.style.setProperty('--hx', (hx - ox).toFixed(0) + 'px'); b.style.setProperty('--hy', (hy - oy).toFixed(0) + 'px');
       });
