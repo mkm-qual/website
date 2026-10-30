@@ -680,6 +680,44 @@
   });
 })();
 
+/* ROI charts on hover: one tooltip follows the pointer over any [data-tip] row; the effort chart gets a crosshair
+   that reads both curves (sampled once from the SVG paths) and marks the avoided upkeep between them. */
+(() => {
+  const rows = document.querySelectorAll('.turn [data-tip]'), eff = document.querySelector('.effort');
+  if (!rows.length && !eff) return;
+  const tip = document.createElement('div'); tip.className = 'chart-tip'; tip.setAttribute('aria-hidden', 'true'); document.body.append(tip);
+  const show = (html, e) => {
+    tip.innerHTML = html; tip.classList.add('on');
+    const w = tip.offsetWidth, x = Math.min(innerWidth - w - 12, e.clientX + 14), y = e.clientY - tip.offsetHeight - 14;
+    tip.style.transform = 'translate(' + Math.max(12, x) + 'px,' + (y < 8 ? e.clientY + 18 : y) + 'px)';
+  };
+  const hide = () => tip.classList.remove('on');
+  rows.forEach(r => {
+    const [head, rest] = r.dataset.tip.split(' · ');
+    r.addEventListener('pointermove', e => show('<b>' + head + '</b><br>' + rest, e));
+    r.addEventListener('pointerleave', hide);
+  });
+  if (!eff) return;
+  const svg = eff.querySelector('svg'), them = svg.querySelector('.ef-them'), us = svg.querySelector('.ef-us');
+  const x = eff.querySelector('.ef-x'), dThem = x.querySelector('.them'), dUs = x.querySelector('.us'), gap = x.querySelector('.ef-gap');
+  // top edge of each area: the highest point at every x across the 400-wide viewBox
+  const edge = path => { const top = new Float32Array(401).fill(180), n = 600, L = path.getTotalLength();
+    for (let i = 0; i <= n; i++){ const p = path.getPointAtLength(L * i / n), k = Math.round(p.x); if (k >= 0 && k <= 400 && p.y < top[k]) top[k] = p.y; }
+    for (let k = 1; k <= 400; k++) if (top[k] >= 180 && top[k - 1] < 180) top[k] = top[k - 1];
+    return top; };
+  let eThem, eUs;
+  eff.addEventListener('pointermove', e => {
+    if (!eThem){ eThem = edge(them); eUs = edge(us); }
+    const r = svg.getBoundingClientRect(), fx = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width)), k = Math.round(fx * 400);
+    const yT = eThem[k] / 180 * r.height, yU = eUs[k] / 180 * r.height, top = r.top - eff.getBoundingClientRect().top;
+    x.style.left = (fx * r.width) + 'px'; x.style.top = top + 'px'; x.style.height = r.height + 'px';
+    dThem.style.top = yT + 'px'; dUs.style.top = yU + 'px';
+    gap.style.top = yT + 'px'; gap.style.height = Math.max(0, yU - yT) + 'px';
+    show('<b>Sprint ' + (1 + Math.round(fx * 25)) + '</b><br>Highlighted: the upkeep script-based suites need and Boson avoids', e);
+  });
+  eff.addEventListener('pointerleave', hide);
+})();
+
 /* Results: when the card comes into view the stats rise in turn and each figure counts up to its value. Reduced motion shows them as written. */
 (() => {
   const card = document.querySelector('.results-card');
@@ -1070,13 +1108,17 @@ gl_FragColor=vec4(col,1.);}`;
 })();
 
 /* Pixel reveal: draw the Qualitia wordmark (the Q symbol on narrow screens) as negative space in a dense field of
-   rounded pixels whose size shrinks from ~84px to fine over the final stretch of scroll. Static fine grid for reduced motion. */
+   crisp, slightly rounded pixels whose size shrinks from ~84px to fine over the final stretch of scroll. Each pixel
+   gets the same treatment as the content boxes above: a white tile with a hairline edge, and one soft moving light
+   (amber core, blue and violet haze) seen through all the tiles. The gaps stay plain, so the logo reads. The light
+   drifts while the panel is on screen; reduced motion shows a still frame. */
 (() => {
   const wrap = document.querySelector('.px-reveal'), qsym = document.getElementById('q-symbol');
   if (!wrap) return;
   const cv = wrap.querySelector('canvas'), ctx = cv.getContext('2d');
-  // the logo is negative space: a dense navy pixel field around it, empty cells where the logo is
-  const BG = '#001630', FG = '#10305a', DENSITY = 0.85, COARSE = 84;
+  // the logo is negative space: a dense pixel field around it, empty cells where the logo is
+  const DENSITY = 0.85, COARSE = 84;
+  const dark = () => getComputedStyle(wrap).backgroundColor !== 'rgb(255, 255, 255)';   // the ground is site.css's: white, or navy in dark mode
   const reduce = matchMedia('(prefers-reduced-motion: reduce)');
   const toImg = (sym, vb) => { const i = new Image(); i.onload = () => { mask = null; queue(); };
     i.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="' + vb + '">' + sym.innerHTML.replace(/currentColor|#0095EB/gi, '#fff') + '</svg>'); return i; };
@@ -1084,6 +1126,7 @@ gl_FragColor=vec4(col,1.);}`;
   wordmark.src = 'assets/brand/qualitia-logo-white.svg';
   const symbol = qsym ? toImg(qsym, '0 0 35 36') : null;
   let mask = null, W = 0, H = 0, queued = false;
+  const tiles = document.createElement('canvas'); let tileKey = '';   // the tile layer, cached per size and theme
   let maxY = 0; const readMax = () => { maxY = document.documentElement.scrollHeight - innerHeight; };   // page height, read on load and resize only
   const narrow = () => W < 600 && symbol;
   const fine = () => (narrow() ? 5 : 6);
@@ -1113,20 +1156,44 @@ gl_FragColor=vec4(col,1.);}`;
     if (w !== W || h !== H){ W = w; H = h; const dpr = Math.min(devicePixelRatio || 1, 2); cv.width = W * dpr; cv.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0); mask = null; }
     if (!mask) buildMask();
     const v = cellSize(), gap = v > 2 ? 1 : 0, rad = 1 + 3 * Math.max(0, Math.min(1, (v - fine()) / (COARSE - fine())));
-    ctx.fillStyle = BG; ctx.fillRect(0, 0, W, H); ctx.fillStyle = FG;
-    for (let y = 0; y < H; y += v) for (let x = 0; x < W; x += v){
-      const cx = Math.min(W - 1, x + (v >> 1)), cy = Math.min(H - 1, y + (v >> 1));
-      const inLogo = mask && mask[(cx + cy * W) * 4 + 3] > 128;
-      if (inLogo || hash(x / v | 0, y / v | 0) >= DENSITY) continue;
-      if (ctx.roundRect){ ctx.beginPath(); ctx.roundRect(x, y, v - gap, v - gap, rad); ctx.fill(); } else ctx.fillRect(x, y, v - gap, v - gap);
+    const dk = dark(), edge = v >= 10, dpr = Math.min(devicePixelRatio || 1, 2), key = [v, W, H, dk, !!mask].join();
+    // 1. the tiles, like the boxes: a near-white (or surface) fill and a hairline edge; drawn once per size, then reused
+    if (key !== tileKey){
+      tileKey = key; tiles.width = W * dpr; tiles.height = H * dpr;
+      const ctx = tiles.getContext('2d'); ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.beginPath();
+      for (let y = 0; y < H; y += v) for (let x = 0; x < W; x += v){
+        const cx = Math.min(W - 1, x + (v >> 1)), cy = Math.min(H - 1, y + (v >> 1));
+        const inLogo = mask && mask[(cx + cy * W) * 4 + 3] > 128;
+        if (inLogo || hash(x / v | 0, y / v | 0) >= DENSITY) continue;
+        if (ctx.roundRect) ctx.roundRect(x + .5, y + .5, v - gap - 1, v - gap - 1, rad); else ctx.rect(x + .5, y + .5, v - gap - 1, v - gap - 1);
+      }
+      ctx.fillStyle = dk ? '#13233A' : '#F1F4F9'; ctx.fill();   // solid, like the boxes, so the light shows at full strength
+      ctx.strokeStyle = dk ? 'rgba(255,255,255,.1)' : (edge ? 'rgba(10,37,64,.1)' : 'rgba(10,37,64,.09)'); ctx.lineWidth = 1; ctx.stroke();
     }
+    ctx.clearRect(0, 0, W, H);                                   // the panel's own background shows between tiles
+    ctx.drawImage(tiles, 0, 0, W, H);
+    // 2. the moving light, painted only where tiles are (source-atop), like the section light behind the boxes
+    const t = (reduce.matches ? 12 : performance.now() / 1000) * .25;
+    const glow = (x, y, rx, ry, c) => { const g = ctx.createRadialGradient(x, y, 0, x, y, Math.max(rx, ry)); g.addColorStop(0, c); g.addColorStop(1, 'rgba(255,255,255,0)');
+      ctx.save(); ctx.translate(x, y); ctx.scale(rx / Math.max(rx, ry), ry / Math.max(rx, ry)); ctx.translate(-x, -y); ctx.fillStyle = g; ctx.fillRect(x - Math.max(rx, ry), y - Math.max(rx, ry), Math.max(rx, ry) * 2, Math.max(rx, ry) * 2); ctx.restore(); };
+    ctx.globalCompositeOperation = 'source-atop';
+    ctx.globalAlpha = dk ? .6 : 1;
+    glow(W * (.72 + .18 * Math.sin(t * .9)), H * (.6 + .25 * Math.cos(t * .7)), W * .5, H * 1.1, 'rgba(0,149,235,.5)');
+    glow(W * (.22 + .16 * Math.cos(t * .6)), H * (.45 + .3 * Math.sin(t * .8)), W * .38, H * .9, 'rgba(122,92,255,.46)');
+    glow(W * (.48 + .22 * Math.sin(t * .5 + 1)), H * (.5 + .22 * Math.sin(t * 1.1)), W * .3, H * .8, 'rgba(255,168,74,.56)');
+    ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'source-over';
+    if (live && !reduce.matches && !document.hidden) queue();   // keep the light moving while the panel is on screen
   }
   function queue(){ if (!queued){ queued = true; requestAnimationFrame(draw); } }
   readMax(); addEventListener('load', readMax);
   if ('ResizeObserver' in window) new ResizeObserver(readMax).observe(document.body);   // late images change the height
-  const onScroll = () => { if (scrollY >= maxY - H - 240) queue(); };
+  let live = false;
+  const onScroll = () => { live = scrollY >= maxY - H - 240; if (live) queue(); };
+  document.addEventListener('visibilitychange', onScroll);
   addEventListener('scroll', onScroll, {passive: true});
   addEventListener('resize', () => { readMax(); queue(); }, {passive: true});
   reduce.addEventListener('change', queue);
+  new MutationObserver(queue).observe(document.documentElement, {attributes: true, attributeFilter: ['data-theme']});   // ground follows the theme
   queue();
 })();

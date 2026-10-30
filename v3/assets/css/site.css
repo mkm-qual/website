@@ -254,7 +254,8 @@ p{margin:0}
 /* Statement */
 .statement{padding:var(--sec) var(--side);text-align:center}
 /* Homepage statement panel: same left/right edges and radius as the hero card, holds the features */
-.statement.panel{margin:0 var(--g);padding:clamp(64px,9vw,144px) max(calc(var(--side) - var(--g)),16px);text-align:center;border-radius:var(--r-lg);background:none}
+/* no panel now: a short top, so the logo strip sits centred between the hero and this heading */
+.statement.panel{margin:0 var(--g);padding:clamp(28px,3vw,48px) max(calc(var(--side) - var(--g)),16px) clamp(64px,9vw,144px);text-align:center;border-radius:var(--r-lg);background:none}
 .statement .display{max-width:16em;margin-inline:auto}
 .statement .soft{display:block}
 .statement.panel .features{margin-top:clamp(64px,8vw,128px);text-align:left;gap:clamp(32px,4vw,56px)}
@@ -367,7 +368,7 @@ button.mock-btn{border:0;width:calc(100% - 28px);cursor:pointer;font:inherit;fon
 /* Stories (horizontal reel) */
 .stories{padding:var(--sec) 0 0}
 .stories .sec-title{padding-inline:var(--side)}
-.reel{display:flex;gap:var(--g);overflow-x:auto;scroll-snap-type:x mandatory;padding:0 var(--side) var(--g);scroll-padding-inline:var(--side);scrollbar-width:none}
+.reel{display:flex;gap:var(--g);overflow-x:auto;scroll-snap-type:x mandatory;padding:8px var(--side) 48px;margin:-8px 0 -32px;scroll-padding-inline:var(--side);scrollbar-width:none}   /* room for the cards' shadow, which the scroll area would otherwise clip */
 .reel::-webkit-scrollbar{display:none}
 .story{flex:0 0 min(452px,86vw);scroll-snap-align:start;background:var(--surface);border-radius:var(--r);padding:28px;display:flex;flex-direction:column;justify-content:space-between;gap:40px;min-height:444px;margin:0}
 .story blockquote{margin:0;font-size:24px;font-weight:300;line-height:1.25;letter-spacing:-0.01em}
@@ -1189,7 +1190,6 @@ fieldset.ct-f{border:0;margin:0;padding:0}
 .ind-plat{list-style:none;margin:4px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:6px}
 .ind-plat li{padding:6px 10px;border-radius:var(--r-sm);background:var(--paper);font-size:var(--t-meta)}
 .ind-case{display:flex;flex-direction:column;gap:6px;height:100%;background:var(--deep);color:var(--deep-fg);border-radius:var(--r);padding:20px 22px;transition:transform .25s var(--ease)}
-.ind-case:hover{transform:translateY(-2px)}
 .ind-case small{font:500 var(--t-xs) var(--mono);color:var(--cta)}
 .ind-case b{font-weight:300;font-size:clamp(19px,1.6vw,22px);line-height:1.25}
 .ind-case span{margin-top:auto;padding-top:8px;font-size:var(--t-small);color:var(--deep-soft)}
@@ -1281,7 +1281,9 @@ fieldset.ct-f{border:0;margin:0;padding:0}
 :root{--px-h:clamp(220px,38vw,520px)}
 main,footer{position:relative;z-index:1;background:var(--paper)}
 .px-spacer{height:var(--px-h)}
-.px-reveal{position:fixed;left:0;right:0;bottom:0;height:var(--px-h);z-index:0;background:#001630}
+.px-reveal{position:fixed;left:0;right:0;bottom:0;height:var(--px-h);z-index:0;background:#FFFFFF}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .px-reveal{background:#001630} }
+:root[data-theme="dark"] .px-reveal{background:#001630}
 .px-reveal canvas{display:block;width:100%;height:100%}
 
 /* ---------- Stakeholder round (Oct 2026): feature proof, differentiators, Salesforce-first platforms ---------- */
@@ -1579,3 +1581,45 @@ main,footer{position:relative;z-index:1;background:var(--paper)}
 .e2e-pdf{box-shadow:var(--stroke),0 30px 60px -30px rgba(0,22,48,.5)}
 .e2e-steps button[aria-current="step"]{box-shadow:var(--stroke),0 8px 24px -16px rgba(0,22,48,.35)}
 .sec-items div,.sf-col,.pp-icon,.cs-logo,.cs-row-mets div,.ind-plat li{box-shadow:var(--stroke)}
+
+/* ROI charts on hover: the row under the pointer lifts and the rest dim; the effort chart gets a crosshair with a dot
+   on each curve and the avoided upkeep highlighted between them. One tooltip (site.js) says what you're pointing at. */
+.cmp .row2,.ba-r:not(.ba-h){transition:opacity var(--dur) var(--ease)}
+.cmp:has(.row2:hover) .row2:not(:hover),.ba:has(.ba-r:not(.ba-h):hover) .ba-r:not(.ba-h):not(:hover){opacity:.4}
+.row2 .fill,.ba-v,.track2{transition:box-shadow var(--dur) var(--ease),filter var(--dur) var(--ease),scale .3s var(--ease-spring)}
+.row2:hover .fill.us,.ba-r:hover .ba-v.us{box-shadow:0 8px 20px -8px rgba(91,76,240,.7);filter:brightness(1.06)}
+.row2:hover .fill.them,.row2:hover .fill.range{filter:brightness(.94)}
+.row2:hover .track2{box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--ink) 18%,transparent)}
+.ba-r:hover .ba-v.us{scale:1.03}
+.ba-to::before{transition:translate .3s var(--ease-spring),background-color var(--dur)}
+.ba-r:hover .ba-to::before{translate:4px 0;background:#5B4CF0}
+.row2[data-tip],.ba-r[data-tip],.effort{cursor:default}
+.effort{position:relative}
+.ef-x{position:absolute;top:0;bottom:0;left:0;width:0;border-left:1px dashed color-mix(in srgb,var(--ink) 35%,transparent);opacity:0;transition:opacity var(--dur);pointer-events:none}
+.effort:hover .ef-x{opacity:1}
+.ef-dot{position:absolute;left:0;width:10px;height:10px;margin:-5px 0 0 -5px;border-radius:50%;background:var(--box);box-shadow:0 0 0 2px var(--ink-soft)}
+.ef-dot.us{box-shadow:0 0 0 2px #5B4CF0}
+.ef-gap{position:absolute;left:-3px;width:6px;border-radius:3px;background:color-mix(in srgb,#FFA84A 55%,transparent)}
+.chart-tip{position:fixed;z-index:70;left:0;top:0;max-width:260px;padding:8px 12px;border-radius:var(--r-sm);background:#0A2540;color:#fff;font-size:var(--t-meta);line-height:1.35;box-shadow:0 10px 30px -10px rgba(10,37,64,.5);pointer-events:none;opacity:0;transition:opacity .15s var(--ease)}
+.chart-tip.on{opacity:1}
+.chart-tip b{font-weight:500}
+@media (hover:none){ .ef-x,.chart-tip{display:none} }
+
+/* Runs inside your network: each card lifts on hover, its edge takes a brand tint and the icon tile fills with the
+   CTA blue-violet, tilting a touch */
+.sec-items > div{transition:translate .35s var(--ease-spring),box-shadow .25s var(--ease)}
+.sec-items > div:hover{translate:0 -4px;box-shadow:0 0 0 1px color-mix(in srgb,#5B4CF0 28%,transparent),0 18px 36px -18px rgba(10,37,64,.32)}
+.sec-items .sec-ico{transition:background-color .25s var(--ease),stroke .25s var(--ease),rotate .35s var(--ease-spring),scale .35s var(--ease-spring)}
+.sec-items > div:hover .sec-ico{background-color:#4F55E6;stroke:#fff;rotate:-6deg;scale:1.08}
+@media (prefers-reduced-motion:reduce){ .sec-items > div:hover{translate:none} .sec-items > div:hover .sec-ico{rotate:none;scale:none} }
+
+/* Card hover, site-wide (the same language as the security cards): the card lifts with a deeper shadow and a
+   brand-tinted edge, and its badge or icon tile fills with the CTA blue-violet. Applied once a card has finished its
+   scroll reveal (:not(.rv)), so the two never fight over `translate`. */
+:is(.diff,.story,.pp-card,.kpi,.qt,.bl-card,.ind-case,.tile,.case-art,.pp-next a):not(.rv){transition:translate .35s var(--ease-spring),box-shadow .25s var(--ease),background-color var(--dur) var(--ease)}
+:is(.diff,.story:not(.dark),.pp-card,.kpi:not(.hi),.qt,.bl-card:not(.hi),.ind-case,.tile:not(.tile-cta),.pp-next a):hover{translate:0 -4px;box-shadow:0 0 0 1px color-mix(in srgb,#5B4CF0 28%,transparent),0 1px 2px rgba(10,37,64,.04),0 22px 44px -22px rgba(10,37,64,.32)}
+:is(.story.dark,.kpi.hi,.bl-card.hi,.tile-cta):hover{translate:0 -4px;box-shadow:0 24px 48px -20px rgba(10,37,64,.5)}
+.case:hover .case-art{translate:0 -4px;box-shadow:0 22px 44px -22px rgba(10,37,64,.32)}
+:is(.diff,.pp-card) :is(.chip,.pp-icon){transition:background-color .25s var(--ease),color .25s var(--ease)}
+.diff:hover .chip,.pp-card:hover .pp-icon{background-color:#4F55E6;color:#fff}
+@media (hover:none),(prefers-reduced-motion:reduce){ :is(.diff,.story,.pp-card,.kpi,.qt,.bl-card,.ind-case,.tile,.pp-next a):hover,.case:hover .case-art{translate:none} }
