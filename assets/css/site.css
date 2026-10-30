@@ -1378,8 +1378,6 @@ main,footer{position:relative;z-index:1;background:var(--paper)}
 .sh-stick::after{content:"";position:absolute;z-index:-1;width:70vmax;aspect-ratio:1;left:50%;top:60%;border-radius:50%;background:radial-gradient(closest-side,rgba(0,149,235,.35),rgba(0,149,235,.08) 55%,transparent);transform:translate(calc(-50% + (var(--p,0) - .5) * 30vw),-50%) scale(calc(.8 + var(--p,0) * .5))}
 
 .sh-copy{position:absolute;inset:var(--ct) var(--side) auto;text-align:center;z-index:3;pointer-events:none;transform:translateY(calc(var(--z,0) * 17vh))}
-.sh-tag{display:inline-flex;align-items:center;gap:8px;font-size:var(--t-small);color:rgba(255,255,255,.78);text-decoration:none;pointer-events:auto;margin-bottom:18px}
-.sh-tag .chip{background:var(--cta);color:#001630}
 .sh-lines{position:relative;display:grid;place-items:center}
 .sh-line{grid-area:1/1;margin:0;font-size:var(--fs);line-height:1.02;letter-spacing:-0.025em;font-weight:300;max-width:14em;will-change:opacity,transform,filter;
   opacity:var(--o,0);transform:translateY(calc((1 - var(--o,0)) * var(--dir,1) * 28px)) scale(calc(.96 + var(--o,0) * .04));filter:blur(calc((1 - var(--o,0)) * 10px))}
@@ -1411,7 +1409,7 @@ main,footer{position:relative;z-index:1;background:var(--paper)}
 @media (min-width:1280px){ .sh-rail{display:flex} }
 
 /* the app window */
-.sh-stage{position:absolute;left:50%;top:calc(var(--ct) + 50px + var(--fs) * 2.1 + 20px);width:min(880px,calc(100% - 2 * var(--side)));transform:translateX(-50%);perspective:1600px;z-index:2}
+.sh-stage{position:absolute;left:50%;top:calc(var(--ct) + 10px + var(--fs) * 2.1 + 20px);width:min(880px,calc(100% - 2 * var(--side)));transform:translateX(-50%);perspective:1600px;z-index:2}
 .sh-app{position:relative;background:#F6F8FC;color:#001630;border-radius:var(--r);box-shadow:0 1px 0 rgba(255,255,255,.4) inset,0 40px 80px -30px rgba(0,0,0,.6),0 0 0 1px rgba(180,198,255,.25);overflow:hidden;transform-origin:50% 0;
   opacity:calc(1 - var(--z,0));transform:translateY(calc(var(--a,0) * 18vh + var(--z,0) * 30vh)) rotateX(calc(var(--a,0) * 32deg - var(--z,0) * 24deg)) scale(calc(1 - var(--a,0) * .12 - var(--z,0) * .3));will-change:transform,opacity}
 .sh-bar{display:flex;align-items:center;gap:12px;padding:10px 14px;background:#fff;border-bottom:1px solid rgba(0,22,48,.08);font-size:var(--t-xs);color:rgba(0,22,48,.6)}
@@ -1476,7 +1474,7 @@ main,footer{position:relative;z-index:1;background:var(--paper)}
   .sh-stick{--fs:clamp(26px,7.6vw,32px);--ct:84px}
   .sh-line br{display:none}
   .sh-line .dim{margin-left:.25em}
-  .sh-stage{top:calc(var(--ct) + 44px + var(--fs) * 3.6 + 24px)}
+  .sh-stage{top:calc(var(--ct) + 4px + var(--fs) * 3.6 + 24px)}
   .sh-row:nth-child(n+5){display:none}
   .sh-bar .env{display:none}
   .sh-foot{gap:14px}
