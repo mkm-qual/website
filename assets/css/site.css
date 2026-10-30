@@ -367,7 +367,7 @@ button.mock-btn{border:0;width:calc(100% - 28px);cursor:pointer;font:inherit;fon
 /* Stories (horizontal reel) */
 .stories{padding:var(--sec) 0 0}
 .stories .sec-title{padding-inline:var(--side)}
-.reel{display:flex;gap:var(--g);overflow-x:auto;scroll-snap-type:x mandatory;padding:0 var(--side) var(--g);scroll-padding-inline:var(--side);scrollbar-width:none}
+.reel{display:flex;gap:var(--g);overflow-x:auto;scroll-snap-type:x mandatory;padding:8px var(--side) 48px;margin:-8px 0 -32px;scroll-padding-inline:var(--side);scrollbar-width:none}   /* room for the cards' shadow, which the scroll area would otherwise clip */
 .reel::-webkit-scrollbar{display:none}
 .story{flex:0 0 min(452px,86vw);scroll-snap-align:start;background:var(--surface);border-radius:var(--r);padding:28px;display:flex;flex-direction:column;justify-content:space-between;gap:40px;min-height:444px;margin:0}
 .story blockquote{margin:0;font-size:24px;font-weight:300;line-height:1.25;letter-spacing:-0.01em}
