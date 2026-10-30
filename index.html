@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@100..700&family=Geist+Mono:wght@400;500&display=swap">
 <script>try{var t=localStorage.getItem("q-theme");if(t==="light"||t==="dark")document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
-<link rel="stylesheet" href="assets/css/site.css?v=4aa5ef11">
+<link rel="stylesheet" href="assets/css/site.css?v=52a6ac0c">
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -286,11 +286,11 @@
           <h3>Time to update automation after a sprint</h3>
           <p class="sub">Working days, 0 to 30</p>
         </div>
-        <div class="row2">
+        <div class="row2" data-tip="Boson · updated the same day, in one click">
           <span class="who"><b>Boson</b></span>
           <div class="track2"><div class="window" style="left:3.33%"></div><div class="fill us min" style="width:1.5%"></div><span class="out" style="left:calc(3.33% + 10px)">same day, 1 click</span></div>
         </div>
-        <div class="row2">
+        <div class="row2" data-tip="Script-based tools · 3 weeks, up to 6, to update">
           <span class="who">Script-based tools</span>
           <div class="track2"><div class="window" style="left:3.33%"></div><div class="fill them" style="width:50%">3 weeks</div><div class="fill range" style="left:50%;width:50%;border-radius:0 var(--r-sm) var(--r-sm) 0;justify-content:flex-end">6 weeks</div></div>
         </div>
@@ -302,11 +302,11 @@
           <h3>Automated coverage within one sprint day</h3>
           <p class="sub">Share of user flows automated, 0 to 100%</p>
         </div>
-        <div class="row2">
+        <div class="row2" data-tip="Boson · 70%+ of user flows automated within a sprint day">
           <span class="who"><b>Boson</b></span>
           <div class="track2"><div class="fill us" style="width:70%">70%+</div></div>
         </div>
-        <div class="row2">
+        <div class="row2" data-tip="Other tools · under 20% in the same day">
           <span class="who">Other tools</span>
           <div class="track2"><div class="fill them" style="width:20%"></div><span class="out" style="left:calc(20% + 10px)">under 20%</span></div>
         </div>
@@ -322,9 +322,9 @@
         </div>
         <div class="ba" role="table" aria-label="Before and after Boson">
           <div class="ba-r ba-h" role="row"><span role="columnheader"><span class="sr-only">Measure</span></span><span role="columnheader">Before</span><span aria-hidden="true"></span><span role="columnheader">With Boson</span></div>
-          <div class="ba-r" role="row"><span class="who" role="rowheader">Regression cycle</span><span class="ba-v them" role="cell">3 weeks</span><i class="ba-to" aria-hidden="true"></i><span class="ba-v us" role="cell">1 day</span></div><!-- TODO: validate 3 weeks / 1 day -->
-          <div class="ba-r" role="row"><span class="who" role="rowheader">Automated coverage</span><span class="ba-v them" role="cell">~20%</span><i class="ba-to" aria-hidden="true"></i><span class="ba-v us" role="cell">~70%</span></div><!-- TODO: validate ~20% / ~70% -->
-          <div class="ba-r" role="row"><span class="who" role="rowheader">Salesforce go-to-market</span><span class="ba-v them" role="cell">Baseline</span><i class="ba-to" aria-hidden="true"></i><span class="ba-v us" role="cell">40% faster</span></div><!-- TODO: validate (40% confirmed by Vrushank, 29 Oct) -->
+          <div class="ba-r" role="row" data-tip="Regression cycle · 3 weeks before, 1 day with Boson"><span class="who" role="rowheader">Regression cycle</span><span class="ba-v them" role="cell">3 weeks</span><i class="ba-to" aria-hidden="true"></i><span class="ba-v us" role="cell">1 day</span></div><!-- TODO: validate 3 weeks / 1 day -->
+          <div class="ba-r" role="row" data-tip="Automated coverage · ~20% before, ~70% with Boson"><span class="who" role="rowheader">Automated coverage</span><span class="ba-v them" role="cell">~20%</span><i class="ba-to" aria-hidden="true"></i><span class="ba-v us" role="cell">~70%</span></div><!-- TODO: validate ~20% / ~70% -->
+          <div class="ba-r" role="row" data-tip="Salesforce go-to-market · 40% faster with Boson"><span class="who" role="rowheader">Salesforce go-to-market</span><span class="ba-v them" role="cell">Baseline</span><i class="ba-to" aria-hidden="true"></i><span class="ba-v us" role="cell">40% faster</span></div><!-- TODO: validate (40% confirmed by Vrushank, 29 Oct) -->
         </div>
         <p class="legend">Your numbers will vary with suite size, release cadence and team.</p>
       </figure>
@@ -341,6 +341,7 @@
           </svg>
           <span class="ef-lab ef-lab-them">Script-based tools</span>
           <span class="ef-lab ef-lab-us">Boson</span>
+          <span class="ef-x" aria-hidden="true"><i class="ef-gap"></i><i class="ef-dot them"></i><i class="ef-dot us"></i></span>
         </div>
         <div class="ticks ef-ticks"><span style="left:0">Sprint 1</span><span style="left:50%">Sprint 13</span><span style="left:100%">Sprint 26</span></div>
         <p class="legend"><i class="ef-key"></i>Hatched: the extra upkeep script-based suites need. Boson ends the year with ~60% less effort.<!-- TODO: validate the ~60% --></p>
@@ -503,6 +504,6 @@
 <div class="px-spacer" aria-hidden="true"></div>
 <div class="px-reveal" aria-hidden="true"><canvas></canvas></div>
 
-<script src="assets/js/site.js?v=44b46db5"></script>
+<script src="assets/js/site.js?v=9a884ced"></script>
 </body>
 </html>

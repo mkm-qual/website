@@ -680,6 +680,44 @@
   });
 })();
 
+/* ROI charts on hover: one tooltip follows the pointer over any [data-tip] row; the effort chart gets a crosshair
+   that reads both curves (sampled once from the SVG paths) and marks the avoided upkeep between them. */
+(() => {
+  const rows = document.querySelectorAll('.turn [data-tip]'), eff = document.querySelector('.effort');
+  if (!rows.length && !eff) return;
+  const tip = document.createElement('div'); tip.className = 'chart-tip'; tip.setAttribute('aria-hidden', 'true'); document.body.append(tip);
+  const show = (html, e) => {
+    tip.innerHTML = html; tip.classList.add('on');
+    const w = tip.offsetWidth, x = Math.min(innerWidth - w - 12, e.clientX + 14), y = e.clientY - tip.offsetHeight - 14;
+    tip.style.transform = 'translate(' + Math.max(12, x) + 'px,' + (y < 8 ? e.clientY + 18 : y) + 'px)';
+  };
+  const hide = () => tip.classList.remove('on');
+  rows.forEach(r => {
+    const [head, rest] = r.dataset.tip.split(' · ');
+    r.addEventListener('pointermove', e => show('<b>' + head + '</b><br>' + rest, e));
+    r.addEventListener('pointerleave', hide);
+  });
+  if (!eff) return;
+  const svg = eff.querySelector('svg'), them = svg.querySelector('.ef-them'), us = svg.querySelector('.ef-us');
+  const x = eff.querySelector('.ef-x'), dThem = x.querySelector('.them'), dUs = x.querySelector('.us'), gap = x.querySelector('.ef-gap');
+  // top edge of each area: the highest point at every x across the 400-wide viewBox
+  const edge = path => { const top = new Float32Array(401).fill(180), n = 600, L = path.getTotalLength();
+    for (let i = 0; i <= n; i++){ const p = path.getPointAtLength(L * i / n), k = Math.round(p.x); if (k >= 0 && k <= 400 && p.y < top[k]) top[k] = p.y; }
+    for (let k = 1; k <= 400; k++) if (top[k] >= 180 && top[k - 1] < 180) top[k] = top[k - 1];
+    return top; };
+  let eThem, eUs;
+  eff.addEventListener('pointermove', e => {
+    if (!eThem){ eThem = edge(them); eUs = edge(us); }
+    const r = svg.getBoundingClientRect(), fx = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width)), k = Math.round(fx * 400);
+    const yT = eThem[k] / 180 * r.height, yU = eUs[k] / 180 * r.height, top = r.top - eff.getBoundingClientRect().top;
+    x.style.left = (fx * r.width) + 'px'; x.style.top = top + 'px'; x.style.height = r.height + 'px';
+    dThem.style.top = yT + 'px'; dUs.style.top = yU + 'px';
+    gap.style.top = yT + 'px'; gap.style.height = Math.max(0, yU - yT) + 'px';
+    show('<b>Sprint ' + (1 + Math.round(fx * 25)) + '</b><br>Highlighted: the upkeep script-based suites need and Boson avoids', e);
+  });
+  eff.addEventListener('pointerleave', hide);
+})();
+
 /* Results: when the card comes into view the stats rise in turn and each figure counts up to its value. Reduced motion shows them as written. */
 (() => {
   const card = document.querySelector('.results-card');
