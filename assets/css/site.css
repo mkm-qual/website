@@ -564,7 +564,15 @@ footer{padding:clamp(56px,7vw,96px) var(--side) 32px;font-size:var(--t-small)}
 .pp-next b{font-size:22px;font-weight:300;letter-spacing:-0.01em;line-height:1.2;display:flex;justify-content:space-between;gap:12px}
 .pp-next b::after{content:"→";transition:transform .2s var(--ease)}
 .pp-next a:hover b::after{transform:translateX(4px)}
-.pp-quote{padding-top:var(--sec)}
+.pp-quote{margin-top:var(--sec)}
+/* product-page testimonial: one centred white card (it carries the section glow), big light quote, logo and attribution */
+.quote{margin-inline:var(--side);padding:clamp(40px,6vw,96px) clamp(24px,6vw,112px);border-radius:var(--r-lg);display:flex;flex-direction:column;align-items:center;gap:clamp(24px,3vw,36px);text-align:center}
+.quote blockquote{margin:0;max-width:28em;font-size:clamp(24px,2.6vw,36px);font-weight:300;line-height:1.25;letter-spacing:-0.015em;color:var(--ink);text-wrap:balance}
+.quote figcaption{display:flex;flex-direction:column;align-items:center;gap:14px;font-size:var(--t-small);color:var(--ink-soft)}
+.quote figcaption b{display:block;font-weight:500;color:var(--ink);font-size:var(--t-body)}
+.quote-logo{height:28px;width:auto;max-width:140px;object-fit:contain;filter:grayscale(1) contrast(1.1);opacity:.85}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .quote-logo{filter:grayscale(1) invert(1) brightness(1.4)} }
+:root[data-theme="dark"] .quote-logo{filter:grayscale(1) invert(1) brightness(1.4)}
 
 @media (max-width:1024px){
   .pp-hero,.pp-split{grid-template-columns:1fr}
@@ -1549,4 +1557,4 @@ main,footer{position:relative;z-index:1;background:var(--paper)}
 @media (prefers-reduced-motion:reduce){ .bx::before,.bx::after{animation:none} }
 
 /* Content boxes are pure white in light mode (tokens --box, --box-edge). Plain selectors, so hover states keep working. */
-.media,.ov-media,.cmp,.diff,.sf-panel,.secure-card,.story:not(.dark),.tile:not(.tile-cta),.case-art,.kpi,.qt,.pp-card,.tc-e2e,.rs-art,.cs-feat,.cs-chart,.cs-ba>div,.bl-card:not(.hi),.bl-formula,.bl-end,.ind-panel,.lg-note,.sm-col{background-color:var(--box);box-shadow:var(--box-edge)}
+.media,.ov-media,.cmp,.diff,.sf-panel,.secure-card,.story:not(.dark),.quote,.tile:not(.tile-cta),.case-art,.kpi,.qt,.pp-card,.tc-e2e,.rs-art,.cs-feat,.cs-chart,.cs-ba>div,.bl-card:not(.hi),.bl-formula,.bl-end,.ind-panel,.lg-note,.sm-col{background-color:var(--box);box-shadow:var(--box-edge)}
