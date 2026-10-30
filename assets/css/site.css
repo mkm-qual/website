@@ -1560,8 +1560,8 @@ main,footer{position:relative;z-index:1;background:var(--paper)}
    section positions, converted into each box's own coordinates, so neighbouring tiles catch different parts of the same
    light. The light layer reaches a full box size past every edge and the drift is a share of it, so a layer edge
    never shows inside the box; the scroll parallax (--py)
-   is set per section for the same reason. In the sideways stories reel, --rx keeps the light still while the cards
-   slide through it. */
+   is set per section for the same reason. In the sideways stories reel, --rx lights each
+   card as it looks centred in view, fixed, so sliding never repaints it. */
 .bx::before,.bx::after{content:"";position:absolute;inset:-100%;z-index:-1;pointer-events:none;will-change:transform;translate:0 var(--py,0px)}
 .bx::before{background:radial-gradient(30vmax 24vmax at calc(var(--cx,50%) + var(--rx,0px)) var(--cy,50%),var(--ga,transparent),transparent 72%);transform-origin:calc(var(--cx,50%) + var(--rx,0px)) var(--cy,50%);animation:bx-core 10s ease-in-out infinite alternate}
 .bx::after{background:radial-gradient(52vmax 40vmax at calc(var(--hx,50%) + var(--rx,0px)) var(--hy,70%),var(--gb,transparent),transparent 72%);transform-origin:calc(var(--hx,50%) + var(--rx,0px)) var(--hy,70%);translate:0 calc(var(--py,0px) * -.6);animation:bx-halo 14s ease-in-out infinite alternate}
