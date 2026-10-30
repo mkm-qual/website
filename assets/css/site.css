@@ -1469,7 +1469,7 @@ main,footer{position:relative;z-index:1;background:var(--paper)}
 @keyframes sh-wheel{0%{opacity:0;transform:translateY(-3px)}30%{opacity:1}100%{opacity:0;transform:translateY(10px)}}
 
 /* step bar along the foot of the stage: five segments fill in turn (same language as the Total Control walkthrough bar) */
-.sh-steps{position:absolute;left:50%;bottom:30px;transform:translateX(-50%);width:min(560px,calc(100% - 2 * var(--side)));display:flex;gap:8px;list-style:none;margin:0;padding:0;z-index:4;pointer-events:none;opacity:min(1,calc(var(--p,0) * 16))}
+.sh-steps{position:absolute;left:50%;bottom:30px;transform:translateX(-50%);width:min(560px,calc(100% - 2 * var(--side)));display:flex;gap:8px;list-style:none;margin:0;padding:0;z-index:4;pointer-events:none;opacity:calc(min(1,var(--p,0) * 16) * (1 - var(--z,0)))}   /* fades out with the app window at the end */
 .sh-steps li{flex:1;display:flex;flex-direction:column;gap:10px;font-size:var(--t-meta);color:color-mix(in srgb,var(--sh-fg) 45%,transparent);transition:color .3s}
 .sh-steps li.done{color:var(--sh-soft)}
 .sh-steps li.on{color:var(--sh-fg)}
