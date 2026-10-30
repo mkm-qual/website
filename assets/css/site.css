@@ -328,6 +328,9 @@ button.mock-btn{border:0;width:calc(100% - 28px);cursor:pointer;font:inherit;fon
 .story blockquote{margin:0;font-size:24px;font-weight:300;line-height:1.25;letter-spacing:-0.01em}
 .story figcaption{font-size:var(--t-small)}
 .story figcaption b{display:block;font-weight:500}
+.story-logo{display:block;height:30px;width:auto;max-width:130px;object-fit:contain;object-position:left center;margin-bottom:14px;filter:grayscale(1) contrast(1.1);opacity:.85}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .story-logo{filter:grayscale(1) invert(1) brightness(1.4)} }
+:root[data-theme="dark"] .story-logo{filter:grayscale(1) invert(1) brightness(1.4)}
 .story figcaption span{color:var(--ink-soft)}
 .story.dark{background:var(--deep);color:var(--deep-fg)}
 .story.dark .big{font-size:80px;font-weight:200;letter-spacing:-0.04em;line-height:1}
