@@ -583,7 +583,7 @@
 (() => {
   const main = document.querySelector('main');
   if (!main) return;
-  const BOX = '.media,.ov-media,.cmp,.diff,.sf-panel,.secure-card,.story:not(.dark),.quote,.tile:not(.tile-cta),.kpi,.qt,.pp-card,.tc-e2e,.cs-feat,.cs-chart,.bl-card:not(.hi),.ind-panel';
+  const BOX = '.media,.overview,.cmp,.diff,.sf-panel,.secure-card,.story:not(.dark),.quote,.tile:not(.tile-cta),.kpi,.qt,.pp-card,.tc-e2e,.cs-feat,.cs-chart,.bl-card:not(.hi),.ind-panel';
   // [core, halo, core x, core y] with x and y as fractions of the section
   const P = [
     ['rgba(122,92,255,.30)', 'rgba(0,149,235,.22)',  .22, .35],
