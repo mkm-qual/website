@@ -520,20 +520,32 @@
   els.forEach(el => io.observe(el));
 })();
 
-/* Homepage features: one value block in focus at a time. The block crossing the middle of the screen is at full strength;
-   the others fade back. An observer watches a thin line across the middle, so nothing is measured while scrolling.
+/* Homepage features: one value block in focus at a time. The block nearest the middle of the screen is at full strength;
+   the others fade back, and the focus moves on as you scroll. Above the section the first block leads, below it the last.
+   This runs before the hero's frame (it is registered first), so it measures a clean layout and costs four cheap reads.
    Reduced motion shows every block at full strength. */
 (() => {
   const wrap = document.getElementById('features');
-  if (!wrap || matchMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window)) return;
+  if (!wrap || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   const feats = [...wrap.querySelectorAll('.feat')];
   if (feats.length < 2) return;
   wrap.classList.add('focus-mode');
-  let current = null;
-  const focus = f => { if (f === current) return; feats.forEach(x => x.classList.toggle('is-focus', x === f)); current = f; };
-  focus(feats[0]);
-  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) focus(e.target); }), {rootMargin: '-50% 0px -50% 0px'});
-  feats.forEach(f => io.observe(f));
+  let current = null, queued = false;
+  const update = () => {
+    queued = false;
+    const mid = innerHeight / 2;
+    let best = feats[0], dist = Infinity;
+    for (const f of feats){
+      const r = f.getBoundingClientRect();
+      const d = r.top > mid ? r.top - mid : r.bottom < mid ? mid - r.bottom : 0;   // 0 when the block spans the middle
+      if (d < dist){ dist = d; best = f; }
+    }
+    if (best !== current){ feats.forEach(f => f.classList.toggle('is-focus', f === best)); current = best; }
+  };
+  const queue = () => { if (!queued){ queued = true; requestAnimationFrame(update); } };
+  addEventListener('scroll', queue, {passive: true});
+  addEventListener('resize', queue, {passive: true});
+  update();
 })();
 
 /* Homepage hero: scroll story. One rAF loop reads how far the pinned hero has scrolled and writes CSS variables; site.css draws it.
