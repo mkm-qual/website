@@ -573,51 +573,55 @@
   els.forEach(el => io.observe(el));
 })();
 
-/* Page glow: one fixed layer behind the boxes (site.css). The section nearest the middle of the screen sets its colours
-   and position, so the light changes as you reach each box, and the layer moves a little against the scroll inside
-   that section for parallax. The hero and the logo strip have their own ground, so the glow rests there. */
+/* Box glow: each section gets its own colours (set on the section, inherited by its boxes), and every content box draws
+   that light inside itself (site.css .bx). While a box is on screen its light slides against the scroll for parallax.
+   Box positions are measured once per layout, so scrolling only does arithmetic and one write per visible box. */
 (() => {
-  const secs = [...document.querySelectorAll('main > section, main > div')];
-  if (!secs.length || !('IntersectionObserver' in window)) return;
-  // [core, halo, x, y]: warm or bright core in a softer halo, after the stripe.com stats glow
+  const main = document.querySelector('main');
+  if (!main) return;
+  const BOX = '.media,.ov-media,.cmp,.diff,.sf-panel,.secure-card,.story:not(.dark),.tile:not(.tile-cta),.kpi,.qt,.pp-card,.tc-e2e,.cs-feat,.cs-chart,.bl-card:not(.hi),.ind-panel';
+  // [core, halo, x, y]: a bright core in a softer halo
   const P = [
-    ['rgba(122,92,255,.42)', 'rgba(0,149,235,.32)',  '30%', '45%'],
-    ['rgba(0,212,232,.38)',  'rgba(0,149,235,.32)',  '74%', '55%'],
-    ['rgba(255,92,157,.32)',  'rgba(122,92,255,.32)', '26%', '62%'],
-    ['rgba(255,168,74,.58)', 'rgba(0,149,235,.38)', '50%', '72%'],
-    ['rgba(0,149,235,.38)',  'rgba(122,92,255,.29)','70%', '40%'],
-    ['rgba(0,212,232,.38)',  'rgba(0,149,235,.32)',  '30%', '52%'],
-    ['rgba(52,195,143,.35)', 'rgba(0,149,235,.29)', '72%', '60%'],
-    ['rgba(255,168,74,.48)',  'rgba(255,92,157,.29)','40%', '56%']
+    ['rgba(122,92,255,.22)', 'rgba(0,149,235,.16)',  '24%', '30%'],
+    ['rgba(0,212,232,.22)',  'rgba(0,149,235,.16)',  '76%', '35%'],
+    ['rgba(255,92,157,.18)', 'rgba(122,92,255,.16)', '26%', '40%'],
+    ['rgba(255,168,74,.3)',  'rgba(0,149,235,.18)',  '50%', '45%'],
+    ['rgba(0,149,235,.22)',  'rgba(122,92,255,.15)', '72%', '30%'],
+    ['rgba(0,212,232,.22)',  'rgba(0,149,235,.16)',  '28%', '35%'],
+    ['rgba(52,195,143,.2)',  'rgba(0,149,235,.15)',  '74%', '40%'],
+    ['rgba(255,168,74,.26)', 'rgba(255,92,157,.15)', '40%', '38%']
   ];
-  const quiet = el => el.matches('.sh, .logos');
-  const g = document.createElement('div');
-  g.className = 'glow'; g.setAttribute('aria-hidden', 'true');
-  g.innerHTML = '<div class="glow-in"><i class="g-halo"></i><i class="g-core"></i></div>';
-  (document.querySelector('main') || document.body).prepend(g);   // inside main: above its white ground, clipped to it
-  const inner = g.firstElementChild;
   let n = 0;
-  const pal = new Map(secs.map(el => [el, quiet(el) ? null : P[n++ % P.length]]));
-  let cur = null;
-  const set = el => {
-    if (el === cur) return;
-    cur = el;
-    const p = pal.get(el);
-    g.style.setProperty('--ga', p ? p[0] : 'rgba(0,0,0,0)'); g.style.setProperty('--gb', p ? p[1] : 'rgba(0,0,0,0)');
-    if (p){ g.style.setProperty('--gx', p[2]); g.style.setProperty('--gy', p[3]); }
-  };
-  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) set(e.target); }), {rootMargin: '-45% 0px -45% 0px'});
-  secs.forEach(el => io.observe(el));
-  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  // parallax: within the current section the light slides up a little as you scroll through it
+  [...main.children].forEach(sec => {
+    if (sec.matches('.sh, .logos') || !sec.querySelector(BOX)) return;
+    const p = P[n++ % P.length];
+    sec.style.setProperty('--ga', p[0]); sec.style.setProperty('--gb', p[1]); sec.style.setProperty('--gx', p[2]); sec.style.setProperty('--gy', p[3]);
+  });
+  const boxes = [...main.querySelectorAll(BOX)];
+  boxes.forEach(b => b.classList.add('bx'));
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window)) return;
+  const geo = new Map(), live = new Set();
+  const measure = () => { boxes.forEach(b => { const r = b.getBoundingClientRect(); geo.set(b, {c: r.top + scrollY + r.height / 2, py: null}); }); queue(); };
   let queued = false;
   const frame = () => {
     queued = false;
-    if (!cur) return;
-    const r = cur.getBoundingClientRect(), k = Math.min(1, Math.max(0, (innerHeight / 2 - r.top) / Math.max(1, r.height)));
-    inner.style.transform = 'translate3d(0,' + ((.5 - k) * 10).toFixed(2) + 'vh,0)';
+    const mid = scrollY + innerHeight / 2;
+    live.forEach(b => {
+      const g = geo.get(b); if (!g) return;
+      const py = Math.max(-80, Math.min(80, (g.c - mid) * .09));
+      if (g.py === null || Math.abs(py - g.py) > .5){ g.py = py; b.style.setProperty('--py', py.toFixed(1) + 'px'); }
+    });
   };
-  addEventListener('scroll', () => { if (!queued){ queued = true; requestAnimationFrame(frame); } }, {passive: true});
+  const queue = () => { if (!queued){ queued = true; requestAnimationFrame(frame); } };
+  const io = new IntersectionObserver(es => { es.forEach(e => e.isIntersecting ? live.add(e.target) : live.delete(e.target)); queue(); });
+  boxes.forEach(b => io.observe(b));
+  let t;
+  const remeasure = () => { clearTimeout(t); t = setTimeout(measure, 150); };
+  addEventListener('scroll', queue, {passive: true});
+  addEventListener('resize', remeasure, {passive: true});
+  addEventListener('load', measure);
+  new ResizeObserver(remeasure).observe(main);
+  measure();
 })();
 
 /* Light motion inside sections, once each as it scrolls in: headings fade up, list items and tiles rise in turn,
