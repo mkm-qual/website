@@ -573,6 +573,41 @@
   els.forEach(el => io.observe(el));
 })();
 
+/* Results: when the card comes into view the stats rise in turn and each figure counts up to its value. Reduced motion shows them as written. */
+(() => {
+  const card = document.querySelector('.results-card');
+  if (!card || matchMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window)) return;
+  const stats = [...card.querySelectorAll('.stat')];
+  stats.forEach((st, i) => st.style.setProperty('--i', i));
+  // the last whole number in each figure counts: from the low end of a range (5–7×), otherwise from 0
+  const figs = [...card.querySelectorAll('.num:not(.sm)')].map(el => {
+    const t = el.textContent, m = t.match(/(\d+)(?!.*\d)/);
+    if (!m) return null;
+    const lo = t.slice(0, m.index).match(/(\d+)\D*$/);
+    return {el, t, at: m.index, len: m[1].length, to: +m[1], from: lo ? +lo[1] : 0, i: stats.indexOf(el.closest('.stat'))};
+  }).filter(Boolean);
+  const paint = (f, v) => { f.el.textContent = f.t.slice(0, f.at) + v + f.t.slice(f.at + f.len); };
+  figs.forEach(f => { f.el.setAttribute('aria-label', f.t); paint(f, f.from); });
+  card.classList.add('anim');
+  const io = new IntersectionObserver(es => {
+    if (!es.some(e => e.isIntersecting)) return;
+    io.disconnect();
+    card.classList.add('play');
+    const t0 = performance.now();
+    const tick = now => {
+      let busy = false;
+      figs.forEach(f => {
+        const k = Math.min(1, Math.max(0, (now - t0 - 250 - f.i * 140) / 1400));
+        paint(f, Math.round(f.from + (f.to - f.from) * (1 - Math.pow(1 - k, 3))));
+        if (k < 1) busy = true;
+      });
+      if (busy) requestAnimationFrame(tick); else figs.forEach(f => { f.el.textContent = f.t; f.el.removeAttribute('aria-label'); });
+    };
+    requestAnimationFrame(tick);
+  }, {threshold: .35});
+  io.observe(card);
+})();
+
 /* Homepage features: one value block in focus at a time. The block nearest the middle of the screen is at full strength;
    the others fade back, and the focus moves on as you scroll. Above the section the first block leads, below it the last.
    This runs before the hero's frame (it is registered first), so it measures a clean layout and costs four cheap reads.
