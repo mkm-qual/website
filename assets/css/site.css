@@ -44,6 +44,7 @@
   --box:#FFFFFF;
   --box-in:var(--surface);  /* small blocks inside a box */
   --box-card:#FFFFFF;       /* small floating cards inside a box (flow steps) */
+  --stroke:0 0 0 1px color-mix(in srgb,var(--ink) 9%,transparent);  /* light edge for a white box inside a white box */
   --us-fill:linear-gradient(90deg,#0A6FD6,#5B4CF0);  /* Boson's bars in charts: white text holds 4.9:1 or better */
   --box-edge:0 0 0 1px rgba(10,37,64,.07),0 1px 2px rgba(10,37,64,.04),0 14px 36px -20px rgba(10,37,64,.18);
   /* the hero's colour, carried lightly through the site: a glow for dark cards (with grain); light sections sit over the page glow below */
@@ -247,7 +248,7 @@ p{margin:0}
 .statement .soft{display:block}
 .statement.panel .features{margin-top:clamp(64px,8vw,128px);text-align:left;gap:clamp(32px,4vw,56px)}
 .statement.panel .media{background:var(--box)}
-.statement.panel .node{background:var(--box-card);box-shadow:0 0 0 1px rgba(10,37,64,.06),0 12px 24px -16px rgba(11,31,58,.3)}
+.statement.panel .node{background:var(--box-card);box-shadow:var(--stroke),0 12px 24px -16px rgba(11,31,58,.3)}
 
 /* Feature rows (sticky text left, media right) */
 .features{padding:0;display:flex;flex-direction:column;gap:var(--g)}
@@ -1559,3 +1560,11 @@ main,footer{position:relative;z-index:1;background:var(--paper)}
 
 /* Content boxes are pure white in light mode (tokens --box, --box-edge). Plain selectors, so hover states keep working. */
 .media,.ov-media,.cmp,.diff,.sf-panel,.secure-card,.story:not(.dark),.quote,.tile:not(.tile-cta),.case-art,.kpi,.qt,.pp-card,.tc-e2e,.rs-art,.cs-feat,.cs-chart,.cs-ba>div,.bl-card:not(.hi),.bl-formula,.bl-end,.ind-panel,.lg-note,.sm-col{background-color:var(--box);box-shadow:var(--box-edge)}
+
+/* A white box inside a white box gets a light stroke, keeping its own shadow */
+.mock{box-shadow:var(--stroke),0 20px 40px -20px rgba(11,31,58,.35)}
+.node{box-shadow:var(--stroke),0 12px 24px -16px rgba(11,31,58,.35)}
+.e2e-app{box-shadow:var(--stroke),0 30px 60px -30px rgba(0,22,48,.45)}
+.e2e-pdf{box-shadow:var(--stroke),0 30px 60px -30px rgba(0,22,48,.5)}
+.e2e-steps button[aria-current="step"]{box-shadow:var(--stroke),0 8px 24px -16px rgba(0,22,48,.35)}
+.sec-items div,.pp-icon,.cs-logo,.cs-row-mets div,.ind-plat li{box-shadow:var(--stroke)}
