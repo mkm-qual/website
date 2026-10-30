@@ -561,7 +561,7 @@
     app: sh.querySelector('.sh-app'),
     go: sh.querySelector('.sh-go'), goT: sh.querySelector('.sh-go-t'), ripple: sh.querySelector('.sh-ripple'),
     hand: sh.querySelector('.sh-hand'),
-    end: sh.querySelector('.sh-end'),
+    end: sh.querySelector('.sh-end'), hint: sh.querySelector('.sh-hint'),
     tests: document.getElementById('sh-tests'), cov: document.getElementById('sh-cov'), time: document.getElementById('sh-time')
   };
   let lastRail = -1, lastLine = -1;
@@ -631,6 +631,12 @@
     const stage = p < .12 ? 0 : p < .3 ? 1 : p < .38 ? 2 : p < .74 ? 3 : 4;
     h.steps.forEach((li, i) => set(li, '--sf', seg(p, B[i], B[i + 1])));
     if (stage !== lastRail){ h.steps.forEach((li, i) => { li.classList.toggle('on', i === stage); li.classList.toggle('done', i < stage); }); lastRail = stage; }
+    // the scroll hint sits midway between the headline and the window until it fades (measured last, once both are placed)
+    if (p < .1){
+      const sr = stick.getBoundingClientRect();
+      const mid = (h.lines[0].getBoundingClientRect().bottom + h.app.getBoundingClientRect().top) / 2 - sr.top;
+      set(h.hint, '--hint-y', mid.toFixed(1) + 'px');
+    }
   }
 
   if (!sh) return;

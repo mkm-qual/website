@@ -1394,7 +1394,7 @@ main,footer{position:relative;z-index:1;background:var(--paper)}
 .sh-notes i{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--pass);margin-right:7px;vertical-align:middle}
 
 /* scroll hint */
-.sh-hint{position:absolute;left:50%;bottom:28px;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;font-family:var(--mono);font-size:var(--t-xs);letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.6);opacity:calc(1 - var(--p,0) * 14);z-index:4;pointer-events:none}
+.sh-hint{position:absolute;left:50%;top:var(--hint-y,45%);transform:translate(-50%,-50%);opacity:calc(1 - var(--p,0) * 14);z-index:4;pointer-events:none}   /* centred between the headline and the app window */
 .sh-hint b{display:block;width:22px;height:34px;border:1.5px solid rgba(255,255,255,.5);border-radius:12px;position:relative}
 .sh-hint b::after{content:"";position:absolute;left:50%;top:7px;width:3px;height:7px;margin-left:-1.5px;border-radius:2px;background:#fff;animation:sh-wheel 1.6s var(--ease) infinite}
 @keyframes sh-wheel{0%{opacity:0;transform:translateY(-3px)}30%{opacity:1}100%{opacity:0;transform:translateY(10px)}}
