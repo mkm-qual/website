@@ -1604,3 +1604,11 @@ main,footer{position:relative;z-index:1;background:var(--paper)}
 .chart-tip.on{opacity:1}
 .chart-tip b{font-weight:500}
 @media (hover:none){ .ef-x,.chart-tip{display:none} }
+
+/* Runs inside your network: each card lifts on hover, its edge takes a brand tint and the icon tile fills with the
+   CTA blue-violet, tilting a touch */
+.sec-items > div{transition:translate .35s var(--ease-spring),box-shadow .25s var(--ease)}
+.sec-items > div:hover{translate:0 -4px;box-shadow:0 0 0 1px color-mix(in srgb,#5B4CF0 28%,transparent),0 18px 36px -18px rgba(10,37,64,.32)}
+.sec-items .sec-ico{transition:background-color .25s var(--ease),stroke .25s var(--ease),rotate .35s var(--ease-spring),scale .35s var(--ease-spring)}
+.sec-items > div:hover .sec-ico{background-color:#4F55E6;stroke:#fff;rotate:-6deg;scale:1.08}
+@media (prefers-reduced-motion:reduce){ .sec-items > div:hover{translate:none} .sec-items > div:hover .sec-ico{rotate:none;scale:none} }
