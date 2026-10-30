@@ -671,43 +671,50 @@
   update();
 })();
 
-/* Hero art: a WebGL ribbon of colour that flows across the hero, Stripe style. Noise-warped bands in the brand blues
-   plus violet, cyan, pink and amber, softly blurred under a film grain; it leans a little toward the pointer. Drawn at low
-   resolution and paused off screen or in a background tab. Reduced motion gets one still frame; no WebGL keeps the CSS blobs. */
+/* Hero art: two silk ribbons sweep up through the hero, Stripe style. Each ribbon folds and twists along its length
+   (the visible width follows the twist), shades darker in the folds, catches a sheen, and carries fine fibres along it.
+   Colours run Qualitia blue, violet, pink and amber. The ground is the hero's own background, so it works in light and dark.
+   It leans a little toward the pointer, pauses off screen or in a background tab, and shows one still frame for reduced motion.
+   Without WebGL the CSS colour blobs stay. */
 (() => {
-  const mesh = document.querySelector('.sh-mesh');
+  const mesh = document.querySelector('.sh-mesh'), stick = mesh && mesh.closest('.sh-stick');
   if (!mesh) return;
   const cv = document.createElement('canvas');
   const gl = cv.getContext('webgl', {antialias: false, alpha: false, powerPreference: 'low-power'});
   if (!gl) return;
   const VS = 'attribute vec2 a;void main(){gl_Position=vec4(a,0.,1.);}';
   const FS = `precision highp float;
-uniform vec2 r;uniform float t;uniform vec2 m;
-vec3 pm(vec3 x){return mod(((x*34.)+1.)*x,289.);}
-float sn(vec2 v){const vec4 C=vec4(.211324865405187,.366025403784439,-.577350269189626,.024390243902439);
-vec2 i=floor(v+dot(v,C.yy));vec2 x0=v-i+dot(i,C.xx);vec2 i1=(x0.x>x0.y)?vec2(1.,0.):vec2(0.,1.);
-vec4 x12=x0.xyxy+C.xxzz;x12.xy-=i1;i=mod(i,289.);
-vec3 p=pm(pm(i.y+vec3(0.,i1.y,1.))+i.x+vec3(0.,i1.x,1.));
-vec3 w=max(.5-vec3(dot(x0,x0),dot(x12.xy,x12.xy),dot(x12.zw,x12.zw)),0.);w*=w;w*=w;
-vec3 x=2.*fract(p*C.www)-1.;vec3 h=abs(x)-.5;vec3 ox=floor(x+.5);vec3 a0=x-ox;
-w*=1.79284291400159-.85373472095314*(a0*a0+h*h);
-vec3 g;g.x=a0.x*x0.x+h.x*x0.y;g.yz=a0.yz*x12.xz+h.yz*x12.yw;return 130.*dot(w,g);}
+uniform vec2 r;uniform float t;uniform vec2 m;uniform vec3 bg;
+vec3 grad(float k){vec3 a=vec3(0.,.584,.922),b=vec3(.478,.361,1.),c=vec3(1.,.36,.616),d=vec3(1.,.66,.29);
+return k<.34?mix(a,b,k/.34):k<.68?mix(b,c,(k-.34)/.34):mix(c,d,(k-.68)/.32);}
+// one ribbon: a band bent along an arc (centre o, radius R) that twists as it goes round. The inner edge melts away,
+// the outer edge is crisp; colour runs across the band and along it, with a sheen and fine fibres along its length
+vec4 ribbon(vec2 p,vec2 o,float R,float W,float ph,float tw,float T,float px){
+vec2 q=p-o;float th=atan(q.y,q.x);
+float rr=R+.05*sin(th*3.+T*.6+ph)+.03*sin(th*7.-T*.4)+m.y*.03;
+float d=length(q)-rr;
+float tws=cos(th*tw-T*.5+ph+m.x*.8);
+float hw=W*(.16+.84*abs(tws))*(.8+.2*sin(th*2.+T*.3));
+float u=d/hw;
+if(abs(u)>1.)return vec4(0.);
+float a=u>0.?clamp((1.-u)*hw/px,0.,1.):smoothstep(-1.,-.2,u);
+float face=tws<0.?-1.:1.;
+float k=clamp(.5+.38*u*face+.45*sin(th*2.4+T*.15+ph),0.,1.);
+vec3 c=grad(k);
+float fold=smoothstep(0.,.8,abs(tws));
+c*=.72+.28*fold;
+c+=exp(-pow((u-.3*face)*2.4,2.))*.3*fold;
+c*=1.+.05*sin(u*190.+sin(th*20.+ph)*2.)*sin(u*31.+th*5.);
+if(face<0.)c=mix(c,vec3(1.),.14);
+return vec4(c,a);}
 void main(){
-vec2 uv=gl_FragCoord.xy/r;vec2 p=vec2(uv.x*r.x/r.y,uv.y);float T=t*.045;
-vec2 q=vec2(sn(p*.8+vec2(T,-T*.6)+m*.25),sn(p*.8+vec2(-T*.8,T*.5)+5.2));
-float n=sn(p*1.4+q*1.1+vec2(T*.7,0.));
-float d=uv.y-(.12+.72*uv.x)-.16*q.x-m.y*.06+m.x*.04;
-float b=exp(-d*d*5.);
-float d2=d+.5+.08*q.y;float b2=exp(-d2*d2*12.)*.5;
-vec3 navy=vec3(0.,.086,.188);
-vec3 c=mix(vec3(0.,.584,.922),vec3(.478,.361,1.),smoothstep(-.55,.55,n));
-c=mix(c,vec3(0.,.83,.91),smoothstep(.15,.85,q.y)*.85);
-c=mix(c,vec3(1.,.36,.616),smoothstep(.25,.9,sn(p*.6-vec2(T*.5,T*.3)+9.))*.9);
-c=mix(c,vec3(1.,.7,.36),smoothstep(.55,1.,n*.6+q.x*.6)*b);
-vec3 c2=mix(vec3(.478,.361,1.),vec3(1.,.36,.616),smoothstep(-.4,.6,q.x));
-vec3 o=mix(navy,c,b*.92);o=mix(o,c2,b2);
-float hx=(uv.x-.5)*2.2,hy=(uv.y-.8)*3.2;o*=1.-.38*exp(-hx*hx-hy*hy);
-gl_FragColor=vec4(o,1.);}`;
+vec2 uv=gl_FragCoord.xy/r;float asp=r.x/r.y;vec2 p=vec2(uv.x*asp,uv.y);float T=t*.1;float px=1.5/r.y;
+vec3 col=bg;
+vec4 b=ribbon(p,vec2(-.4,-.92),.95,.08,2.1,4.,T,px);
+float wd=smoothstep(.6,1.3,asp);   // phones: the big ribbon sits lower and right, clear of the headline
+vec4 a=ribbon(p,vec2(asp+mix(.62,.47,wd),mix(-.38,-.1,wd)),mix(.9,1.,wd),.19,0.,5.,T,px);
+col=mix(col,b.rgb,b.a*.9);col=mix(col,a.rgb,a.a);
+gl_FragColor=vec4(col,1.);}`;
   const sh = (type, src) => { const o = gl.createShader(type); gl.shaderSource(o, src); gl.compileShader(o); return gl.getShaderParameter(o, gl.COMPILE_STATUS) ? o : null; };
   const vs = sh(gl.VERTEX_SHADER, VS), fs = sh(gl.FRAGMENT_SHADER, FS);
   if (!vs || !fs) return;
@@ -717,24 +724,32 @@ gl_FragColor=vec4(o,1.);}`;
   gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 3,-1, -1,3]), gl.STATIC_DRAW);
   const loc = gl.getAttribLocation(pr, 'a'); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
-  const uR = gl.getUniformLocation(pr, 'r'), uT = gl.getUniformLocation(pr, 't'), uM = gl.getUniformLocation(pr, 'm');
+  const uR = gl.getUniformLocation(pr, 'r'), uT = gl.getUniformLocation(pr, 't'), uM = gl.getUniformLocation(pr, 'm'), uB = gl.getUniformLocation(pr, 'bg');
   cv.className = 'sh-gl'; cv.setAttribute('aria-hidden', 'true');
   mesh.prepend(cv); mesh.classList.add('gl');
 
   const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const SCALE = .2;                                         // drawn small and stretched: the upscale is the blur, and it costs a twenty-fifth
+  const SCALE = Math.min(devicePixelRatio || 1, 1.5) * .7;   // crisp enough for the fibres, well under full cost
   const size = () => {
     const w = Math.max(1, Math.round(mesh.clientWidth * SCALE)), h = Math.max(1, Math.round(mesh.clientHeight * SCALE));
     if (cv.width !== w || cv.height !== h){ cv.width = w; cv.height = h; gl.viewport(0, 0, w, h); gl.uniform2f(uR, w, h); }
   };
+  // the ribbons sit on the hero's own background colour, read again whenever the theme changes
+  const ground = () => {
+    const c = getComputedStyle(stick).backgroundColor.match(/[\d.]+/g) || [0, 22, 48];
+    gl.uniform3f(uB, c[0] / 255, c[1] / 255, c[2] / 255);
+  };
   const mx = {x: 0, y: 0, tx: 0, ty: 0};
   const draw = time => {
     mx.x += (mx.tx - mx.x) * .04; mx.y += (mx.ty - mx.y) * .04;
-    gl.uniform1f(uT, time / 1000 + 40); gl.uniform2f(uM, mx.x, mx.y);
+    gl.uniform1f(uT, time / 1000 + 30); gl.uniform2f(uM, mx.x, mx.y);
     gl.drawArrays(gl.TRIANGLES, 0, 3);
   };
-  size();
-  addEventListener('resize', () => { size(); if (still) draw(0); }, {passive: true});
+  size(); ground();
+  const redrawStill = () => { if (still) draw(0); };
+  addEventListener('resize', () => { size(); redrawStill(); }, {passive: true});
+  new MutationObserver(() => { ground(); redrawStill(); }).observe(document.documentElement, {attributes: true, attributeFilter: ['data-theme']});
+  matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { ground(); redrawStill(); });
   if (still){ draw(0); return; }
   addEventListener('pointermove', e => { mx.tx = e.clientX / innerWidth - .5; mx.ty = .5 - e.clientY / innerHeight; }, {passive: true});
   let on = true, raf = 0;
