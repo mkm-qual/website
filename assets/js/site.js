@@ -1088,12 +1088,16 @@ gl_FragColor=vec4(col,1.);}`;
   const sprites = COLS.map(() => document.createElement('canvas'));
   let spriteV = 0, spriteS = 0, spritePad = 0;
   function makeSprites(v, dpr){
-    const pad = Math.max(3, v * .55), S = Math.ceil(v + pad * 2);   // a wide blur, so each pixel dissolves into the ground
+    // a blur all the way through: colour falls off smoothly from the centre (a Gaussian-like curve), no flat core;
+    // the blob is wider than its cell, so neighbours overlap and merge
+    const pad = v * .45, S = Math.ceil(v + pad * 2), r = S / 2;
+    const fall = [[0, 1], [.2, .86], [.4, .58], [.6, .3], [.8, .1], [1, 0]];
     sprites.forEach((c, i) => {
       c.width = c.height = Math.ceil(S * dpr);
       const g = c.getContext('2d'); g.setTransform(dpr, 0, 0, dpr, 0, 0);
-      g.shadowColor = COLS[i]; g.shadowBlur = pad * dpr * .8; g.shadowOffsetX = 4000 * dpr;   // only the blurred shadow lands on the sprite
-      g.fillStyle = '#000'; g.fillRect(pad + v * .15 - 4000, pad + v * .15, v * .7, v * .7);
+      const rgb = COLS[i].slice(4, -1), grd = g.createRadialGradient(r, r, 0, r, r, r);
+      fall.forEach(([o, a]) => grd.addColorStop(o, 'rgba(' + rgb + ',' + a + ')'));
+      g.fillStyle = grd; g.fillRect(0, 0, S, S);
     });
     spriteV = v; spriteS = S; spritePad = pad;
   }
@@ -1132,7 +1136,7 @@ gl_FragColor=vec4(col,1.);}`;
     const r = wrap.getBoundingClientRect(), w = Math.max(1, Math.floor(r.width)), h = Math.max(1, Math.floor(r.height));
     if (w !== W || h !== H){ W = w; H = h; const dpr = Math.min(devicePixelRatio || 1, 2); cv.width = W * dpr; cv.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0); mask = null; }
     if (!mask) buildMask();
-    const v = cellSize(), gap = v > 2 ? 1 : 0, soft = v >= 5, dpr = Math.min(devicePixelRatio || 1, 2);
+    const v = cellSize(), gap = v > 2 ? 1 : 0, soft = v >= 3, dpr = Math.min(devicePixelRatio || 1, 2);
     if (soft && v !== spriteV) makeSprites(v, dpr);
     ctx.fillStyle = ground(); ctx.fillRect(0, 0, W, H);
     for (let y = 0; y < H; y += v) for (let x = 0; x < W; x += v){
