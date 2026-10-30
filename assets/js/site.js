@@ -671,6 +671,82 @@
   update();
 })();
 
+/* Hero art: a WebGL ribbon of colour that flows across the hero, Stripe style. Noise-warped bands in the brand blues
+   plus violet, cyan, pink and amber, with fine silk lines; it leans a little toward the pointer. Drawn at reduced
+   resolution and paused off screen or in a background tab. Reduced motion gets one still frame; no WebGL keeps the CSS blobs. */
+(() => {
+  const mesh = document.querySelector('.sh-mesh');
+  if (!mesh) return;
+  const cv = document.createElement('canvas');
+  const gl = cv.getContext('webgl', {antialias: false, alpha: false, powerPreference: 'low-power'});
+  if (!gl) return;
+  const VS = 'attribute vec2 a;void main(){gl_Position=vec4(a,0.,1.);}';
+  const FS = `precision highp float;
+uniform vec2 r;uniform float t;uniform vec2 m;
+vec3 pm(vec3 x){return mod(((x*34.)+1.)*x,289.);}
+float sn(vec2 v){const vec4 C=vec4(.211324865405187,.366025403784439,-.577350269189626,.024390243902439);
+vec2 i=floor(v+dot(v,C.yy));vec2 x0=v-i+dot(i,C.xx);vec2 i1=(x0.x>x0.y)?vec2(1.,0.):vec2(0.,1.);
+vec4 x12=x0.xyxy+C.xxzz;x12.xy-=i1;i=mod(i,289.);
+vec3 p=pm(pm(i.y+vec3(0.,i1.y,1.))+i.x+vec3(0.,i1.x,1.));
+vec3 w=max(.5-vec3(dot(x0,x0),dot(x12.xy,x12.xy),dot(x12.zw,x12.zw)),0.);w*=w;w*=w;
+vec3 x=2.*fract(p*C.www)-1.;vec3 h=abs(x)-.5;vec3 ox=floor(x+.5);vec3 a0=x-ox;
+w*=1.79284291400159-.85373472095314*(a0*a0+h*h);
+vec3 g;g.x=a0.x*x0.x+h.x*x0.y;g.yz=a0.yz*x12.xz+h.yz*x12.yw;return 130.*dot(w,g);}
+void main(){
+vec2 uv=gl_FragCoord.xy/r;vec2 p=vec2(uv.x*r.x/r.y,uv.y);float T=t*.045;
+vec2 q=vec2(sn(p*.8+vec2(T,-T*.6)+m*.25),sn(p*.8+vec2(-T*.8,T*.5)+5.2));
+float n=sn(p*1.4+q*1.1+vec2(T*.7,0.));
+float d=uv.y-(.12+.72*uv.x)-.16*q.x-m.y*.06+m.x*.04;
+float b=exp(-d*d*7.);
+float d2=d+.5+.08*q.y;float b2=exp(-d2*d2*26.)*.55;
+vec3 navy=vec3(0.,.086,.188);
+vec3 c=mix(vec3(0.,.584,.922),vec3(.478,.361,1.),smoothstep(-.55,.55,n));
+c=mix(c,vec3(0.,.83,.91),smoothstep(.15,.85,q.y)*.85);
+c=mix(c,vec3(1.,.36,.616),smoothstep(.25,.9,sn(p*.6-vec2(T*.5,T*.3)+9.))*.9);
+c=mix(c,vec3(1.,.7,.36),smoothstep(.55,1.,n*.6+q.x*.6)*b);
+vec3 c2=mix(vec3(.478,.361,1.),vec3(1.,.36,.616),smoothstep(-.4,.6,q.x));
+float silk=smoothstep(.6,1.,.5+.5*sin(d*30.+n*3.5+T*5.));
+vec3 o=mix(navy,c,b*.92);o=mix(o,c2,b2);o+=silk*.08*(b+b2);
+float hx=(uv.x-.5)*2.2,hy=(uv.y-.8)*3.2;o*=1.-.38*exp(-hx*hx-hy*hy);
+o+=(fract(sin(dot(gl_FragCoord.xy,vec2(12.9898,78.233)))*43758.5453)-.5)*.012;
+gl_FragColor=vec4(o,1.);}`;
+  const sh = (type, src) => { const o = gl.createShader(type); gl.shaderSource(o, src); gl.compileShader(o); return gl.getShaderParameter(o, gl.COMPILE_STATUS) ? o : null; };
+  const vs = sh(gl.VERTEX_SHADER, VS), fs = sh(gl.FRAGMENT_SHADER, FS);
+  if (!vs || !fs) return;
+  const pr = gl.createProgram(); gl.attachShader(pr, vs); gl.attachShader(pr, fs); gl.linkProgram(pr);
+  if (!gl.getProgramParameter(pr, gl.LINK_STATUS)) return;
+  gl.useProgram(pr);
+  gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 3,-1, -1,3]), gl.STATIC_DRAW);
+  const loc = gl.getAttribLocation(pr, 'a'); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+  const uR = gl.getUniformLocation(pr, 'r'), uT = gl.getUniformLocation(pr, 't'), uM = gl.getUniformLocation(pr, 'm');
+  cv.className = 'sh-gl'; cv.setAttribute('aria-hidden', 'true');
+  mesh.prepend(cv); mesh.classList.add('gl');
+
+  const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const SCALE = .55;                                        // soft colour field, so half resolution looks the same and costs a quarter
+  const size = () => {
+    const w = Math.max(1, Math.round(mesh.clientWidth * SCALE)), h = Math.max(1, Math.round(mesh.clientHeight * SCALE));
+    if (cv.width !== w || cv.height !== h){ cv.width = w; cv.height = h; gl.viewport(0, 0, w, h); gl.uniform2f(uR, w, h); }
+  };
+  const mx = {x: 0, y: 0, tx: 0, ty: 0};
+  const draw = time => {
+    mx.x += (mx.tx - mx.x) * .04; mx.y += (mx.ty - mx.y) * .04;
+    gl.uniform1f(uT, time / 1000 + 40); gl.uniform2f(uM, mx.x, mx.y);
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
+  };
+  size();
+  addEventListener('resize', () => { size(); if (still) draw(0); }, {passive: true});
+  if (still){ draw(0); return; }
+  addEventListener('pointermove', e => { mx.tx = e.clientX / innerWidth - .5; mx.ty = .5 - e.clientY / innerHeight; }, {passive: true});
+  let on = true, raf = 0;
+  const loop = time => { raf = 0; draw(time); if (on && !document.hidden) raf = requestAnimationFrame(loop); };
+  const wake = () => { if (on && !document.hidden && !raf) raf = requestAnimationFrame(loop); };
+  new IntersectionObserver(es => { on = es[0].isIntersecting; wake(); }).observe(mesh);
+  document.addEventListener('visibilitychange', wake);
+  wake();
+})();
+
 /* Homepage hero: scroll story. One rAF loop reads how far the pinned hero has scrolled and writes CSS variables; site.css draws it.
    Reduced motion shows the finished state, unpinned. */
 (() => {
