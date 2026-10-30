@@ -777,7 +777,7 @@ footer{padding:clamp(56px,7vw,96px) var(--side) 32px;font-size:var(--t-small)}
 .ct-offices b{display:block;color:var(--ink);font-weight:500;font-size:var(--t-small);margin-bottom:4px}
 .ct-card{background:var(--paper);border-radius:var(--r-lg);box-shadow:0 16px 40px -28px rgba(0,22,48,.22),0 0 0 1px var(--ink-faint);padding:clamp(22px,3vw,40px)}
 .ct-card h2{font-size:28px;font-weight:300;letter-spacing:-0.01em;margin-bottom:6px}
-#ct-head p{color:var(--ink-soft);font-size:var(--t-list);margin-bottom:24px}
+#ct-head{margin-bottom:24px}
 .ct-form{display:flex;flex-direction:column;gap:18px}
 .ct-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 .ct-f{display:flex;flex-direction:column;gap:6px;min-width:0}
