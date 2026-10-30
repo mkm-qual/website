@@ -1567,4 +1567,4 @@ main,footer{position:relative;z-index:1;background:var(--paper)}
 .e2e-app{box-shadow:var(--stroke),0 30px 60px -30px rgba(0,22,48,.45)}
 .e2e-pdf{box-shadow:var(--stroke),0 30px 60px -30px rgba(0,22,48,.5)}
 .e2e-steps button[aria-current="step"]{box-shadow:var(--stroke),0 8px 24px -16px rgba(0,22,48,.35)}
-.sec-items div,.pp-icon,.cs-logo,.cs-row-mets div,.ind-plat li{box-shadow:var(--stroke)}
+.sec-items div,.sf-col,.pp-icon,.cs-logo,.cs-row-mets div,.ind-plat li{box-shadow:var(--stroke)}
