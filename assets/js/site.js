@@ -804,7 +804,7 @@ gl_FragColor=vec4(col,1.);}`;
   mesh.prepend(cv); mesh.classList.add('gl');
 
   const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const SCALE = Math.min(devicePixelRatio || 1, 1.5) * .7;   // crisp enough for the fibres, well under full cost
+  const SCALE = Math.min(devicePixelRatio || 1, 2);   // full device resolution (capped at 2x), so the ribbon edges and fibres stay sharp
   const size = () => {
     const w = Math.max(1, Math.round(mesh.clientWidth * SCALE)), h = Math.max(1, Math.round(mesh.clientHeight * SCALE));
     if (cv.width !== w || cv.height !== h){ cv.width = w; cv.height = h; gl.viewport(0, 0, w, h); gl.uniform2f(uR, w, h); }
