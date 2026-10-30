@@ -45,6 +45,7 @@
   --box-in:var(--surface);  /* small blocks inside a box */
   --box-card:#FFFFFF;       /* small floating cards inside a box (flow steps) */
   --stroke:0 0 0 1px color-mix(in srgb,var(--ink) 9%,transparent);  /* light edge for a white box inside a white box */
+  --hatch-edge:color-mix(in srgb,var(--ink) 16%,transparent);        /* the same kind of edge around hatched chart areas */
   --us-fill:linear-gradient(90deg,#0A6FD6,#5B4CF0);  /* Boson's bars in charts: white text holds 4.9:1 or better */
   --box-edge:0 0 0 1px rgba(10,37,64,.07),0 1px 2px rgba(10,37,64,.04),0 14px 36px -20px rgba(10,37,64,.18);
   /* the hero's colour, carried lightly through the site: a glow for dark cards (with grain); light sections sit over the page glow below */
@@ -309,7 +310,7 @@ button.mock-btn{border:0;width:calc(100% - 28px);cursor:pointer;font:inherit;fon
 .fill{position:absolute;inset-block:0;left:0;border-radius:var(--r-sm);display:flex;align-items:center;padding-inline:10px;font-family:var(--mono);font-size:var(--t-xs);white-space:nowrap;font-variant-numeric:tabular-nums}
 .fill.us{background:var(--us-fill);color:#fff;font-weight:500}
 .fill.them{background:color-mix(in srgb,var(--ink) 12%,var(--box));color:var(--ink-soft)}
-.fill.range{background:repeating-linear-gradient(135deg,color-mix(in srgb,var(--ink) 26%,var(--box)) 0 2px,var(--box) 2px 8px);color:var(--ink-soft)}
+.fill.range{background:repeating-linear-gradient(135deg,color-mix(in srgb,var(--ink) 26%,var(--box)) 0 2px,var(--box) 2px 8px);color:var(--ink-soft);box-shadow:inset 0 0 0 1px var(--hatch-edge)}
 .fill.min{padding:0}
 .out{position:absolute;top:50%;transform:translateY(-50%);font-family:var(--mono);font-size:var(--t-xs);white-space:nowrap;color:var(--ink)}
 .axis{display:grid;grid-template-columns:120px 1fr;gap:14px}
@@ -1304,7 +1305,7 @@ main,footer{position:relative;z-index:1;background:var(--paper)}
 /* Effort over a year: stacked areas, Boson solid periwinkle, the extra script-based upkeep hatched */
 .effort{position:relative;border-bottom:1px solid var(--ink-faint)}
 .effort svg{display:block;width:100%;height:clamp(150px,16vw,190px)}
-.ef-them{fill:url(#effort-hatch)}
+.ef-them{fill:url(#effort-hatch);stroke:var(--hatch-edge);stroke-width:1;vector-effect:non-scaling-stroke}
 .eh-a{fill:color-mix(in srgb,var(--ink) 30%,var(--box))}
 .eh-b{fill:var(--box)}
 .ef-us{fill:url(#effort-us)}
@@ -1313,7 +1314,7 @@ main,footer{position:relative;z-index:1;background:var(--paper)}
 .ef-lab-us{bottom:10px;right:10px;color:#fff;font-weight:500}
 .ef-ticks{margin-top:-14px}
 .ef-ticks span{white-space:nowrap}
-.ef-key{width:14px!important;height:14px!important;border:0!important;border-radius:3px;background:repeating-linear-gradient(135deg,color-mix(in srgb,var(--ink) 30%,var(--box)) 0 2px,var(--box) 3px 6px)}
+.ef-key{width:14px!important;height:14px!important;border:0!important;box-shadow:inset 0 0 0 1px var(--hatch-edge);border-radius:3px;background:repeating-linear-gradient(135deg,color-mix(in srgb,var(--ink) 30%,var(--box)) 0 2px,var(--box) 3px 6px)}
 @media (max-width:480px){ .ba-r{grid-template-columns:minmax(0,1.1fr) minmax(0,1fr) 20px minmax(0,1fr);gap:6px} .ba-to{width:20px;height:20px} .ba-to::before{width:14px;height:14px} .ba-v{padding-inline:8px;font-size:var(--t-xs)} }
 
 /* Platforms: Salesforce intro row, then Customisations · Clouds · One journey as equal columns, ServiceNow as the panel's footer */
