@@ -576,6 +576,44 @@
   els.forEach(el => io.observe(el));
 })();
 
+/* Silk texture for the boxes: one ribbon of silk drawn once, after the hero's: fine fibres run along a curving band
+   that twists (narrowing in the folds), shaded darker in the folds, with a sheen just off centre and soft edges.
+   It becomes an image (--silk-img) that every box lays in faintly. */
+(() => {
+  if (!document.querySelector('main')) return;
+  const W = 1200, H = 420, cv = document.createElement('canvas'); cv.width = W; cv.height = H;
+  const g = cv.getContext('2d');
+  const PAL = [[0,149,235], [122,92,255], [255,92,157], [255,168,74]];
+  const col = k => { const t = Math.max(0, Math.min(.999, k)) * 3, i = t | 0, f = t - i, a = PAL[i], b = PAL[i + 1]; return [a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f, a[2] + (b[2] - a[2]) * f]; };
+  // the whole ribbon stays inside the texture (no cut ends), and it fades out over the last stretch at both ends
+  const P = t => { const u = 1 - t; return [u*u*u*90 + 3*u*u*t*400 + 3*u*t*t*800 + t*t*t*1110, u*u*u*290 + 3*u*u*t*70 + 3*u*t*t*370 + t*t*t*130]; };
+  const ends = t => { const a = Math.min(1, t / .22), b = Math.min(1, (1 - t) / .22); return a * a * (3 - 2 * a) * b * b * (3 - 2 * b); };
+  const N = 150, STEPS = 160;
+  g.lineCap = 'round';
+  for (let k = 0; k < N; k++){
+    const v = k / (N - 1) * 2 - 1;                                  // across the band, -1..1
+    g.beginPath();
+    for (let j = 0; j <= STEPS; j++){
+      const t = j / STEPS, p = P(t), q = P(Math.min(1, t + .002)), dx = q[0] - p[0], dy = q[1] - p[1], L = Math.hypot(dx, dy) || 1;
+      const tw = Math.cos(t * Math.PI * 1.6 + .6), w = 70 * (.18 + .82 * Math.abs(tw));
+      const x = p[0] - dy / L * v * w, y = p[1] + dx / L * v * w;
+      j ? g.lineTo(x, y) : g.moveTo(x, y);
+    }
+    // along the strand: colour drifts through the palette, and it dims where the band folds (pinches)
+    const edge = 1 - Math.pow(Math.abs(v), 3), sheen = Math.exp(-Math.pow((v - .3) * 3, 2)), grad = g.createLinearGradient(90, 0, 1110, 0);
+    for (let j = 0; j <= 20; j++){
+      const t = j / 20, fold = .35 + .65 * Math.abs(Math.cos(t * Math.PI * 1.6 + .6)), c = col(.1 + t * .55 + (v + 1) * .12);
+      const lift = sheen * .5 * fold;
+      grad.addColorStop(t, 'rgba(' + (c[0] + (255 - c[0]) * lift | 0) + ',' + (c[1] + (255 - c[1]) * lift | 0) + ',' + (c[2] + (255 - c[2]) * lift | 0) + ',' + ((.5 * edge + .25 * sheen) * fold * ends(t)).toFixed(3) + ')');
+    }
+    g.strokeStyle = grad;
+    g.lineWidth = .9 + (k % 3 === 0 ? .4 : 0);
+    g.stroke();
+  }
+  const set = url => document.documentElement.style.setProperty('--silk-img', 'url(' + url + ')');
+  cv.toBlob ? cv.toBlob(b => b && set(URL.createObjectURL(b)), 'image/png') : set(cv.toDataURL());
+})();
+
 /* Box glow: one light field per section, seen through its content boxes (site.css .bx). Each section gets a colour pair
    and a spot for its bright core; the halo sits opposite. Every box gets those spots in its own coordinates, so the
    tiles of a section show different parts of one light instead of repeating the same glow. The field drifts on its own
@@ -596,14 +634,23 @@
     ['rgba(255,168,74,.35)', 'rgba(255,92,157,.20)', .4,  .4]
   ];
   const secs = [];
-  let n = 0;
+  let n = 0, silkN = 0;
   [...main.children].forEach(sec => {
     if (sec.matches('.sh, .logos')) return;
     const boxes = sec.matches(BOX) ? [sec] : [...sec.querySelectorAll(BOX)];   // a box can be a section of its own
     if (!boxes.length) return;
     const p = P[n++ % P.length];
     sec.style.setProperty('--ga', p[0]); sec.style.setProperty('--gb', p[1]);
-    boxes.forEach(b => b.classList.add('bx'));
+    boxes.forEach(b => {
+      b.classList.add('bx');
+      // silk: a bundle at its own angle (never flat), place and size in every box
+      const k = document.createElement('i'), q = document.createElement('b'), r = (m) => { const v = Math.sin(++silkN * 12.9898 + m * 78.233) * 43758.5453; return v - Math.floor(v); };
+      const ang = (r(1) < .5 ? -1 : 1) * (12 + r(2) * 30);
+      q.style.cssText = '--sa:' + ang.toFixed(1) + 'deg;--sx:' + (42 + r(3) * 16).toFixed(1) + '%;--sy:' + (44 + r(4) * 12).toFixed(1) + '%;--ss:' + (34 + r(5) * 22).toFixed(1) + '%';
+      // a slow drift, each with its own pace and start, so no two boxes move alike
+      k.style.cssText = '--sd:' + (40 + r(7) * 30).toFixed(1) + 's;--sdl:-' + (r(8) * 60).toFixed(1) + 's';
+      k.className = 'silk'; k.setAttribute('aria-hidden', 'true'); k.append(q); b.prepend(k);
+    });
     secs.push({sec, boxes, x: p[2], y: p[3], c: 0, py: null});
   });
   if (!secs.length) return;

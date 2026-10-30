@@ -1638,3 +1638,15 @@ main,footer{position:relative;z-index:1;background:var(--paper)}
 .sf-go{display:inline-block;transition:translate .3s var(--ease-spring)}
 .sf-sn:hover .sf-go{translate:4px 0}
 @media (hover:none),(prefers-reduced-motion:reduce){ .sf-tiles li:hover,.sf-chain:hover span{translate:none} .sf-tiles li:hover svg{rotate:none;scale:none} .sf-sn:hover .sf-go{translate:none} }
+
+/* Silk in the boxes: a faint ribbon of silk, like the hero's, drawn once by site.js (--silk-img) and laid into each
+   box at its own angle, place and size (--sa, --sx, --sy, --ss). It drifts slowly on its own pace and is masked by
+   the inverse of the box's light, so it fades where the colour is strong and shows where it dims. */
+.bx .silk{position:absolute;inset:-100%;z-index:-1;pointer-events:none;translate:0 var(--py,0px);
+  -webkit-mask-image:radial-gradient(30vmax 24vmax at calc(var(--cx,50%) + var(--rx,0px)) var(--cy,50%),transparent 0,transparent 18%,#000 75%);mask-image:radial-gradient(30vmax 24vmax at calc(var(--cx,50%) + var(--rx,0px)) var(--cy,50%),transparent 0,transparent 18%,#000 75%);
+  animation:silk-drift var(--sd,50s) ease-in-out var(--sdl,0s) infinite alternate;will-change:transform}
+.bx .silk b{position:absolute;inset:0;rotate:var(--sa,24deg);background:var(--silk-img,none) var(--sx,50%) var(--sy,50%)/var(--ss,45%) auto no-repeat;opacity:.22}
+@keyframes silk-drift{0%{transform:translate(-2.5%,1.5%)}50%{transform:translate(1.5%,-2%)}100%{transform:translate(2.5%,1%)}}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .bx .silk b{opacity:.16} }
+:root[data-theme="dark"] .bx .silk b{opacity:.16}
+@media (prefers-reduced-motion:reduce){ .bx .silk{animation:none} }
