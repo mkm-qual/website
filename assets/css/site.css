@@ -303,11 +303,11 @@ button.mock-btn{border:0;width:calc(100% - 28px);cursor:pointer;font:inherit;fon
 .row2 > *{min-width:0}
 .row2 .who{font-size:var(--t-small);line-height:1.25}
 .row2 .who b{font-weight:500}
-.track2{position:relative;height:36px;border-radius:var(--r-sm);background:color-mix(in srgb,var(--ink) 4%,var(--box))}
+.track2{position:relative;height:36px;border-radius:var(--r-sm);background:var(--box);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--ink) 9%,transparent)}
 .fill{position:absolute;inset-block:0;left:0;border-radius:var(--r-sm);display:flex;align-items:center;padding-inline:10px;font-family:var(--mono);font-size:var(--t-xs);white-space:nowrap;font-variant-numeric:tabular-nums}
 .fill.us{background:var(--us-fill);color:#fff;font-weight:500}
 .fill.them{background:color-mix(in srgb,var(--ink) 12%,var(--box));color:var(--ink-soft)}
-.fill.range{background:repeating-linear-gradient(135deg,color-mix(in srgb,var(--ink) 14%,var(--box)) 0 6px,color-mix(in srgb,var(--ink) 5%,var(--box)) 6px 12px);color:var(--ink-soft)}
+.fill.range{background:repeating-linear-gradient(135deg,color-mix(in srgb,var(--ink) 26%,var(--box)) 0 2px,var(--box) 2px 8px);color:var(--ink-soft)}
 .fill.min{padding:0}
 .out{position:absolute;top:50%;transform:translateY(-50%);font-family:var(--mono);font-size:var(--t-xs);white-space:nowrap;color:var(--ink)}
 .axis{display:grid;grid-template-columns:120px 1fr;gap:14px}
@@ -1287,7 +1287,7 @@ main,footer{position:relative;z-index:1;background:var(--paper)}
 .ba-r .who{font-size:var(--t-small);line-height:1.25}
 .ba-h span{font:500 11px var(--mono);letter-spacing:.04em;text-transform:uppercase;color:var(--ink-soft)}
 .ba-v{height:44px;border-radius:var(--r-sm);display:flex;align-items:center;padding-inline:12px;font-family:var(--mono);font-size:var(--t-meta);white-space:nowrap;font-variant-numeric:tabular-nums}
-.ba-v.them{background:color-mix(in srgb,var(--ink) 7%,var(--box));color:var(--ink-soft)}
+.ba-v.them{background:var(--box);color:var(--ink-soft);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--ink) 10%,transparent)}
 .ba-v.us{background:var(--us-fill);color:#fff;font-weight:500}
 .ba-to{width:24px;height:24px;display:grid;place-items:center;justify-self:center}
 .ba-to::before{content:"";width:16px;height:16px;background:var(--ink-soft);-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12h14M13 6l6 6-6 6'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12h14M13 6l6 6-6 6'/%3E%3C/svg%3E") center/contain no-repeat}
@@ -1295,15 +1295,15 @@ main,footer{position:relative;z-index:1;background:var(--paper)}
 .effort{position:relative;border-bottom:1px solid var(--ink-faint)}
 .effort svg{display:block;width:100%;height:clamp(150px,16vw,190px)}
 .ef-them{fill:url(#effort-hatch)}
-.eh-a{fill:color-mix(in srgb,var(--ink) 14%,var(--box))}
-.eh-b{fill:color-mix(in srgb,var(--ink) 4%,var(--box))}
+.eh-a{fill:color-mix(in srgb,var(--ink) 30%,var(--box))}
+.eh-b{fill:var(--box)}
 .ef-us{fill:url(#effort-us)}
 .ef-lab{position:absolute;font:var(--t-xs) var(--mono);white-space:nowrap;color:var(--ink)}
 .ef-lab-them{top:0;right:0}
 .ef-lab-us{bottom:10px;right:10px;color:#fff;font-weight:500}
 .ef-ticks{margin-top:-14px}
 .ef-ticks span{white-space:nowrap}
-.ef-key{width:14px!important;height:14px!important;border:0!important;border-radius:3px;background:repeating-linear-gradient(135deg,color-mix(in srgb,var(--ink) 14%,var(--box)) 0 3px,color-mix(in srgb,var(--ink) 4%,var(--box)) 3px 6px)}
+.ef-key{width:14px!important;height:14px!important;border:0!important;border-radius:3px;background:repeating-linear-gradient(135deg,color-mix(in srgb,var(--ink) 30%,var(--box)) 0 2px,var(--box) 3px 6px)}
 @media (max-width:480px){ .ba-r{grid-template-columns:minmax(0,1.1fr) minmax(0,1fr) 20px minmax(0,1fr);gap:6px} .ba-to{width:20px;height:20px} .ba-to::before{width:14px;height:14px} .ba-v{padding-inline:8px;font-size:var(--t-xs)} }
 
 /* Platforms: Salesforce intro row, then Customisations · Clouds · One journey as equal columns, ServiceNow as the panel's footer */
@@ -1540,8 +1540,8 @@ main,footer{position:relative;z-index:1;background:var(--paper)}
 .bx::before,.bx::after{content:"";position:absolute;inset:-60%;z-index:-1;pointer-events:none;will-change:transform;translate:0 var(--py,0px)}
 .bx::before{background:radial-gradient(30vmax 24vmax at var(--cx,50%) var(--cy,50%),var(--ga,transparent),transparent 72%);transform-origin:var(--cx,50%) var(--cy,50%);animation:bx-core 10s ease-in-out infinite alternate}
 .bx::after{background:radial-gradient(52vmax 40vmax at var(--hx,50%) var(--hy,70%),var(--gb,transparent),transparent 72%);transform-origin:var(--hx,50%) var(--hy,70%);translate:0 calc(var(--py,0px) * -.6);animation:bx-halo 14s ease-in-out infinite alternate}
-@keyframes bx-core{0%{transform:translate(-7vw,4vh) scale(1)}50%{transform:translate(6vw,-4vh) scale(1.2)}100%{transform:translate(2vw,6vh) scale(.9)}}
-@keyframes bx-halo{0%{transform:translate(8vw,-3vh) scale(1.1)}50%{transform:translate(-7vw,5vh) scale(.92)}100%{transform:translate(-2vw,-6vh) scale(1.15)}}
+@keyframes bx-core{0%{transform:translate(-16vw,6vh) scale(1)}35%{transform:translate(4vw,-7vh) scale(1.22)}70%{transform:translate(14vw,5vh) scale(.95)}100%{transform:translate(-4vw,9vh) scale(1.1)}}
+@keyframes bx-halo{0%{transform:translate(14vw,-5vh) scale(1.1)}40%{transform:translate(-12vw,7vh) scale(.9)}75%{transform:translate(-2vw,-8vh) scale(1.2)}100%{transform:translate(10vw,4vh) scale(1)}}
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .bx::before,:root:not([data-theme="light"]) .bx::after{opacity:.6} }
 :root[data-theme="dark"] .bx::before,:root[data-theme="dark"] .bx::after{opacity:.6}
 @media (prefers-reduced-motion:reduce){ .bx::before,.bx::after{animation:none} }
