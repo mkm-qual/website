@@ -289,7 +289,7 @@
     });
   }
   const stopAuto = () => { clearTimeout(autoTimer); onDone = null; };
-  tabs.forEach(b => b.addEventListener('click', () => { if (running) return; stopAuto(); setTool(b.dataset.tool); finalState(defect.checked && false); }));
+  tabs.forEach(b => b.addEventListener('click', () => { if (running) return; stopAuto(); setTool(b.dataset.tool); finalState(false); }));
   runBtn.addEventListener('click', () => { stopAuto(); run(); });
   defect.addEventListener('change', stopAuto);
   setTool('ado');
@@ -520,6 +520,26 @@
   };
   addEventListener('scroll', update, {passive: true});
   update();
+})();
+
+/* Scroll reveal: cards fade up once as they enter the viewport, staggered within their group. Skipped for reduced motion. */
+(() => {
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window)) return;
+  const els = [...document.querySelectorAll('.feat, .diff, .cmp, .sf-panel, .results-card, .secure-card, .pp-card, .kpi, .qt, .cs-card, .rs-card')]
+    .filter(el => el.getBoundingClientRect().top > innerHeight);   // leave anything already on screen alone
+  if (!els.length) return;
+  els.forEach(el => {
+    const sibs = [...el.parentElement.children].filter(c => els.includes(c));
+    el.style.setProperty('--rv-i', Math.min(sibs.indexOf(el), 5));
+    el.classList.add('rv');
+  });
+  const io = new IntersectionObserver(es => es.forEach(e => {
+    if (!e.isIntersecting) return;
+    e.target.classList.add('in'); io.unobserve(e.target);
+    const el = e.target, done = ev => { if (ev.target !== el) return; el.removeEventListener('transitionend', done); el.classList.remove('rv', 'in'); el.style.removeProperty('--rv-i'); };
+    el.addEventListener('transitionend', done);
+  }), {rootMargin: '0px 0px -8% 0px'});
+  els.forEach(el => io.observe(el));
 })();
 
 /* Draw-on-scroll charts */
