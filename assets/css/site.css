@@ -130,13 +130,22 @@ p{margin:0}
 .mega .m-story p{font-size:var(--t-small);color:var(--deep-soft)}
 .new{font-size:10px;font-weight:500;font-style:normal;padding:3px 5px;border-radius:var(--r-xs);background:var(--cta);color:#001630;margin-left:6px;vertical-align:1px}
 
-/* Floating pill nav */
-.pill-nav{position:fixed;left:50%;top:calc(16px + env(safe-area-inset-top,0px));z-index:60;width:460px;max-width:calc(100vw - 32px);display:flex;justify-content:space-between;gap:6px;align-items:center;padding:8px;border-radius:calc(var(--r-sm) + 8px);background:color-mix(in srgb,var(--paper) 97%,transparent);box-shadow:0 8px 30px -8px rgba(11,31,58,.22),0 0 0 1px var(--ink-faint);transform:translate(-50%,-160%);transition:transform .35s var(--ease)}
+/* Floating nav: a centred circle showing the Q. Hover (or keyboard focus) swaps the Q for a menu icon; open, it turns
+   into a close icon and the menu drops below, centred on the circle. Theme switch and Book a demo sit at the menu's foot. */
+.pill-nav{position:fixed;left:50%;top:calc(16px + env(safe-area-inset-top,0px));z-index:60;width:56px;height:56px;border-radius:50%;background:color-mix(in srgb,var(--paper) 97%,transparent);box-shadow:0 8px 30px -8px rgba(11,31,58,.22),0 0 0 1px var(--ink-faint);transform:translate(-50%,-160%);transition:transform .35s var(--ease)}
 .pill-nav.show{transform:translate(-50%,0)}
-.pill-nav .btn{padding:10px}
-.pill-r{display:flex;align-items:center;gap:6px}
-.pill-nav .logo{padding-left:6px}
-.pill-nav .mega-float{position:absolute;top:calc(100% + 8px);left:0;right:0;background:var(--paper);border-radius:var(--r);box-shadow:0 24px 48px -16px rgba(11,31,58,.3),0 0 0 1px var(--ink-faint);padding:12px;display:flex;flex-direction:column;gap:2px}
+.pill-btn{all:unset;box-sizing:border-box;cursor:pointer;width:100%;height:100%;border-radius:50%;display:grid;place-items:center;color:var(--ink);-webkit-tap-highlight-color:transparent}
+.pill-btn svg{grid-area:1/1;width:22px;height:22px;transition:opacity .2s var(--ease),transform .3s var(--ease-spring)}
+.pill-btn .pb-q{width:26px;height:27px}
+.pb-menu,.pb-close{fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;opacity:0;transform:rotate(-90deg) scale(.5)}
+@media (hover:hover){ .pill-btn:hover .pb-q{opacity:0;transform:scale(.5)} .pill-btn:hover .pb-menu{opacity:1;transform:none} }
+.pill-btn:focus-visible{outline:2px solid var(--brand);outline-offset:3px}
+.pill-btn:focus-visible .pb-q{opacity:0;transform:scale(.5)} .pill-btn:focus-visible .pb-menu{opacity:1;transform:none}
+.pill-btn[aria-expanded="true"] .pb-q,.pill-btn[aria-expanded="true"] .pb-menu{opacity:0;transform:scale(.5)}
+.pill-btn[aria-expanded="true"] .pb-close{opacity:1;transform:none}
+.pill-nav .mega-float{--mf-w:min(460px,calc(100vw - 32px));position:absolute;top:calc(100% + 10px);left:50%;width:var(--mf-w);margin-left:calc(var(--mf-w) / -2);background:var(--paper);border-radius:var(--r);box-shadow:0 24px 48px -16px rgba(11,31,58,.3),0 0 0 1px var(--ink-faint);padding:12px;display:flex;flex-direction:column;gap:2px}
+.mf-actions{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:12px 10px 2px;border-top:1px solid var(--ink-faint)}
+.mf-actions .btn{padding:10px 16px}
 .pill-nav .mega-float[hidden]{display:none!important}
 /* grouped like the Platform menu: Platforms and Capabilities side by side, industries as chips, Customers at the foot */
 .pill-nav .mega-float{gap:12px;max-height:calc(100vh - 110px);overflow-y:auto;overscroll-behavior:contain}

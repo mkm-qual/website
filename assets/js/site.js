@@ -8,9 +8,9 @@
   menuBtn.addEventListener('click', e => { e.stopPropagation(); setMega(mega.hidden); });
   mega.addEventListener('click', e => { if (e.target.closest('a')) setMega(false); });
 
-  // Floating pill nav
+  // Floating nav: a circle with the Q that opens the menu below it
   const pill = document.getElementById('pill'), pillBtn = document.getElementById('pill-menu'), pillList = document.getElementById('pill-list');
-  const setPill = open => { pillList.hidden = !open; pillBtn.setAttribute('aria-expanded', open); };
+  const setPill = open => { pillList.hidden = !open; pillBtn.setAttribute('aria-expanded', open); pillBtn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu'); };
   pillBtn.addEventListener('click', e => { e.stopPropagation(); setPill(pillList.hidden); });
   pillList.addEventListener('click', e => { if (e.target.closest('a')) setPill(false); });
   document.addEventListener('click', e => {
