@@ -573,6 +573,41 @@
   els.forEach(el => io.observe(el));
 })();
 
+/* Light motion inside sections, once each as it scrolls in: headings fade up, list items and tiles rise in turn,
+   the effort chart wipes across the year, security icons draw their outlines and the CTA mascot waves. Skipped for reduced motion. */
+(() => {
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window)) return;
+  const GROUPS = [
+    ['.sec-title, .turn-head, .ov-text > h2, .ov-text > .lede', 'rv'],
+    ['.ov-types li, .pillars li, .sf-tiles li, .sf-chain li, .sec-items > div, .ba-r:not(.ba-h), .proof-foot', 'rv-s'],
+    ['.effort', 'rv-wipe'],
+    ['.sec-ico', 'rv-draw'],
+    ['.cta-mascot', 'rv-wave']
+  ];
+  const io = new IntersectionObserver(es => es.forEach(e => {
+    if (!e.isIntersecting) return;
+    const el = e.target; io.unobserve(el); el.classList.add('in');
+    const cls = el.dataset.rv;
+    if (cls === 'rv-draw') return;                                 // the outline stays drawn; nothing to undo
+    const done = ev => {
+      if (ev.target !== el) return;
+      el.removeEventListener(cls === 'rv-wave' ? 'animationend' : 'transitionend', done);
+      el.classList.remove(cls, 'in'); el.style.removeProperty('--rv-i'); delete el.dataset.rv;
+    };
+    el.addEventListener(cls === 'rv-wave' ? 'animationend' : 'transitionend', done);
+  }), {rootMargin: '0px 0px -8% 0px'});
+  GROUPS.forEach(([sel, cls]) => {
+    const els = [...document.querySelectorAll(sel)].filter(el => !el.classList.contains('rv') && el.getBoundingClientRect().top > innerHeight);
+    els.forEach(el => {
+      const sibs = [...el.parentElement.children].filter(c => els.includes(c));
+      el.style.setProperty('--rv-i', Math.min(sibs.indexOf(el), 8));
+      if (cls === 'rv-draw') el.querySelectorAll('path, circle, rect').forEach(n => n.setAttribute('pathLength', '1'));
+      el.dataset.rv = cls; el.classList.add(cls);
+      io.observe(el);
+    });
+  });
+})();
+
 /* Results: when the card comes into view the stats rise in turn and each figure counts up to its value. Reduced motion shows them as written. */
 (() => {
   const card = document.querySelector('.results-card');
