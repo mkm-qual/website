@@ -1593,17 +1593,14 @@ main,footer{position:relative;z-index:1;background:var(--paper)}
 .ba-r:hover .ba-v.us{scale:1.03}
 .ba-to::before{transition:translate .3s var(--ease-spring),background-color var(--dur)}
 .ba-r:hover .ba-to::before{translate:4px 0;background:#5B4CF0}
-.row2[data-tip],.ba-r[data-tip],.effort{cursor:default}
+.row2,.ba-r,.effort{cursor:default}
 .effort{position:relative}
 .ef-x{position:absolute;top:0;bottom:0;left:0;width:0;border-left:1px dashed color-mix(in srgb,var(--ink) 35%,transparent);opacity:0;transition:opacity var(--dur);pointer-events:none}
 .effort:hover .ef-x{opacity:1}
 .ef-dot{position:absolute;left:0;width:10px;height:10px;margin:-5px 0 0 -5px;border-radius:50%;background:var(--box);box-shadow:0 0 0 2px var(--ink-soft)}
 .ef-dot.us{box-shadow:0 0 0 2px #5B4CF0}
 .ef-gap{position:absolute;left:-3px;width:6px;border-radius:3px;background:color-mix(in srgb,#FFA84A 55%,transparent)}
-.chart-tip{position:fixed;z-index:70;left:0;top:0;max-width:260px;padding:8px 12px;border-radius:var(--r-sm);background:#0A2540;color:#fff;font-size:var(--t-meta);line-height:1.35;box-shadow:0 10px 30px -10px rgba(10,37,64,.5);pointer-events:none;opacity:0;transition:opacity .15s var(--ease)}
-.chart-tip.on{opacity:1}
-.chart-tip b{font-weight:500}
-@media (hover:none){ .ef-x,.chart-tip{display:none} }
+@media (hover:none){ .ef-x{display:none} }
 
 /* Runs inside your network: each card lifts on hover, its edge takes a brand tint and the icon tile fills with the
    CTA blue-violet, tilting a touch */
