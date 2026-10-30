@@ -43,6 +43,7 @@
   /* content boxes: white, held apart from the white page by a hairline and a soft shadow (dark mode keeps its surfaces) */
   --box:#FFFFFF;
   --box-in:var(--surface);  /* small blocks inside a box */
+  --box-card:#FFFFFF;       /* small floating cards inside a box (flow steps) */
   --us-fill:linear-gradient(90deg,#0A6FD6,#5B4CF0);  /* Boson's bars in charts: white text holds 4.9:1 or better */
   --box-edge:0 0 0 1px rgba(10,37,64,.07),0 1px 2px rgba(10,37,64,.04),0 14px 36px -20px rgba(10,37,64,.18);
   /* the hero's colour, carried lightly through the site: a glow for dark cards (with grain); light sections sit over the page glow below */
@@ -52,14 +53,14 @@
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
-    --box:var(--surface); --box-in:var(--paper); --box-edge:none;
+    --box:var(--surface); --box-in:var(--paper); --box-card:var(--paper); --box-edge:none;
     --paper:#070E1A; --surface:#0F1A2B; --ink:#F6F9FC; --ink-soft:#ADBDCC; --ink-faint:rgba(232,238,247,.12);
     --cta:#B4C6FF; --chip:#1D2B47; --deep:#122440; --deep-fg:#F6F9FC; --deep-soft:#ADBDCC; --logo-hover:color-mix(in srgb,var(--brand) 30%,var(--surface));
     color-scheme:dark;
   }
 }
 :root[data-theme="dark"]{
-    --box:var(--surface); --box-in:var(--paper); --box-edge:none;
+    --box:var(--surface); --box-in:var(--paper); --box-card:var(--paper); --box-edge:none;
   --paper:#070E1A; --surface:#0F1A2B; --ink:#F6F9FC; --ink-soft:#ADBDCC; --ink-faint:rgba(232,238,247,.12);
   --cta:#B4C6FF; --chip:#1D2B47; --deep:#122440; --deep-fg:#F6F9FC; --deep-soft:#ADBDCC; --logo-hover:color-mix(in srgb,var(--brand) 30%,var(--surface));
   color-scheme:dark;
@@ -246,7 +247,7 @@ p{margin:0}
 .statement .soft{display:block}
 .statement.panel .features{margin-top:clamp(64px,8vw,128px);text-align:left;gap:clamp(32px,4vw,56px)}
 .statement.panel .media{background:var(--box)}
-.statement.panel .node{background:var(--box-in)}
+.statement.panel .node{background:var(--box-card);box-shadow:0 0 0 1px rgba(10,37,64,.06),0 12px 24px -16px rgba(11,31,58,.3)}
 
 /* Feature rows (sticky text left, media right) */
 .features{padding:0;display:flex;flex-direction:column;gap:var(--g)}
