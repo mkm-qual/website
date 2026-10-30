@@ -1189,7 +1189,6 @@ fieldset.ct-f{border:0;margin:0;padding:0}
 .ind-plat{list-style:none;margin:4px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:6px}
 .ind-plat li{padding:6px 10px;border-radius:var(--r-sm);background:var(--paper);font-size:var(--t-meta)}
 .ind-case{display:flex;flex-direction:column;gap:6px;height:100%;background:var(--deep);color:var(--deep-fg);border-radius:var(--r);padding:20px 22px;transition:transform .25s var(--ease)}
-.ind-case:hover{transform:translateY(-2px)}
 .ind-case small{font:500 var(--t-xs) var(--mono);color:var(--cta)}
 .ind-case b{font-weight:300;font-size:clamp(19px,1.6vw,22px);line-height:1.25}
 .ind-case span{margin-top:auto;padding-top:8px;font-size:var(--t-small);color:var(--deep-soft)}
@@ -1612,3 +1611,14 @@ main,footer{position:relative;z-index:1;background:var(--paper)}
 .sec-items .sec-ico{transition:background-color .25s var(--ease),stroke .25s var(--ease),rotate .35s var(--ease-spring),scale .35s var(--ease-spring)}
 .sec-items > div:hover .sec-ico{background-color:#4F55E6;stroke:#fff;rotate:-6deg;scale:1.08}
 @media (prefers-reduced-motion:reduce){ .sec-items > div:hover{translate:none} .sec-items > div:hover .sec-ico{rotate:none;scale:none} }
+
+/* Card hover, site-wide (the same language as the security cards): the card lifts with a deeper shadow and a
+   brand-tinted edge, and its badge or icon tile fills with the CTA blue-violet. Applied once a card has finished its
+   scroll reveal (:not(.rv)), so the two never fight over `translate`. */
+:is(.diff,.story,.pp-card,.kpi,.qt,.bl-card,.ind-case,.tile,.case-art,.pp-next a):not(.rv){transition:translate .35s var(--ease-spring),box-shadow .25s var(--ease),background-color var(--dur) var(--ease)}
+:is(.diff,.story:not(.dark),.pp-card,.kpi:not(.hi),.qt,.bl-card:not(.hi),.ind-case,.tile:not(.tile-cta),.pp-next a):hover{translate:0 -4px;box-shadow:0 0 0 1px color-mix(in srgb,#5B4CF0 28%,transparent),0 1px 2px rgba(10,37,64,.04),0 22px 44px -22px rgba(10,37,64,.32)}
+:is(.story.dark,.kpi.hi,.bl-card.hi,.tile-cta):hover{translate:0 -4px;box-shadow:0 24px 48px -20px rgba(10,37,64,.5)}
+.case:hover .case-art{translate:0 -4px;box-shadow:0 22px 44px -22px rgba(10,37,64,.32)}
+:is(.diff,.pp-card) :is(.chip,.pp-icon){transition:background-color .25s var(--ease),color .25s var(--ease)}
+.diff:hover .chip,.pp-card:hover .pp-icon{background-color:#4F55E6;color:#fff}
+@media (hover:none),(prefers-reduced-motion:reduce){ :is(.diff,.story,.pp-card,.kpi,.qt,.bl-card,.ind-case,.tile,.pp-next a):hover,.case:hover .case-art{translate:none} }
