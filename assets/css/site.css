@@ -137,8 +137,10 @@ p{margin:0}
 .mf-chips{display:flex;flex-wrap:wrap;gap:6px;padding:0 10px}
 .pill-nav .mega-float .mf-chips a{padding:6px 10px;border-radius:var(--r-sm);background:var(--surface);font-size:var(--t-meta);transition:background var(--dur)}
 .pill-nav .mega-float .mf-chips a:hover{background:var(--logo-hover)}
-.pill-nav .mega-float .mf-foot{display:flex;justify-content:space-between;gap:12px;padding:12px 10px 6px;border-top:1px solid var(--ink-faint);font-size:var(--t-small);font-weight:500}
-.mf-foot span{color:var(--ink-soft);font-weight:400}
+.pill-nav .mega-float .mf-foot{position:relative;display:flex;justify-content:space-between;gap:12px;margin-top:9px;padding:10px;border-radius:var(--r-sm);font-size:var(--t-small);font-weight:500;transition:background var(--dur)}
+.mf-foot::before{content:"";position:absolute;left:10px;right:10px;top:-8px;border-top:1px solid var(--ink-faint)}   /* divider sits above the hover area */
+.mf-foot span{color:var(--ink-soft);font-weight:400;transition:color var(--dur),translate var(--dur) var(--ease)}
+.mf-foot:hover span{color:var(--ink);translate:2px 0}
 .pill-nav .mega-float .mf-group > a:hover,.pill-nav .mega-float .mf-foot:hover{background:var(--surface)}
 .pill-nav .mega-float a[aria-current="page"]{color:var(--brand)}
 @media (max-width:420px){ .mf-cols{grid-template-columns:1fr;gap:8px} }
