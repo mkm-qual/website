@@ -543,6 +543,110 @@
   update();
 })();
 
+/* Homepage hero: scroll story. One rAF loop reads how far the pinned hero has scrolled and writes CSS variables; site.css draws it.
+   Reduced motion shows the finished state, unpinned. */
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+  const seg = (p, a, b) => clamp((p - a) / (b - a));
+  const ease = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+  const set = (el, k, v) => el.style.setProperty(k, typeof v === 'number' ? v.toFixed(4) : v);
+  const sh = document.getElementById('hero');
+  const stick = sh && sh.querySelector('.sh-stick');
+  const hero = sh && {
+    lines: [...sh.querySelectorAll('.sh-line')],
+    rail: [...sh.querySelectorAll('.sh-rail li')],
+    side: [...sh.querySelectorAll('.sh-side span')],
+    rows: [...sh.querySelectorAll('.sh-row')],
+    app: sh.querySelector('.sh-app'),
+    go: sh.querySelector('.sh-go'), goT: sh.querySelector('.sh-go-t'), ripple: sh.querySelector('.sh-ripple'),
+    hand: sh.querySelector('.sh-hand'),
+    chips: [...sh.querySelectorAll('.sh-chip')],
+    end: sh.querySelector('.sh-end'),
+    tests: document.getElementById('sh-tests'), cov: document.getElementById('sh-cov'), time: document.getElementById('sh-time')
+  };
+  let lastRail = -1, lastLine = -1;
+
+  function drawHero(p){
+    const h = hero;
+    set(stick, '--p', p);
+    // 1. the window rises and lays flat
+    set(h.app, '--a', 1 - ease(seg(p, 0, .14)));
+    // org metadata is read, one item at a time
+    const sc = seg(p, .02, .2) * h.side.length;
+    h.side.forEach((s, i) => { s.classList.toggle('scan', sc > i && sc < i + 1); s.classList.toggle('done', sc >= i + 1); });
+
+    // 2. the hand travels to Generate, 3. clicks
+    const sr = stick.getBoundingClientRect(), br = h.go.getBoundingClientRect();
+    const hw = h.hand.offsetWidth, hh = hw * 42 / 34;
+    const tx = br.left - sr.left + br.width * .62 - hw * .36, ty = br.top - sr.top + br.height * .55 - hh * .05;
+    const sx = sr.width * .92, sy = sr.height * 1.08;
+    const m = ease(seg(p, .1, .3));
+    const out = ease(seg(p, .4, .54));
+    const hx = sx + (tx - sx) * m + out * 70, hy = sy + (ty - sy) * m - Math.sin(Math.PI * m) * sr.height * .12 + out * 90;
+    const press = seg(p, .31, .36);
+    set(h.hand, '--hx', hx.toFixed(1) + 'px'); set(h.hand, '--hy', hy.toFixed(1) + 'px');
+    set(h.hand, '--hs', 1 - .2 * Math.sin(Math.PI * press));
+    set(h.hand, '--hr', (-14 + 10 * (1 - m)).toFixed(2) + 'deg');
+    set(h.hand, '--ho', 1 - seg(p, .46, .56));
+    h.go.classList.toggle('hover', p > .26 && p < .31);
+    h.go.classList.toggle('press', press > .15 && press < .85);
+    set(h.ripple, '--r', seg(p, .33, .44)); set(h.ripple, '--rv', p > .33 ? 1 : 0);
+
+    // 4. journeys generate, one after another
+    let total = 0;
+    h.rows.forEach((r, i) => {
+      const a = .38 + i * .045, f = ease(seg(p, a, a + .12));
+      total += f;
+      set(r, '--f', f); set(r, '--v', seg(p, a - .06, a));
+      const st = f >= 1 ? 'ok' : f > 0 ? 'go' : '';
+      if (r.dataset.st !== st){
+        r.dataset.st = st; r.classList.toggle('ok', st === 'ok'); r.classList.toggle('go', st === 'go');
+        if (st !== 'go') r.querySelector('.st').textContent = st === 'ok' ? '✓ ' + r.dataset.steps + ' steps' : 'queued';
+      }
+      if (st === 'go') r.querySelector('.st').textContent = 'building ' + Math.round(f * 100) + '%';
+    });
+    const g = total / h.rows.length;
+    h.tests.textContent = Math.round(412 * g);
+    h.cov.textContent = Math.round(72 * g) + '%';
+    h.time.textContent = Math.round(38 * g) + 's';
+    const state = g >= 1 ? 'done' : p > .36 ? 'run' : '';
+    if (h.go.dataset.st !== state){
+      h.go.dataset.st = state; h.go.classList.toggle('run', state === 'run');
+      h.goT.textContent = state === 'done' ? '✓ 6 journeys ready' : state === 'run' ? 'Generating…' : 'Generate';
+    }
+
+    // 5. release: the window settles, results float in, the call to action arrives
+    set(stick, '--z', ease(seg(p, .76, .9)));
+    h.chips.forEach((c, i) => set(c, '--c', ease(seg(p, .78 + i * .03, .84 + i * .03))));
+    const e = ease(seg(p, .86, .95));
+    set(h.end, '--e', e); h.end.classList.toggle('live', e > .5);
+
+    // headline crossfade
+    const o = [1 - seg(p, .33, .39), seg(p, .4, .46) * (1 - seg(p, .68, .74)), seg(p, .74, .8)];
+    h.lines.forEach((l, i) => { set(l, '--o', o[i]); set(l, '--dir', (i === 0 || (i === 1 && p > .7)) ? -1 : 1); });
+    const top = o.indexOf(Math.max(...o));
+    if (top !== lastLine){ h.lines.forEach((l, i) => i === top ? l.removeAttribute('aria-hidden') : l.setAttribute('aria-hidden', 'true')); lastLine = top; }
+
+    const stage = p < .12 ? 0 : p < .3 ? 1 : p < .38 ? 2 : p < .74 ? 3 : 4;
+    if (stage !== lastRail){ h.rail.forEach((li, i) => li.classList.toggle('on', i === stage)); lastRail = stage; }
+  }
+
+  if (!sh) return;
+  if (reduce){ drawHero(1); return; }
+  let queued = false;
+  const frame = () => {
+    queued = false;
+    const r = sh.getBoundingClientRect(), vh = innerHeight;
+    if (r.bottom > 0 && r.top < vh) drawHero(clamp(-r.top / (r.height - vh)));
+  };
+  const queue = () => { if (!queued){ queued = true; requestAnimationFrame(frame); } };
+  addEventListener('scroll', queue, {passive: true});
+  addEventListener('resize', queue, {passive: true});
+  addEventListener('load', queue);
+  frame();
+})();
+
 /* Draw-on-scroll charts */
 (() => {
   const els = document.querySelectorAll('[data-draw]');

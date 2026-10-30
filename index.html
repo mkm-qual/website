@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@100..700&family=Geist+Mono:wght@400;500&display=swap">
 <script>try{var t=localStorage.getItem("q-theme");if(t==="light"||t==="dark")document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
-<link rel="stylesheet" href="assets/css/site.css?v=06982a29">
+<link rel="stylesheet" href="assets/css/site.css?v=0c213d31">
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -79,27 +79,82 @@
 </nav>
 
 <main>
-  <!-- Hero -->
-  <section class="hero">
-    <div class="hero-card">
-      <video class="hero-photo hero-video" id="hero-video" muted loop playsinline preload="none" aria-hidden="true" poster="assets/hero/hero-loop-poster.jpg" data-poster-sm="assets/hero/hero-loop-poster-960.jpg" data-src-lg="assets/hero/hero-loop-1080.mp4" data-src-sm="assets/hero/hero-loop-540.mp4"></video>
-      <button class="hero-pause" type="button" id="hero-pause" aria-label="Pause background video" aria-pressed="false"><svg class="i-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14M16 5v14"/></svg><svg class="i-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg></button>
-      <a class="hero-tag" href="#platforms"><span class="chip">New</span>1-Click testing, now for ServiceNow</a>
-      <div class="hero-in">
-        <h1>One click. <span>Regression in hours, not weeks.</span></h1>
-        <div class="hero-side">
-          <p class="lede">Qualitia Boson builds your Salesforce test automation from your org’s metadata and keeps it current in one click, so every release is accurate first, and fast.</p>
-          <div class="row">
-            <a class="btn btn-cta" href="#demo">Book a demo</a>
-            <a class="btn btn-soft" href="#feat-generate">See how 1-Click works</a>
-          </div>
-          <div class="hero-notes">
-            <span><i class="dot"></i>Runs inside your network</span>
-            <span><i class="dot"></i>Salesforce · every cloud</span>
-            <span><i class="dot"></i>100% no-code</span>
+  <!-- Hero: scroll story. A hand clicks Generate and the suite builds itself (site.js drives it; reduced motion shows the finished state) -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <symbol id="mo-hand" viewBox="0 0 34 42">
+      <g fill="none" stroke="#001630" stroke-width="2.6" stroke-linejoin="round">
+        <rect x="9" y="1.5" width="6.4" height="24" rx="3.2"/><rect x="15" y="12" width="5.8" height="13" rx="2.9"/><rect x="20.4" y="14" width="5.4" height="12" rx="2.7"/><rect x="25.4" y="16.5" width="5" height="10" rx="2.5"/>
+        <rect x="9" y="19" width="21.4" height="19" rx="7"/><rect x="2.4" y="17" width="6" height="13" rx="3" transform="rotate(-32 5.4 23.5)"/>
+      </g>
+      <g fill="#fff">
+        <rect x="9" y="1.5" width="6.4" height="24" rx="3.2"/><rect x="15" y="12" width="5.8" height="13" rx="2.9"/><rect x="20.4" y="14" width="5.4" height="12" rx="2.7"/><rect x="25.4" y="16.5" width="5" height="10" rx="2.5"/>
+        <rect x="9" y="19" width="21.4" height="19" rx="7"/><rect x="2.4" y="17" width="6" height="13" rx="3" transform="rotate(-32 5.4 23.5)"/>
+      </g>
+      <path d="M15.2 14.5v6M20.6 16.5v4.5M25.6 19v3" stroke="#001630" stroke-opacity=".35" stroke-width="1.4" stroke-linecap="round"/>
+      <rect x="10.6" y="3.2" width="3.2" height="3.4" rx="1.6" fill="#B4C6FF"/>
+    </symbol>
+  </svg>
+  <section class="sh" id="hero" aria-label="Qualitia Boson: one click generates your Salesforce regression suite">
+    <div class="sh-stick">
+      <div class="sh-copy">
+        <a class="sh-tag" href="#platforms"><span class="chip">New</span>1-Click testing, now for ServiceNow</a>
+        <div class="sh-lines">
+          <h1 class="sh-line" data-l="0">One click.<br><span class="dim">That’s the whole script.</span></h1>
+          <p class="sh-line" data-l="1" aria-hidden="true">Every journey, <em>generated</em><br><span class="dim">from your org’s metadata.</span></p>
+          <p class="sh-line" data-l="2" aria-hidden="true">Regression in <em>hours</em>,<br><span class="dim">not weeks.</span></p>
+        </div>
+      </div>
+
+      <ol class="sh-rail" aria-hidden="true"><li>01 Read org</li><li>02 Point</li><li>03 Click</li><li>04 Generate</li><li>05 Release</li></ol>
+
+      <div class="sh-stage">
+        <div class="sh-app" aria-hidden="true">
+          <div class="sh-bar"><span class="dots"><i></i><i></i><i></i></span><svg viewBox="0 0 250 36"><use href="#q-boson"/></svg><span class="env">Sales Cloud · UAT</span></div>
+          <div class="sh-body">
+            <div class="sh-side">
+              <h5>Org metadata</h5>
+              <span>Objects <small>312</small></span>
+              <span>Page layouts <small>148</small></span>
+              <span>Flows <small>96</small></span>
+              <span>Lightning components <small>211</small></span>
+              <span>Permission sets <small>58</small></span>
+              <span>Validation rules <small>174</small></span>
+            </div>
+            <div class="sh-main">
+              <div class="sh-head">
+                <b>Generate automation<small>6 journeys found in metadata</small></b>
+                <span class="sh-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 3L5 13h6l-1 8 8-10h-6z"/></svg><span class="sh-go-t">Generate</span><i class="sh-ripple"></i></span>
+              </div>
+              <div class="sh-list">
+                <div class="sh-row" data-steps="14"><span>Lead to Opportunity conversion</span><span class="pb"><i></i></span><span class="st">queued</span></div>
+                <div class="sh-row" data-steps="22"><span>Quote with CPQ discount approval</span><span class="pb"><i></i></span><span class="st">queued</span></div>
+                <div class="sh-row" data-steps="11"><span>Case escalation, Lightning console</span><span class="pb"><i></i></span><span class="st">queued</span></div>
+                <div class="sh-row" data-steps="18"><span>OmniScript · Policy onboarding</span><span class="pb"><i></i></span><span class="st">queued</span></div>
+                <div class="sh-row" data-steps="16"><span>Contract renewal with approvals</span><span class="pb"><i></i></span><span class="st">queued</span></div>
+                <div class="sh-row" data-steps="9"><span>Run as · Partner community user</span><span class="pb"><i></i></span><span class="st">queued</span></div>
+              </div>
+              <div class="sh-foot"><span><b id="sh-tests">0</b>tests generated</span><span><b id="sh-cov">0%</b>flow coverage</span><span><b id="sh-time">0s</b>authoring time</span></div>
+            </div>
           </div>
         </div>
       </div>
+      <div class="sh-chip c1" aria-hidden="true"><i>✓</i><span><b>8 of 8</b> self-healed</span></div>
+      <div class="sh-chip c2" aria-hidden="true"><i>⚡</i><span><b>412 tests</b> updated for Sprint 14</span></div>
+      <div class="sh-chip c3" aria-hidden="true"><i>⏱</i><span>Regression: <b>3 weeks → 1 day</b></span></div>
+      <div class="sh-chip c4" aria-hidden="true"><i>◎</i><span><b>72%</b> flow coverage</span></div>
+
+      <div class="sh-hand" aria-hidden="true"><svg viewBox="0 0 34 42"><use href="#mo-hand"/></svg></div>
+
+      <div class="sh-end">
+        <p class="lede">Qualitia Boson builds your Salesforce test automation from your org’s metadata and keeps it current in one click, so every release is accurate first, and fast.</p>
+        <div class="row">
+          <a class="btn btn-cta" href="#demo">Book a demo</a>
+          <a class="btn btn-soft" href="#feat-generate">See how 1-Click works</a>
+        </div>
+        <div class="sh-notes"><span><i></i>Runs inside your network</span><span><i></i>Salesforce · every cloud</span><span><i></i>100% no-code</span></div>
+      </div>
+
+      <div class="sh-hint" aria-hidden="true"><b></b>Scroll to click</div>
     </div>
   </section>
 
@@ -459,6 +514,6 @@
 <div class="px-spacer" aria-hidden="true"></div>
 <div class="px-reveal" aria-hidden="true"><canvas></canvas></div>
 
-<script src="assets/js/site.js?v=613a0269"></script>
+<script src="assets/js/site.js?v=f0071f6a"></script>
 </body>
 </html>
