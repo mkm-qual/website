@@ -355,6 +355,9 @@ button.mock-btn{border:0;width:calc(100% - 28px);cursor:pointer;font:inherit;fon
 .reel-nav{display:flex;justify-content:flex-end;gap:8px;padding:0 var(--side) clamp(40px,4vw,64px)}
 .reel-nav button{width:40px;height:40px;border-radius:var(--r-sm);border:0;background:var(--surface);cursor:pointer;font-size:var(--t-body)}
 .reel-nav button:hover{background:var(--ink-faint)}
+/* Wide screens: the section pins and vertical scroll moves the reel sideways (JS adds .hs and sets the height) */
+.stories.hs .hs-pin{position:sticky;top:0;height:100vh;display:flex;flex-direction:column;justify-content:center;overflow:hidden}
+.stories.hs .reel{overflow:visible;scroll-snap-type:none;will-change:transform}
 
 /* CTA */
 .cta{padding:0 var(--side) var(--g)}

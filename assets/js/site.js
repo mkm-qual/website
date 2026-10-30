@@ -46,6 +46,59 @@
     nav.querySelector('[data-dir="1"]').addEventListener('click', () => stepReel(1));
   });
 
+  // Stories: on wide screens the section pins while vertical scroll slides the reel across
+  (() => {
+  const sec = document.querySelector('.stories'), reel = document.getElementById('reel');
+  if (!sec || !reel || !sec.querySelector('.hs-pin') || reduce) return;
+  const wide = matchMedia('(min-width: 900px) and (min-height: 640px)');
+  let on = false, start = 0, dist = 0, last = -1, queued = false;
+  const frame = () => {
+    queued = false;
+    const p = Math.min(1, Math.max(0, (scrollY - start) / dist));
+    if (p === last) return;
+    last = p;
+    reel.style.transform = 'translate3d(' + (-p * dist).toFixed(1) + 'px,0,0)';
+  };
+  const queue = () => { if (on && !queued){ queued = true; requestAnimationFrame(frame); } };
+  const measure = () => {
+    sec.classList.remove('hs'); sec.style.height = ''; reel.style.transform = ''; last = -1;
+    on = wide.matches;
+    if (!on) return;
+    reel.scrollLeft = 0;
+    const end = reel.lastElementChild.getBoundingClientRect().right - reel.getBoundingClientRect().left;
+    dist = Math.max(0, end + parseFloat(getComputedStyle(reel).paddingRight) - reel.clientWidth);
+    if (!dist){ on = false; return; }
+    sec.classList.add('hs');
+    const pad = parseFloat(getComputedStyle(sec).paddingTop);
+    sec.style.height = (pad + innerHeight + dist) + 'px';
+    start = sec.getBoundingClientRect().top + scrollY + pad;
+    frame();
+  };
+  // Arrows step the page instead of the reel while it's pinned
+  const nav = document.querySelector('[data-reel-nav="reel"]');
+  if (nav) nav.addEventListener('click', e => {
+    const b = e.target.closest('[data-dir]');
+    if (!on || !b) return;
+    e.stopImmediatePropagation();
+    const step = reel.firstElementChild.offsetWidth + 16;
+    scrollTo({top: scrollY + (+b.dataset.dir) * step, behavior: 'smooth'});
+  }, true);
+  let t;
+  const remeasure = () => { clearTimeout(t); t = setTimeout(() => settle(), 120); };
+  addEventListener('scroll', queue, {passive: true});
+  addEventListener('resize', remeasure, {passive: true});
+  addEventListener('load', () => settle());
+  // Remeasure when content above changes height (images, fonts), but not for the height this sets itself
+  const host = document.querySelector('main') || document.body;
+  let seen = 0;
+  const settle = () => { measure(); seen = Math.round(host.getBoundingClientRect().height); };
+  new ResizeObserver(en => {
+    const h = Math.round(en[0].borderBoxSize ? en[0].borderBoxSize[0].blockSize : host.getBoundingClientRect().height);
+    if (Math.abs(h - seen) > 1){ clearTimeout(t); t = setTimeout(settle, 120); }
+  }).observe(host);
+  settle();
+  })();
+
   // Console runs (illustrative), only on pages that have the console
   if (document.getElementById('c-body')) {
   const RUNS = {
