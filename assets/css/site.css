@@ -1403,7 +1403,7 @@ main,footer{position:relative;z-index:1;background:var(--paper)}
 .sh-steps li.done{color:rgba(255,255,255,.68)}
 .sh-steps li.on{color:#fff}
 .sh-steps i{display:block;height:3px;border-radius:3px;background:rgba(255,255,255,.14);overflow:hidden}
-.sh-steps b{display:block;height:100%;width:calc(var(--sf,0) * 100%);border-radius:inherit;background:linear-gradient(90deg,var(--brand),var(--cta))}
+.sh-steps b{display:block;height:100%;width:calc(var(--sf,0) * 100%);border-radius:inherit;background:var(--brand)}   /* solid, like the Total Control walkthrough bar */
 
 
 /* the app window */
