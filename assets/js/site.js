@@ -672,7 +672,7 @@
 })();
 
 /* Hero art: a WebGL ribbon of colour that flows across the hero, Stripe style. Noise-warped bands in the brand blues
-   plus violet, cyan, pink and amber, with fine silk lines; it leans a little toward the pointer. Drawn at reduced
+   plus violet, cyan, pink and amber, softly blurred under a film grain; it leans a little toward the pointer. Drawn at low
    resolution and paused off screen or in a background tab. Reduced motion gets one still frame; no WebGL keeps the CSS blobs. */
 (() => {
   const mesh = document.querySelector('.sh-mesh');
@@ -697,18 +697,16 @@ vec2 uv=gl_FragCoord.xy/r;vec2 p=vec2(uv.x*r.x/r.y,uv.y);float T=t*.045;
 vec2 q=vec2(sn(p*.8+vec2(T,-T*.6)+m*.25),sn(p*.8+vec2(-T*.8,T*.5)+5.2));
 float n=sn(p*1.4+q*1.1+vec2(T*.7,0.));
 float d=uv.y-(.12+.72*uv.x)-.16*q.x-m.y*.06+m.x*.04;
-float b=exp(-d*d*7.);
-float d2=d+.5+.08*q.y;float b2=exp(-d2*d2*26.)*.55;
+float b=exp(-d*d*5.);
+float d2=d+.5+.08*q.y;float b2=exp(-d2*d2*12.)*.5;
 vec3 navy=vec3(0.,.086,.188);
 vec3 c=mix(vec3(0.,.584,.922),vec3(.478,.361,1.),smoothstep(-.55,.55,n));
 c=mix(c,vec3(0.,.83,.91),smoothstep(.15,.85,q.y)*.85);
 c=mix(c,vec3(1.,.36,.616),smoothstep(.25,.9,sn(p*.6-vec2(T*.5,T*.3)+9.))*.9);
 c=mix(c,vec3(1.,.7,.36),smoothstep(.55,1.,n*.6+q.x*.6)*b);
 vec3 c2=mix(vec3(.478,.361,1.),vec3(1.,.36,.616),smoothstep(-.4,.6,q.x));
-float silk=smoothstep(.6,1.,.5+.5*sin(d*30.+n*3.5+T*5.));
-vec3 o=mix(navy,c,b*.92);o=mix(o,c2,b2);o+=silk*.08*(b+b2);
+vec3 o=mix(navy,c,b*.92);o=mix(o,c2,b2);
 float hx=(uv.x-.5)*2.2,hy=(uv.y-.8)*3.2;o*=1.-.38*exp(-hx*hx-hy*hy);
-o+=(fract(sin(dot(gl_FragCoord.xy,vec2(12.9898,78.233)))*43758.5453)-.5)*.012;
 gl_FragColor=vec4(o,1.);}`;
   const sh = (type, src) => { const o = gl.createShader(type); gl.shaderSource(o, src); gl.compileShader(o); return gl.getShaderParameter(o, gl.COMPILE_STATUS) ? o : null; };
   const vs = sh(gl.VERTEX_SHADER, VS), fs = sh(gl.FRAGMENT_SHADER, FS);
@@ -724,7 +722,7 @@ gl_FragColor=vec4(o,1.);}`;
   mesh.prepend(cv); mesh.classList.add('gl');
 
   const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const SCALE = .55;                                        // soft colour field, so half resolution looks the same and costs a quarter
+  const SCALE = .2;                                         // drawn small and stretched: the upscale is the blur, and it costs a twenty-fifth
   const size = () => {
     const w = Math.max(1, Math.round(mesh.clientWidth * SCALE)), h = Math.max(1, Math.round(mesh.clientHeight * SCALE));
     if (cv.width !== w || cv.height !== h){ cv.width = w; cv.height = h; gl.viewport(0, 0, w, h); gl.uniform2f(uR, w, h); }

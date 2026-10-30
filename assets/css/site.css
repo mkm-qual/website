@@ -1391,7 +1391,7 @@ main,footer{position:relative;z-index:1;background:var(--paper)}
 .sh{position:relative;height:460vh;margin:0 var(--g) var(--g)}
 .sh-stick{--ct:clamp(84px,12vh,120px);--fs:clamp(32px,min(5.2vw,8.4vh),80px);position:sticky;top:0;height:100vh;height:100svh;overflow:hidden;border-radius:var(--r-lg);background:#001630;color:#fff;isolation:isolate}
 /* blueprint grid + a glow that drifts with progress */
-.sh-stick::before{content:"";will-change:transform;position:absolute;inset:-2px;z-index:-1;background-image:linear-gradient(rgba(180,198,255,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(180,198,255,.07) 1px,transparent 1px);background-size:48px 48px;mask-image:radial-gradient(80% 70% at 50% 60%,#000 30%,transparent 80%);-webkit-mask-image:radial-gradient(80% 70% at 50% 60%,#000 30%,transparent 80%);transform:translateY(calc(var(--p,0) * -96px))}
+.sh-stick::before{content:none;will-change:transform;position:absolute;inset:-2px;z-index:-1;background-image:linear-gradient(rgba(180,198,255,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(180,198,255,.07) 1px,transparent 1px);background-size:48px 48px;mask-image:radial-gradient(80% 70% at 50% 60%,#000 30%,transparent 80%);-webkit-mask-image:radial-gradient(80% 70% at 50% 60%,#000 30%,transparent 80%);transform:translateY(calc(var(--p,0) * -96px))}
 .sh-stick::after{content:none;will-change:transform;position:absolute;z-index:-1;width:70vmax;aspect-ratio:1;left:50%;top:60%;border-radius:50%;background:radial-gradient(closest-side,rgba(0,149,235,.35),rgba(0,149,235,.08) 55%,transparent);transform:translate(calc(-50% + (var(--p,0) - .5) * 30vw),-50%) scale(calc(.8 + var(--p,0) * .5))}
 /* Stripe-style colour mesh: soft blobs drift slowly behind the grid. Transform-only, so it stays on the compositor. */
 .sh-mesh{position:absolute;inset:0;z-index:-2;overflow:hidden;pointer-events:none}
@@ -1401,7 +1401,9 @@ main,footer{position:relative;z-index:1;background:var(--paper)}
 .sh-mesh i:nth-child(3){--c:#00D4E8;--s:60vmax;--x:85%;--y:90%;--o:.75;--d:27s;animation-delay:-14s}
 .sh-mesh i:nth-child(4){--c:#FF5C9D;--s:58vmax;--x:12%;--y:95%;--o:.7;--d:32s;animation-delay:-5s}
 .sh-mesh i:nth-child(5){--c:#FF9A5C;--s:40vmax;--x:62%;--y:-5%;--o:.5;--d:22s;animation-delay:-11s}
-.sh-gl{position:absolute;inset:0;width:100%;height:100%;display:block}
+.sh-gl{position:absolute;inset:0;width:100%;height:100%;display:block;filter:blur(12px);transform:scale(1.06)}
+/* film grain over the colour */
+.sh-mesh::after{content:"";position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .9 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");background-size:160px;opacity:.3;mix-blend-mode:overlay;pointer-events:none}
 .sh-mesh.gl i{display:none}
 @keyframes mesh-drift{0%{transform:translate(0,0) scale(1)}33%{transform:translate(6vw,-4vh) scale(1.08)}66%{transform:translate(-4vw,5vh) scale(.94)}100%{transform:translate(3vw,2vh) scale(1.04)}}
 @media (prefers-reduced-motion:reduce){ .sh-mesh i{animation:none} }
