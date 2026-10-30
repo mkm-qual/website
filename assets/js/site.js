@@ -18,8 +18,11 @@
     if (!pill.contains(e.target)) setPill(false);
   });
   document.addEventListener('keydown', e => { if (e.key === 'Escape'){ setMega(false); setPill(false); } });
+  let pillShown = null;
   const onScroll = () => {
     const show = scrollY > 360;
+    if (show === pillShown) return;          // only touch the DOM when the bar appears or hides
+    pillShown = show;
     pill.classList.toggle('show', show);
     if (show) setMega(false); else setPill(false);
   };
@@ -517,30 +520,20 @@
   els.forEach(el => io.observe(el));
 })();
 
-/* Homepage features: one value block in focus at a time. The block nearest the middle of the screen is at full strength;
-   the others fade back, and the focus moves on as you scroll. Reduced motion shows every block at full strength. */
+/* Homepage features: one value block in focus at a time. The block crossing the middle of the screen is at full strength;
+   the others fade back. An observer watches a thin line across the middle, so nothing is measured while scrolling.
+   Reduced motion shows every block at full strength. */
 (() => {
   const wrap = document.getElementById('features');
-  if (!wrap || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  if (!wrap || matchMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window)) return;
   const feats = [...wrap.querySelectorAll('.feat')];
   if (feats.length < 2) return;
   wrap.classList.add('focus-mode');
-  let current = null, queued = false;
-  const update = () => {
-    queued = false;
-    const mid = innerHeight / 2;
-    let best = feats[0], dist = Infinity;
-    feats.forEach(f => {
-      const r = f.getBoundingClientRect();
-      const d = r.top > mid ? r.top - mid : r.bottom < mid ? mid - r.bottom : 0;   // 0 when the block spans the middle
-      if (d < dist){ dist = d; best = f; }
-    });
-    if (best !== current){ feats.forEach(f => f.classList.toggle('is-focus', f === best)); current = best; }
-  };
-  const queue = () => { if (!queued){ queued = true; requestAnimationFrame(update); } };
-  addEventListener('scroll', queue, {passive: true});
-  addEventListener('resize', queue, {passive: true});
-  update();
+  let current = null;
+  const focus = f => { if (f === current) return; feats.forEach(x => x.classList.toggle('is-focus', x === f)); current = f; };
+  focus(feats[0]);
+  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) focus(e.target); }), {rootMargin: '-50% 0px -50% 0px'});
+  feats.forEach(f => io.observe(f));
 })();
 
 /* Homepage hero: scroll story. One rAF loop reads how far the pinned hero has scrolled and writes CSS variables; site.css draws it.
@@ -550,7 +543,14 @@
   const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
   const seg = (p, a, b) => clamp((p - a) / (b - a));
   const ease = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
-  const set = (el, k, v) => el.style.setProperty(k, typeof v === 'number' ? v.toFixed(4) : v);
+  // write a CSS variable only when its value changes: most frames touch a handful of properties instead of forty
+  const memo = new WeakMap();
+  const set = (el, k, v) => {
+    const val = typeof v === 'number' ? v.toFixed(3) : v;
+    let m = memo.get(el); if (!m){ m = {}; memo.set(el, m); }
+    if (m[k] !== val){ m[k] = val; el.style.setProperty(k, val); }
+  };
+  const text = (el, t) => { if (el.textContent !== String(t)) el.textContent = t; };
   const sh = document.getElementById('hero');
   const stick = sh && sh.querySelector('.sh-stick');
   const hero = sh && {
@@ -565,6 +565,20 @@
     tests: document.getElementById('sh-tests'), cov: document.getElementById('sh-cov'), time: document.getElementById('sh-time')
   };
   let lastRail = -1, lastLine = -1;
+  // geometry read once per layout (load, resize): the hand's start and target, and where the scroll hint sits
+  let geo = null;
+  function measure(){
+    const h = hero, a = h.app.style.getPropertyValue('--a'), z = stick.style.getPropertyValue('--z'), o = h.lines[0].style.getPropertyValue('--o');
+    const sr = stick.getBoundingClientRect();
+    h.app.style.setProperty('--a', '0'); stick.style.setProperty('--z', '0');           // the window as it sits when the hand arrives
+    const br = h.go.getBoundingClientRect();
+    h.app.style.setProperty('--a', '1'); h.lines[0].style.setProperty('--o', '1');     // the opening frame, for the hint
+    const hint = (h.lines[0].getBoundingClientRect().bottom + h.app.getBoundingClientRect().top) / 2 - sr.top;
+    h.app.style.setProperty('--a', a); stick.style.setProperty('--z', z); h.lines[0].style.setProperty('--o', o);
+    const hw = h.hand.offsetWidth, hh = hw * 42 / 34;
+    geo = {w: sr.width, hgt: sr.height, tx: br.left - sr.left + br.width * .62 - hw * .36, ty: br.top - sr.top + br.height * .55 - hh * .05};
+    h.hint.style.setProperty('--hint-y', hint.toFixed(1) + 'px');
+  }
 
   function drawHero(p){
     const h = hero;
@@ -573,23 +587,22 @@
     set(h.app, '--a', 1 - ease(seg(p, 0, .14)));
     // org metadata is read, one item at a time
     const sc = seg(p, .02, .2) * h.side.length;
-    h.side.forEach((s, i) => { s.classList.toggle('scan', sc > i && sc < i + 1); s.classList.toggle('done', sc >= i + 1); });
+    const si = Math.floor(sc);
+    if (si !== h._si){ h._si = si; h.side.forEach((s, i) => { s.classList.toggle('scan', i === si && sc < h.side.length); s.classList.toggle('done', i < si); }); }
 
     // 2. the hand travels to Generate, 3. clicks
-    const sr = stick.getBoundingClientRect(), br = h.go.getBoundingClientRect();
-    const hw = h.hand.offsetWidth, hh = hw * 42 / 34;
-    const tx = br.left - sr.left + br.width * .62 - hw * .36, ty = br.top - sr.top + br.height * .55 - hh * .05;
-    const sx = sr.width * .92, sy = sr.height * 1.08;
+    if (!geo) measure();
+    const {tx, ty} = geo, sx = geo.w * .92, sy = geo.hgt * 1.08;
     const m = ease(seg(p, .1, .3));
     const out = ease(seg(p, .4, .54));
-    const hx = sx + (tx - sx) * m + out * 70, hy = sy + (ty - sy) * m - Math.sin(Math.PI * m) * sr.height * .12 + out * 90;
+    const hx = sx + (tx - sx) * m + out * 70, hy = sy + (ty - sy) * m - Math.sin(Math.PI * m) * geo.hgt * .12 + out * 90;
     const press = seg(p, .31, .36);
     set(h.hand, '--hx', hx.toFixed(1) + 'px'); set(h.hand, '--hy', hy.toFixed(1) + 'px');
     set(h.hand, '--hs', 1 - .2 * Math.sin(Math.PI * press));
     set(h.hand, '--hr', (-14 + 10 * (1 - m)).toFixed(2) + 'deg');
     set(h.hand, '--ho', 1 - seg(p, .46, .56));
-    h.go.classList.toggle('hover', p > .26 && p < .31);
-    h.go.classList.toggle('press', press > .15 && press < .85);
+    const gs = (p > .26 && p < .31 ? 'hover' : '') + (press > .15 && press < .85 ? ' press' : '');
+    if (gs !== h._gs){ h._gs = gs; h.go.classList.toggle('hover', gs.includes('hover')); h.go.classList.toggle('press', gs.includes('press')); }
     set(h.ripple, '--r', seg(p, .33, .44)); set(h.ripple, '--rv', p > .33 ? 1 : 0);
 
     // 4. journeys generate, one after another
@@ -601,14 +614,14 @@
       const st = f >= 1 ? 'ok' : f > 0 ? 'go' : '';
       if (r.dataset.st !== st){
         r.dataset.st = st; r.classList.toggle('ok', st === 'ok'); r.classList.toggle('go', st === 'go');
-        if (st !== 'go') r.querySelector('.st').textContent = st === 'ok' ? '✓ ' + r.dataset.steps + ' steps' : 'queued';
+        if (st !== 'go') text(r.querySelector('.st'), st === 'ok' ? '✓ ' + r.dataset.steps + ' steps' : 'queued');
       }
-      if (st === 'go') r.querySelector('.st').textContent = 'building ' + Math.round(f * 100) + '%';
+      if (st === 'go') text(r.querySelector('.st'), 'building ' + Math.round(f * 100) + '%');
     });
     const g = total / h.rows.length;
-    h.tests.textContent = Math.round(412 * g);
-    h.cov.textContent = Math.round(72 * g) + '%';
-    h.time.textContent = Math.round(38 * g) + 's';
+    text(h.tests, Math.round(412 * g));
+    text(h.cov, Math.round(72 * g) + '%');
+    text(h.time, Math.round(38 * g) + 's');
     const state = g >= 1 ? 'done' : p > .36 ? 'run' : '';
     if (h.go.dataset.st !== state){
       h.go.dataset.st = state; h.go.classList.toggle('run', state === 'run');
@@ -618,7 +631,8 @@
     // 5. release: the window settles and the call to action arrives
     set(stick, '--z', ease(seg(p, .76, .9)));
     const e = ease(seg(p, .86, .95));
-    set(h.end, '--e', e); h.end.classList.toggle('live', e > .5);
+    set(h.end, '--e', e);
+    if ((e > .5) !== h._live){ h._live = e > .5; h.end.classList.toggle('live', h._live); }
 
     // headline crossfade
     const o = [1 - seg(p, .33, .39), seg(p, .4, .46) * (1 - seg(p, .68, .74)), seg(p, .74, .8)];
@@ -631,12 +645,6 @@
     const stage = p < .12 ? 0 : p < .3 ? 1 : p < .38 ? 2 : p < .74 ? 3 : 4;
     h.steps.forEach((li, i) => set(li, '--sf', seg(p, B[i], B[i + 1])));
     if (stage !== lastRail){ h.steps.forEach((li, i) => { li.classList.toggle('on', i === stage); li.classList.toggle('done', i < stage); }); lastRail = stage; }
-    // the scroll hint sits midway between the headline and the window until it fades (measured last, once both are placed)
-    if (p < .1){
-      const sr = stick.getBoundingClientRect();
-      const mid = (h.lines[0].getBoundingClientRect().bottom + h.app.getBoundingClientRect().top) / 2 - sr.top;
-      set(h.hint, '--hint-y', mid.toFixed(1) + 'px');
-    }
   }
 
   if (!sh) return;
@@ -649,8 +657,10 @@
   };
   const queue = () => { if (!queued){ queued = true; requestAnimationFrame(frame); } };
   addEventListener('scroll', queue, {passive: true});
-  addEventListener('resize', queue, {passive: true});
-  addEventListener('load', queue);
+  const remeasure = () => { geo = null; queue(); };
+  addEventListener('resize', remeasure, {passive: true});
+  addEventListener('load', remeasure);
+  if (document.fonts) document.fonts.ready.then(remeasure);
   frame();
 })();
 
@@ -775,6 +785,7 @@
   wordmark.src = 'assets/brand/qualitia-logo-white.svg';
   const symbol = qsym ? toImg(qsym, '0 0 35 36') : null;
   let mask = null, W = 0, H = 0, queued = false;
+  let maxY = 0; const readMax = () => { maxY = document.documentElement.scrollHeight - innerHeight; };   // page height, read on load and resize only
   const narrow = () => W < 600 && symbol;
   const fine = () => (narrow() ? 5 : 6);
   const hash = (a, b) => { const n = 43758.5453123 * Math.sin(127.1 * a + 311.7 * b); return n - Math.floor(n); };
@@ -792,7 +803,7 @@
   function cellSize(){
     const f = fine();
     if (reduce.matches) return f;
-    const max = Math.max(0, document.documentElement.scrollHeight - innerHeight);
+    const max = Math.max(0, maxY);
     if (max <= 0 || scrollY >= max - 1) return f;
     const t = Math.max(0, Math.min(1, (scrollY - (max - H)) / H));
     return Math.round(COARSE - (COARSE - f) * (t <= 0.35 ? 0 : (t - 0.35) / 0.65) ** 2);
@@ -812,9 +823,11 @@
     }
   }
   function queue(){ if (!queued){ queued = true; requestAnimationFrame(draw); } }
-  const onScroll = () => { const max = document.documentElement.scrollHeight - innerHeight; if (scrollY >= max - H - 240) queue(); };
+  readMax(); addEventListener('load', readMax);
+  if ('ResizeObserver' in window) new ResizeObserver(readMax).observe(document.body);   // late images change the height
+  const onScroll = () => { if (scrollY >= maxY - H - 240) queue(); };
   addEventListener('scroll', onScroll, {passive: true});
-  addEventListener('resize', queue, {passive: true});
+  addEventListener('resize', () => { readMax(); queue(); }, {passive: true});
   reduce.addEventListener('change', queue);
   queue();
 })();
