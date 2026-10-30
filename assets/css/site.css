@@ -1284,8 +1284,12 @@ main,footer{position:relative;z-index:1;background:var(--paper)}
 .sf-col:first-child{border-radius:var(--r) 0 0 var(--r)}
 .sf-col:last-child{border-radius:0 var(--r) var(--r) 0}
 .sf-col h4{margin:0 0 12px;font:500 var(--t-xs) var(--mono);letter-spacing:.04em;text-transform:uppercase;color:var(--ink-soft)}
-.sf-col ul{list-style:none;margin:0;padding:0}
-.sf-col ul li{font-size:var(--t-list);padding:6px 0}
+/* Customisations and Clouds as small icon tiles, so they scan at a glance */
+.sf-tiles{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.sf-tiles li{display:flex;align-items:center;gap:10px;padding:10px;border-radius:var(--r-sm);background:var(--surface);font-size:var(--t-small);line-height:1.25;transition:background var(--dur)}
+.sf-tiles li:hover{background:var(--logo-hover)}
+.sf-tiles li:last-child:nth-child(odd){grid-column:1 / -1}
+.sf-tiles svg{flex:none;width:30px;height:30px;padding:6px;border-radius:var(--r-xs);background:color-mix(in srgb,var(--brand) 12%,var(--paper));stroke:var(--brand);fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
 .sf-eco{font-size:var(--t-list);line-height:1.45;color:var(--ink-soft);margin-top:14px;max-width:24em}
 .sf-chain{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;align-items:center;gap:4px}
 .sf-chain li{display:flex;align-items:center;gap:4px}
@@ -1304,7 +1308,9 @@ main,footer{position:relative;z-index:1;background:var(--paper)}
 }
 @media (max-width:560px){
   .sf-panel{--sf-pad:16px;--sf-in:14px}
-  .sf-col ul li{font-size:var(--t-small);line-height:1.3}
+  .sf-tiles{grid-template-columns:1fr;gap:6px}
+  .sf-tiles li{padding:8px}
+  .sf-tiles svg{width:26px;height:26px;padding:5px}
 }
 
 .logo-grid .tile-cta{flex-direction:column;align-items:flex-start;justify-content:space-between;background:var(--deep);color:var(--deep-fg);aspect-ratio:1;padding:clamp(16px,2vw,24px)}
