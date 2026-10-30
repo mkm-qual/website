@@ -760,9 +760,10 @@ void main(){
 vec2 uv=gl_FragCoord.xy/r;float asp=r.x/r.y;float T=t*.1;float px=1.5/r.y;
 vec3 col=bg;
 float wd=smoothstep(.6,1.3,asp);   // phones: a little lower and slimmer, under the app window
-vec4 b=ribbon(uv,asp,mix(.1,.15,wd),mix(.12,.17,wd),.035,2.4,7.,T,px);
-vec4 a=ribbon(uv,asp,mix(.08,.12,wd),mix(.14,.19,wd),mix(.1,.14,wd),0.,4.4,T,px);
-col=mix(col,b.rgb,b.a*.8);col=mix(col,a.rgb,a.a);
+vec4 b=ribbon(uv,asp,mix(.2,.21,wd),mix(.1,.14,wd),.03,2.4,7.,T,px);
+vec4 a=ribbon(uv,asp,mix(.18,.18,wd),mix(.12,.16,wd),mix(.08,.11,wd),0.,4.4,T,px);
+float edge=smoothstep(.0,.1,uv.y);   // always fade out before the bottom of the hero, so the container never cuts it
+col=mix(col,b.rgb,b.a*.8*edge);col=mix(col,a.rgb,a.a*edge);
 gl_FragColor=vec4(col,1.);}`;
   const sh = (type, src) => { const o = gl.createShader(type); gl.shaderSource(o, src); gl.compileShader(o); return gl.getShaderParameter(o, gl.COMPILE_STATUS) ? o : null; };
   const vs = sh(gl.VERTEX_SHADER, VS), fs = sh(gl.FRAGMENT_SHADER, FS);
