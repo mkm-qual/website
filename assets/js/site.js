@@ -1070,13 +1070,32 @@ gl_FragColor=vec4(col,1.);}`;
 })();
 
 /* Pixel reveal: draw the Qualitia wordmark (the Q symbol on narrow screens) as negative space in a dense field of
-   rounded pixels whose size shrinks from ~84px to fine over the final stretch of scroll. Static fine grid for reduced motion. */
+   colour pixels whose size shrinks from ~84px to fine over the final stretch of scroll. Each pixel takes its colour from
+   the hero ribbon's palette as it sweeps across the panel (blue, violet, pink, amber), varies a little in brightness,
+   and is feathered so its edges melt into the navy. Static fine grid for reduced motion. */
 (() => {
   const wrap = document.querySelector('.px-reveal'), qsym = document.getElementById('q-symbol');
   if (!wrap) return;
   const cv = wrap.querySelector('canvas'), ctx = cv.getContext('2d');
-  // the logo is negative space: a dense navy pixel field around it, empty cells where the logo is
-  const BG = '#001630', FG = '#10305a', DENSITY = 0.85, COARSE = 84;
+  // the logo is negative space: a dense colour pixel field around it, empty cells where the logo is
+  const BG = '#001630', DENSITY = 0.85, COARSE = 84;
+  const PAL = [[0,149,235], [122,92,255], [255,92,157], [255,168,74]];   // the ribbon: blue, violet, pink, amber
+  const colAt = u => { const s = Math.max(0, Math.min(.999, u)) * 3, i = s | 0, f = s - i, a = PAL[i], b = PAL[i + 1];
+    return 'rgb(' + (a[0] + (b[0] - a[0]) * f | 0) + ',' + (a[1] + (b[1] - a[1]) * f | 0) + ',' + (a[2] + (b[2] - a[2]) * f | 0) + ')'; };
+  const STEPS = 32, COLS = Array.from({length: STEPS}, (_, i) => colAt(i / (STEPS - 1)));
+  // soft pixels: one blurred square per palette step, redrawn only when the pixel size changes, then stamped per cell
+  const sprites = COLS.map(() => document.createElement('canvas'));
+  let spriteV = 0, spriteS = 0, spritePad = 0;
+  function makeSprites(v, dpr){
+    const pad = Math.max(2, v * .2), S = Math.ceil(v + pad * 2);
+    sprites.forEach((c, i) => {
+      c.width = c.height = Math.ceil(S * dpr);
+      const g = c.getContext('2d'); g.setTransform(dpr, 0, 0, dpr, 0, 0);
+      g.shadowColor = COLS[i]; g.shadowBlur = pad * dpr * .9; g.shadowOffsetX = 4000 * dpr;   // only the blurred shadow lands on the sprite
+      g.fillStyle = '#000'; g.fillRect(pad + v * .08 - 4000, pad + v * .08, v * .84, v * .84);
+    });
+    spriteV = v; spriteS = S; spritePad = pad;
+  }
   const reduce = matchMedia('(prefers-reduced-motion: reduce)');
   const toImg = (sym, vb) => { const i = new Image(); i.onload = () => { mask = null; queue(); };
     i.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="' + vb + '">' + sym.innerHTML.replace(/currentColor|#0095EB/gi, '#fff') + '</svg>'); return i; };
@@ -1112,14 +1131,19 @@ gl_FragColor=vec4(col,1.);}`;
     const r = wrap.getBoundingClientRect(), w = Math.max(1, Math.floor(r.width)), h = Math.max(1, Math.floor(r.height));
     if (w !== W || h !== H){ W = w; H = h; const dpr = Math.min(devicePixelRatio || 1, 2); cv.width = W * dpr; cv.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0); mask = null; }
     if (!mask) buildMask();
-    const v = cellSize(), gap = v > 2 ? 1 : 0, rad = 1 + 3 * Math.max(0, Math.min(1, (v - fine()) / (COARSE - fine())));
-    ctx.fillStyle = BG; ctx.fillRect(0, 0, W, H); ctx.fillStyle = FG;
+    const v = cellSize(), gap = v > 2 ? 1 : 0, soft = v >= 9, dpr = Math.min(devicePixelRatio || 1, 2);
+    if (soft && v !== spriteV) makeSprites(v, dpr);
+    ctx.fillStyle = BG; ctx.fillRect(0, 0, W, H);
     for (let y = 0; y < H; y += v) for (let x = 0; x < W; x += v){
       const cx = Math.min(W - 1, x + (v >> 1)), cy = Math.min(H - 1, y + (v >> 1));
       const inLogo = mask && mask[(cx + cy * W) * 4 + 3] > 128;
       if (inLogo || hash(x / v | 0, y / v | 0) >= DENSITY) continue;
-      if (ctx.roundRect){ ctx.beginPath(); ctx.roundRect(x, y, v - gap, v - gap, rad); ctx.fill(); } else ctx.fillRect(x, y, v - gap, v - gap);
+      const u = x / W * .9 + y / H * .18 + (hash(x / v | 0, 7 + y / v | 0) - .5) * .14, k = Math.max(0, Math.min(STEPS - 1, Math.round(u * (STEPS - 1))));
+      ctx.globalAlpha = .55 + .45 * hash(3 + x / v | 0, y / v | 0);
+      if (soft) ctx.drawImage(sprites[k], x - spritePad, y - spritePad, spriteS, spriteS);
+      else { ctx.fillStyle = COLS[k]; ctx.fillRect(x, y, v - gap, v - gap); }
     }
+    ctx.globalAlpha = 1;
   }
   function queue(){ if (!queued){ queued = true; requestAnimationFrame(draw); } }
   readMax(); addEventListener('load', readMax);
