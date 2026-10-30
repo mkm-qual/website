@@ -641,7 +641,7 @@
     const hint = (h.lines[0].getBoundingClientRect().bottom + h.app.getBoundingClientRect().top) / 2 - sr.top;
     h.app.style.setProperty('--a', a); stick.style.setProperty('--z', z); h.lines[0].style.setProperty('--o', o);
     const hw = h.hand.offsetWidth, hh = hw * 42 / 34;
-    geo = {w: sr.width, hgt: sr.height, tx: br.left - sr.left + br.width * .62 - hw * .36, ty: br.top - sr.top + br.height * .55 - hh * .05};
+    geo = {w: sr.width, hgt: sr.height, tx: br.left - sr.left + br.width * .62 - hw * .35, ty: br.top - sr.top + br.height * .55 - hh * .05};
     h.hint.style.setProperty('--hint-y', hint.toFixed(1) + 'px');
   }
 
@@ -664,7 +664,7 @@
     const press = seg(p, .31, .36);
     set(h.hand, '--hx', hx.toFixed(1) + 'px'); set(h.hand, '--hy', hy.toFixed(1) + 'px');
     set(h.hand, '--hs', 1 - .2 * Math.sin(Math.PI * press));
-    set(h.hand, '--hr', (-14 + 10 * (1 - m)).toFixed(2) + 'deg');
+    set(h.hand, '--hr', (8 * (1 - m)).toFixed(2) + 'deg');
     set(h.hand, '--ho', 1 - seg(p, .46, .56));
     const gs = (p > .26 && p < .31 ? 'hover' : '') + (press > .15 && press < .85 ? ' press' : '');
     if (gs !== h._gs){ h._gs = gs; h.go.classList.toggle('hover', gs.includes('hover')); h.go.classList.toggle('press', gs.includes('press')); }
