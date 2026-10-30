@@ -687,33 +687,35 @@
 uniform vec2 r;uniform float t;uniform vec2 m;uniform vec3 bg;
 vec3 grad(float k){vec3 a=vec3(0.,.584,.922),b=vec3(.478,.361,1.),c=vec3(1.,.36,.616),d=vec3(1.,.66,.29);
 return k<.34?mix(a,b,k/.34):k<.68?mix(b,c,(k-.34)/.34):mix(c,d,(k-.68)/.32);}
-// one ribbon: a band bent along an arc (centre o, radius R) that twists as it goes round. The inner edge melts away,
-// the outer edge is crisp; colour runs across the band and along it, with a sheen and fine fibres along its length
-vec4 ribbon(vec2 p,vec2 o,float R,float W,float ph,float tw,float T,float px){
-vec2 q=p-o;float th=atan(q.y,q.x);
-float rr=R+.05*sin(th*3.+T*.6+ph)+.03*sin(th*7.-T*.4)+m.y*.03;
-float d=length(q)-rr;
-float tws=cos(th*tw-T*.5+ph+m.x*.8);
-float hw=W*(.16+.84*abs(tws))*(.8+.2*sin(th*2.+T*.3));
+// one ribbon flowing across the full width: a gentle S-curve that dips under the middle and lifts at both sides,
+// twisting as it goes. The top edge is crisp, the lower edge melts away; colour runs across and along the band,
+// with darker folds, a sheen and fine fibres along its length
+vec4 ribbon(vec2 uv,float asp,float y0,float lift,float W,float ph,float tw,float T,float px){
+float x=uv.x-.5;
+float yc=y0+lift*x*x*4.+.045*sin(x*5.+T*.6+ph)+.02*sin(x*11.-T*.4+ph)+m.y*.03;
+float sl=lift*x*8.+.225*cos(x*5.+T*.6+ph)+.22*cos(x*11.-T*.4+ph);
+float d=(uv.y-yc)/sqrt(1.+sl*sl/(asp*asp));
+float tws=cos(x*tw-T*.45+ph+m.x*.8);
+float hw=W*(.2+.8*abs(tws));
 float u=d/hw;
 if(abs(u)>1.)return vec4(0.);
-float a=u>0.?clamp((1.-u)*hw/px,0.,1.):smoothstep(-1.,-.2,u);
+float a=u>0.?clamp((1.-u)*hw/px,0.,1.):smoothstep(-1.,-.25,u);
 float face=tws<0.?-1.:1.;
-float k=clamp(.5+.38*u*face+.45*sin(th*2.4+T*.15+ph),0.,1.);
-vec3 c=grad(k);
 float fold=smoothstep(0.,.8,abs(tws));
-c*=.72+.28*fold;
-c+=exp(-pow((u-.3*face)*2.4,2.))*.3*fold;
-c*=1.+.05*sin(u*190.+sin(th*20.+ph)*2.)*sin(u*31.+th*5.);
-if(face<0.)c=mix(c,vec3(1.),.14);
+float k=clamp(.5+.3*u*face*smoothstep(0.,.45,abs(tws))+.5*x+.12*sin(T*.3+ph),0.,1.);
+vec3 c=grad(k);
+c*=.74+.26*fold;
+c+=exp(-pow((u-.3*face)*2.4,2.))*.28*fold;
+c*=1.+.045*sin(u*190.+sin(x*30.+ph)*2.)*sin(u*31.+x*12.);
+c=mix(c,vec3(1.),.07-.07*face*smoothstep(0.,.45,abs(tws)));
 return vec4(c,a);}
 void main(){
-vec2 uv=gl_FragCoord.xy/r;float asp=r.x/r.y;vec2 p=vec2(uv.x*asp,uv.y);float T=t*.1;float px=1.5/r.y;
+vec2 uv=gl_FragCoord.xy/r;float asp=r.x/r.y;float T=t*.1;float px=1.5/r.y;
 vec3 col=bg;
-vec4 b=ribbon(p,vec2(-.4,-.92),.95,.08,2.1,4.,T,px);
-float wd=smoothstep(.6,1.3,asp);   // phones: the big ribbon sits lower and right, clear of the headline
-vec4 a=ribbon(p,vec2(asp+mix(.62,.47,wd),mix(-.38,-.1,wd)),mix(.9,1.,wd),.19,0.,5.,T,px);
-col=mix(col,b.rgb,b.a*.9);col=mix(col,a.rgb,a.a);
+float wd=smoothstep(.6,1.3,asp);   // phones: a little lower and slimmer, under the app window
+vec4 b=ribbon(uv,asp,mix(.1,.15,wd),mix(.12,.17,wd),.035,2.4,7.,T,px);
+vec4 a=ribbon(uv,asp,mix(.08,.12,wd),mix(.14,.19,wd),mix(.1,.14,wd),0.,4.4,T,px);
+col=mix(col,b.rgb,b.a*.8);col=mix(col,a.rgb,a.a);
 gl_FragColor=vec4(col,1.);}`;
   const sh = (type, src) => { const o = gl.createShader(type); gl.shaderSource(o, src); gl.compileShader(o); return gl.getShaderParameter(o, gl.COMPILE_STATUS) ? o : null; };
   const vs = sh(gl.VERTEX_SHADER, VS), fs = sh(gl.FRAGMENT_SHADER, FS);
