@@ -1343,7 +1343,7 @@ main,footer{position:relative;z-index:1;background:var(--paper)}
 /* Customisations and Clouds as small icon tiles, so they scan at a glance */
 .sf-tiles{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
 .sf-tiles li{display:flex;align-items:center;gap:10px;padding:10px;border-radius:var(--r-sm);background:var(--surface);font-size:var(--t-small);line-height:1.25;transition:background var(--dur)}
-.sf-tiles li:hover{background:var(--logo-hover)}
+
 .sf-tiles li:last-child:nth-child(odd){grid-column:1 / -1}
 .sf-tiles svg,.sec-ico{flex:none;width:30px;height:30px;padding:6px;border-radius:var(--r-xs);background:color-mix(in srgb,var(--brand) 12%,var(--paper));stroke:var(--brand);fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
 .sec-ico{width:36px;height:36px;padding:8px;margin-bottom:6px}
@@ -1422,12 +1422,12 @@ main,footer{position:relative;z-index:1;background:var(--paper)}
 /* ---------- Homepage hero: scroll story ----------
    A pinned stage: the app window rises, org metadata is read, a hand clicks Generate, six journeys build, result chips float in,
    then the call to action arrives. Everything is driven by --p (0 to 1) and a few variables set from site.js. */
-.sh{position:relative;height:460vh;margin:0 var(--g) var(--g)}
+.sh{position:relative;height:460vh;margin:0 0 var(--g)}   /* full bleed, so the hero art runs edge to edge */
 /* hero colours: light like Stripe (navy and slate on white, silk ribbons behind); navy in dark mode */
 .sh-stick{--sh-bg:#FFFFFF;--sh-fg:#0A2540;--sh-dim:#6B7A99;--sh-soft:#425466;--sh-line:rgba(10,37,64,.14);--sh-em:linear-gradient(90deg,#0A2540,#0095EB 45%,#7A5CFF)}
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .sh-stick{--sh-bg:#001630;--sh-fg:#fff;--sh-dim:rgba(255,255,255,.55);--sh-soft:rgba(255,255,255,.8);--sh-line:rgba(255,255,255,.14);--sh-em:linear-gradient(90deg,#fff,var(--cta) 45%,#5CC2FF)} }
 :root[data-theme="dark"] .sh-stick{--sh-bg:#001630;--sh-fg:#fff;--sh-dim:rgba(255,255,255,.55);--sh-soft:rgba(255,255,255,.8);--sh-line:rgba(255,255,255,.14);--sh-em:linear-gradient(90deg,#fff,var(--cta) 45%,#5CC2FF)}
-.sh-stick{--ct:clamp(84px,12vh,120px);--fs:clamp(32px,min(5.2vw,8.4vh),80px);position:sticky;top:0;height:100vh;height:100svh;overflow:hidden;border-radius:var(--r-lg);background:var(--sh-bg);color:var(--sh-fg);isolation:isolate}
+.sh-stick{--ct:clamp(84px,12vh,120px);--fs:clamp(32px,min(5.2vw,8.4vh),80px);position:sticky;top:0;height:100vh;height:100svh;overflow:hidden;border-radius:0;background:var(--sh-bg);color:var(--sh-fg);isolation:isolate}
 /* blueprint grid + a glow that drifts with progress */
 .sh-stick::before{content:none;will-change:transform;position:absolute;inset:-2px;z-index:-1;background-image:linear-gradient(rgba(180,198,255,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(180,198,255,.07) 1px,transparent 1px);background-size:48px 48px;mask-image:radial-gradient(80% 70% at 50% 60%,#000 30%,transparent 80%);-webkit-mask-image:radial-gradient(80% 70% at 50% 60%,#000 30%,transparent 80%);transform:translateY(calc(var(--p,0) * -96px))}
 .sh-stick::after{content:none;will-change:transform;position:absolute;z-index:-1;width:70vmax;aspect-ratio:1;left:50%;top:60%;border-radius:50%;background:radial-gradient(closest-side,rgba(0,149,235,.35),rgba(0,149,235,.08) 55%,transparent);transform:translate(calc(-50% + (var(--p,0) - .5) * 30vw),-50%) scale(calc(.8 + var(--p,0) * .5))}
@@ -1469,7 +1469,7 @@ main,footer{position:relative;z-index:1;background:var(--paper)}
 @keyframes sh-wheel{0%{opacity:0;transform:translateY(-3px)}30%{opacity:1}100%{opacity:0;transform:translateY(10px)}}
 
 /* step bar along the foot of the stage: five segments fill in turn (same language as the Total Control walkthrough bar) */
-.sh-steps{position:absolute;left:50%;bottom:30px;transform:translateX(-50%);width:min(560px,calc(100% - 2 * var(--side)));display:flex;gap:8px;list-style:none;margin:0;padding:0;z-index:4;pointer-events:none;opacity:min(1,calc(var(--p,0) * 16))}
+.sh-steps{position:absolute;left:50%;bottom:30px;transform:translateX(-50%);width:min(560px,calc(100% - 2 * var(--side)));display:flex;gap:8px;list-style:none;margin:0;padding:0;z-index:4;pointer-events:none;opacity:calc(min(1,var(--p,0) * 16) * (1 - var(--z,0)))}   /* fades out with the app window at the end */
 .sh-steps li{flex:1;display:flex;flex-direction:column;gap:10px;font-size:var(--t-meta);color:color-mix(in srgb,var(--sh-fg) 45%,transparent);transition:color .3s}
 .sh-steps li.done{color:var(--sh-soft)}
 .sh-steps li.on{color:var(--sh-fg)}
@@ -1593,17 +1593,14 @@ main,footer{position:relative;z-index:1;background:var(--paper)}
 .ba-r:hover .ba-v.us{scale:1.03}
 .ba-to::before{transition:translate .3s var(--ease-spring),background-color var(--dur)}
 .ba-r:hover .ba-to::before{translate:4px 0;background:#5B4CF0}
-.row2[data-tip],.ba-r[data-tip],.effort{cursor:default}
+.row2,.ba-r,.effort{cursor:default}
 .effort{position:relative}
 .ef-x{position:absolute;top:0;bottom:0;left:0;width:0;border-left:1px dashed color-mix(in srgb,var(--ink) 35%,transparent);opacity:0;transition:opacity var(--dur);pointer-events:none}
 .effort:hover .ef-x{opacity:1}
 .ef-dot{position:absolute;left:0;width:10px;height:10px;margin:-5px 0 0 -5px;border-radius:50%;background:var(--box);box-shadow:0 0 0 2px var(--ink-soft)}
 .ef-dot.us{box-shadow:0 0 0 2px #5B4CF0}
 .ef-gap{position:absolute;left:-3px;width:6px;border-radius:3px;background:color-mix(in srgb,#FFA84A 55%,transparent)}
-.chart-tip{position:fixed;z-index:70;left:0;top:0;max-width:260px;padding:8px 12px;border-radius:var(--r-sm);background:#0A2540;color:#fff;font-size:var(--t-meta);line-height:1.35;box-shadow:0 10px 30px -10px rgba(10,37,64,.5);pointer-events:none;opacity:0;transition:opacity .15s var(--ease)}
-.chart-tip.on{opacity:1}
-.chart-tip b{font-weight:500}
-@media (hover:none){ .ef-x,.chart-tip{display:none} }
+@media (hover:none){ .ef-x{display:none} }
 
 /* Runs inside your network: each card lifts on hover, its edge takes a brand tint and the icon tile fills with the
    CTA blue-violet, tilting a touch */
@@ -1623,3 +1620,21 @@ main,footer{position:relative;z-index:1;background:var(--paper)}
 :is(.diff,.pp-card) :is(.chip,.pp-icon){transition:background-color .25s var(--ease),color .25s var(--ease)}
 .diff:hover .chip,.pp-card:hover .pp-icon{background-color:#4F55E6;color:#fff}
 @media (hover:none),(prefers-reduced-motion:reduce){ :is(.diff,.story,.pp-card,.kpi,.qt,.bl-card,.ind-case,.tile,.pp-next a):hover,.case:hover .case-art{translate:none} }
+
+/* Built for Salesforce on hover: tiles lift onto white with a brand edge and their icon fills blue-violet; a column
+   takes a brand-tinted edge; the Salesforce → Web → Mobile → API chain lights up pill by pill, like a flow running;
+   the ServiceNow bar's link nudges forward */
+.sf-tiles li:not([data-rv]){transition:translate .35s var(--ease-spring),box-shadow .25s var(--ease),background-color var(--dur) var(--ease)}
+.sf-tiles li:hover{translate:0 -3px;background:var(--box);box-shadow:0 0 0 1px color-mix(in srgb,#5B4CF0 28%,transparent),0 14px 28px -16px rgba(10,37,64,.3)}
+.sf-tiles svg{transition:background-color .25s var(--ease),stroke .25s var(--ease),rotate .35s var(--ease-spring),scale .35s var(--ease-spring)}
+.sf-tiles li:hover svg{background-color:#4F55E6;stroke:#fff;rotate:-6deg;scale:1.08}
+.sf-col{transition:box-shadow .25s var(--ease)}
+.sf-col:hover{box-shadow:0 0 0 1px color-mix(in srgb,#5B4CF0 22%,transparent)}
+.sf-chain span{transition:background-color .25s var(--ease),color .25s var(--ease),translate .35s var(--ease-spring)}
+.sf-chain:hover li span{background-color:#4F55E6;color:#fff;translate:0 -2px}   /* li: outranks the first pill's own tint */
+.sf-chain:hover li:nth-child(2) span{transition-delay:.08s}.sf-chain:hover li:nth-child(3) span{transition-delay:.16s}.sf-chain:hover li:nth-child(4) span{transition-delay:.24s}
+.sf-chain li + li::before{transition:background-color .25s var(--ease)}
+.sf-chain:hover li + li::before{background-color:#5B4CF0}
+.sf-go{display:inline-block;transition:translate .3s var(--ease-spring)}
+.sf-sn:hover .sf-go{translate:4px 0}
+@media (hover:none),(prefers-reduced-motion:reduce){ .sf-tiles li:hover,.sf-chain:hover span{translate:none} .sf-tiles li:hover svg{rotate:none;scale:none} .sf-sn:hover .sf-go{translate:none} }

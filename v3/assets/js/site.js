@@ -680,23 +680,10 @@
   });
 })();
 
-/* ROI charts on hover: one tooltip follows the pointer over any [data-tip] row; the effort chart gets a crosshair
-   that reads both curves (sampled once from the SVG paths) and marks the avoided upkeep between them. */
+/* ROI charts on hover: the effort chart gets a crosshair that reads both curves (sampled once from the SVG paths) and
+   marks the avoided upkeep between them. The bar and before/after rows are styled on hover in site.css. */
 (() => {
-  const rows = document.querySelectorAll('.turn [data-tip]'), eff = document.querySelector('.effort');
-  if (!rows.length && !eff) return;
-  const tip = document.createElement('div'); tip.className = 'chart-tip'; tip.setAttribute('aria-hidden', 'true'); document.body.append(tip);
-  const show = (html, e) => {
-    tip.innerHTML = html; tip.classList.add('on');
-    const w = tip.offsetWidth, x = Math.min(innerWidth - w - 12, e.clientX + 14), y = e.clientY - tip.offsetHeight - 14;
-    tip.style.transform = 'translate(' + Math.max(12, x) + 'px,' + (y < 8 ? e.clientY + 18 : y) + 'px)';
-  };
-  const hide = () => tip.classList.remove('on');
-  rows.forEach(r => {
-    const [head, rest] = r.dataset.tip.split(' · ');
-    r.addEventListener('pointermove', e => show('<b>' + head + '</b><br>' + rest, e));
-    r.addEventListener('pointerleave', hide);
-  });
+  const eff = document.querySelector('.effort');
   if (!eff) return;
   const svg = eff.querySelector('svg'), them = svg.querySelector('.ef-them'), us = svg.querySelector('.ef-us');
   const x = eff.querySelector('.ef-x'), dThem = x.querySelector('.them'), dUs = x.querySelector('.us'), gap = x.querySelector('.ef-gap');
@@ -713,9 +700,7 @@
     x.style.left = (fx * r.width) + 'px'; x.style.top = top + 'px'; x.style.height = r.height + 'px';
     dThem.style.top = yT + 'px'; dUs.style.top = yU + 'px';
     gap.style.top = yT + 'px'; gap.style.height = Math.max(0, yU - yT) + 'px';
-    show('<b>Sprint ' + (1 + Math.round(fx * 25)) + '</b><br>Highlighted: the upkeep script-based suites need and Boson avoids', e);
   });
-  eff.addEventListener('pointerleave', hide);
 })();
 
 /* Results: when the card comes into view the stats rise in turn and each figure counts up to its value. Reduced motion shows them as written. */
