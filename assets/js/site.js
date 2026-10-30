@@ -573,48 +573,64 @@
   els.forEach(el => io.observe(el));
 })();
 
-/* Box glow: each section gets its own colours (set on the section, inherited by its boxes), and every content box draws
-   that light inside itself (site.css .bx). While a box is on screen its light slides against the scroll for parallax.
-   Box positions are measured once per layout, so scrolling only does arithmetic and one write per visible box. */
+/* Box glow: one light field per section, seen through its content boxes (site.css .bx). Each section gets a colour pair
+   and a spot for its bright core; the halo sits opposite. Every box gets those spots in its own coordinates, so the
+   tiles of a section show different parts of one light instead of repeating the same glow. The field drifts on its own
+   (CSS) and slides against the scroll for parallax, per section. Positions are measured once per layout. */
 (() => {
   const main = document.querySelector('main');
   if (!main) return;
   const BOX = '.media,.ov-media,.cmp,.diff,.sf-panel,.secure-card,.story:not(.dark),.tile:not(.tile-cta),.kpi,.qt,.pp-card,.tc-e2e,.cs-feat,.cs-chart,.bl-card:not(.hi),.ind-panel';
-  // [core, halo, x, y]: a bright core in a softer halo
+  // [core, halo, core x, core y] with x and y as fractions of the section
   const P = [
-    ['rgba(122,92,255,.30)', 'rgba(0,149,235,.22)',  '24%', '30%'],
-    ['rgba(0,212,232,.30)',  'rgba(0,149,235,.22)',  '76%', '35%'],
-    ['rgba(255,92,157,.24)', 'rgba(122,92,255,.22)', '26%', '40%'],
-    ['rgba(255,168,74,.41)',  'rgba(0,149,235,.24)',  '50%', '45%'],
-    ['rgba(0,149,235,.30)',  'rgba(122,92,255,.20)', '72%', '30%'],
-    ['rgba(0,212,232,.30)',  'rgba(0,149,235,.22)',  '28%', '35%'],
-    ['rgba(52,195,143,.27)',  'rgba(0,149,235,.20)',  '74%', '40%'],
-    ['rgba(255,168,74,.35)', 'rgba(255,92,157,.20)', '40%', '38%']
+    ['rgba(122,92,255,.30)', 'rgba(0,149,235,.22)',  .22, .35],
+    ['rgba(0,212,232,.30)',  'rgba(0,149,235,.22)',  .78, .4],
+    ['rgba(255,92,157,.24)', 'rgba(122,92,255,.22)', .3,  .45],
+    ['rgba(255,168,74,.41)', 'rgba(0,149,235,.24)',  .62, .38],
+    ['rgba(0,149,235,.30)',  'rgba(122,92,255,.20)', .72, .3],
+    ['rgba(0,212,232,.30)',  'rgba(0,149,235,.22)',  .28, .4],
+    ['rgba(52,195,143,.27)', 'rgba(0,149,235,.20)',  .74, .45],
+    ['rgba(255,168,74,.35)', 'rgba(255,92,157,.20)', .4,  .4]
   ];
+  const secs = [];
   let n = 0;
   [...main.children].forEach(sec => {
-    if (sec.matches('.sh, .logos') || !sec.querySelector(BOX)) return;
+    if (sec.matches('.sh, .logos')) return;
+    const boxes = [...sec.querySelectorAll(BOX)];
+    if (!boxes.length) return;
     const p = P[n++ % P.length];
-    sec.style.setProperty('--ga', p[0]); sec.style.setProperty('--gb', p[1]); sec.style.setProperty('--gx', p[2]); sec.style.setProperty('--gy', p[3]);
+    sec.style.setProperty('--ga', p[0]); sec.style.setProperty('--gb', p[1]);
+    boxes.forEach(b => b.classList.add('bx'));
+    secs.push({sec, boxes, x: p[2], y: p[3], c: 0, py: null});
   });
-  const boxes = [...main.querySelectorAll(BOX)];
-  boxes.forEach(b => b.classList.add('bx'));
-  if (matchMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window)) return;
-  const geo = new Map(), live = new Set();
-  const measure = () => { boxes.forEach(b => { const r = b.getBoundingClientRect(); geo.set(b, {c: r.top + scrollY + r.height / 2, py: null}); }); queue(); };
+  if (!secs.length) return;
+  const measure = () => {
+    secs.forEach(S => {
+      const s = (S.sec.querySelector('.hs-pin') || S.sec).getBoundingClientRect();   // a pinned section: light the pinned panel
+      S.c = s.top + scrollY + s.height / 2;
+      // the core at (x, y) of the section, the halo opposite and lower; in each box's layer coordinates (layer = box + 60% each side)
+      const cx = s.left + s.width * S.x, cy = s.top + s.height * S.y, hx = s.left + s.width * (1 - S.x), hy = s.top + s.height * .75;
+      S.boxes.forEach(b => {
+        const r = b.getBoundingClientRect(), ox = r.left - r.width * .6, oy = r.top - r.height * .6;
+        b.style.setProperty('--cx', (cx - ox).toFixed(0) + 'px'); b.style.setProperty('--cy', (cy - oy).toFixed(0) + 'px');
+        b.style.setProperty('--hx', (hx - ox).toFixed(0) + 'px'); b.style.setProperty('--hy', (hy - oy).toFixed(0) + 'px');
+      });
+      S.py = null;
+    });
+    queue();
+  };
+  const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
   let queued = false;
   const frame = () => {
     queued = false;
     const mid = scrollY + innerHeight / 2;
-    live.forEach(b => {
-      const g = geo.get(b); if (!g) return;
-      const py = Math.max(-80, Math.min(80, (g.c - mid) * .09));
-      if (g.py === null || Math.abs(py - g.py) > .5){ g.py = py; b.style.setProperty('--py', py.toFixed(1) + 'px'); }
+    secs.forEach(S => {
+      const py = Math.max(-80, Math.min(80, (S.c - mid) * .09));
+      if (Math.abs(S.c - mid) > innerHeight * 1.5) return;                 // off screen: leave it
+      if (S.py === null || Math.abs(py - S.py) > .5){ S.py = py; S.sec.style.setProperty('--py', py.toFixed(1) + 'px'); }
     });
   };
-  const queue = () => { if (!queued){ queued = true; requestAnimationFrame(frame); } };
-  const io = new IntersectionObserver(es => { es.forEach(e => e.isIntersecting ? live.add(e.target) : live.delete(e.target)); queue(); });
-  boxes.forEach(b => io.observe(b));
+  const queue = () => { if (!still && !queued){ queued = true; requestAnimationFrame(frame); } };
   let t;
   const remeasure = () => { clearTimeout(t); t = setTimeout(measure, 150); };
   addEventListener('scroll', queue, {passive: true});

@@ -1532,15 +1532,15 @@ main,footer{position:relative;z-index:1;background:var(--paper)}
    section's colours (site.js sets --ga core, --gb halo, --gx/--gy position on the section). The light sits on a taller
    layer that site.js slides against the scroll for parallax, under a very light grain. */
 .bx{position:relative;isolation:isolate;overflow:hidden;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .04 0 0 0 0 .14 0 0 0 0 .25 0 0 0 .05 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");background-size:160px}
-/* two layers of light: a bright core and a wide halo, each drifting, swelling and turning on its own loop;
-   the scroll adds parallax through `translate`, at two depths, while the loops run on `transform` */
-.bx::before,.bx::after{content:"";position:absolute;inset:-45%;z-index:-1;pointer-events:none;will-change:transform}
-.bx::before{background:radial-gradient(22% 26% at var(--gx,50%) var(--gy,60%),var(--ga,transparent),transparent 72%);translate:0 var(--py,0px);animation:bx-core 9s ease-in-out infinite alternate}
-.bx::after{background:radial-gradient(34% 34% at calc(100% - var(--gx,50%)) 62%,var(--gb,transparent),transparent 72%);translate:0 calc(var(--py,0px) * -.6);animation:bx-halo 13s ease-in-out infinite alternate}
-@keyframes bx-core{0%{transform:translate(-9%,6%) rotate(0deg) scale(1)}50%{transform:translate(8%,-5%) rotate(25deg) scale(1.22)}100%{transform:translate(3%,8%) rotate(-15deg) scale(.92)}}
-@keyframes bx-halo{0%{transform:translate(10%,-4%) rotate(0deg) scale(1.1)}50%{transform:translate(-8%,7%) rotate(-30deg) scale(.9)}100%{transform:translate(-2%,-8%) rotate(20deg) scale(1.2)}}
-.bx:nth-child(2n)::before{animation-delay:-5s}.bx:nth-child(3n)::before{animation-delay:-9s}
-.bx:nth-child(2n)::after{animation-delay:-7s}.bx:nth-child(3n)::after{animation-delay:-12s}
+/* One light field per section, seen through its boxes: site.js places the core (--cx/--cy) and halo (--hx/--hy) at
+   section positions, converted into each box's own coordinates, so neighbouring tiles catch different parts of the same
+   light. Sizes and drift use viewport units, so the field moves as one across every tile; the scroll parallax (--py)
+   is set per section for the same reason. */
+.bx::before,.bx::after{content:"";position:absolute;inset:-60%;z-index:-1;pointer-events:none;will-change:transform;translate:0 var(--py,0px)}
+.bx::before{background:radial-gradient(30vmax 24vmax at var(--cx,50%) var(--cy,50%),var(--ga,transparent),transparent 72%);transform-origin:var(--cx,50%) var(--cy,50%);animation:bx-core 10s ease-in-out infinite alternate}
+.bx::after{background:radial-gradient(52vmax 40vmax at var(--hx,50%) var(--hy,70%),var(--gb,transparent),transparent 72%);transform-origin:var(--hx,50%) var(--hy,70%);translate:0 calc(var(--py,0px) * -.6);animation:bx-halo 14s ease-in-out infinite alternate}
+@keyframes bx-core{0%{transform:translate(-7vw,4vh) scale(1)}50%{transform:translate(6vw,-4vh) scale(1.2)}100%{transform:translate(2vw,6vh) scale(.9)}}
+@keyframes bx-halo{0%{transform:translate(8vw,-3vh) scale(1.1)}50%{transform:translate(-7vw,5vh) scale(.92)}100%{transform:translate(-2vw,-6vh) scale(1.15)}}
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .bx::before,:root:not([data-theme="light"]) .bx::after{opacity:.6} }
 :root[data-theme="dark"] .bx::before,:root[data-theme="dark"] .bx::after{opacity:.6}
 @media (prefers-reduced-motion:reduce){ .bx::before,.bx::after{animation:none} }
