@@ -127,9 +127,21 @@ p{margin:0}
 .pill-nav .logo{padding-left:6px}
 .pill-nav .mega-float{position:absolute;top:calc(100% + 8px);left:0;right:0;background:var(--paper);border-radius:var(--r);box-shadow:0 24px 48px -16px rgba(11,31,58,.3),0 0 0 1px var(--ink-faint);padding:12px;display:flex;flex-direction:column;gap:2px}
 .pill-nav .mega-float[hidden]{display:none!important}
-.pill-nav .mega-float a{padding:10px;border-radius:var(--r-sm);font-size:var(--t-small);display:flex;justify-content:space-between;gap:12px}
-.pill-nav .mega-float a span{color:var(--ink-soft)}
-.pill-nav .mega-float a:hover{background:var(--surface)}
+/* grouped like the Platform menu: Platforms and Capabilities side by side, industries as chips, Customers at the foot */
+.pill-nav .mega-float{gap:12px;max-height:calc(100vh - 110px);overflow-y:auto;overscroll-behavior:contain}
+.mf-cols{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.mf-group{display:flex;flex-direction:column;gap:2px;min-width:0}
+.mf-group h5{margin:4px 0 6px;padding:0 10px;font:500 var(--t-xs) var(--mono);letter-spacing:.04em;text-transform:uppercase;color:var(--ink-soft)}
+.pill-nav .mega-float .mf-group > a{padding:8px 10px;border-radius:var(--r-sm);font-size:var(--t-small);transition:background var(--dur)}
+.mf-group > a em{font-style:normal;font-size:10px;font-weight:500;padding:2px 5px;margin-left:6px;border-radius:var(--r-xs);background:var(--cta);color:#001630;vertical-align:1px}
+.mf-chips{display:flex;flex-wrap:wrap;gap:6px;padding:0 10px}
+.pill-nav .mega-float .mf-chips a{padding:6px 10px;border-radius:var(--r-sm);background:var(--surface);font-size:var(--t-meta);transition:background var(--dur)}
+.pill-nav .mega-float .mf-chips a:hover{background:var(--logo-hover)}
+.pill-nav .mega-float .mf-foot{display:flex;justify-content:space-between;gap:12px;padding:12px 10px 6px;border-top:1px solid var(--ink-faint);font-size:var(--t-small);font-weight:500}
+.mf-foot span{color:var(--ink-soft);font-weight:400}
+.pill-nav .mega-float .mf-group > a:hover,.pill-nav .mega-float .mf-foot:hover{background:var(--surface)}
+.pill-nav .mega-float a[aria-current="page"]{color:var(--brand)}
+@media (max-width:420px){ .mf-cols{grid-template-columns:1fr;gap:8px} }
 
 /* Hero: text left, live console right */
 .hero{padding:0 var(--g) var(--g)}
