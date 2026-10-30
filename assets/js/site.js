@@ -1072,13 +1072,14 @@ gl_FragColor=vec4(col,1.);}`;
 /* Pixel reveal: draw the Qualitia wordmark (the Q symbol on narrow screens) as negative space in a dense field of
    colour pixels whose size shrinks from ~84px to fine over the final stretch of scroll. Each pixel takes its colour from
    the hero ribbon's palette as it sweeps across the panel (blue, violet, pink, amber), varies a little in brightness,
-   and is feathered so its edges melt into the navy. Static fine grid for reduced motion. */
+   and is blurred so it dissolves into the panel's white ground (navy in dark mode). Static fine grid for reduced motion. */
 (() => {
   const wrap = document.querySelector('.px-reveal'), qsym = document.getElementById('q-symbol');
   if (!wrap) return;
   const cv = wrap.querySelector('canvas'), ctx = cv.getContext('2d');
   // the logo is negative space: a dense colour pixel field around it, empty cells where the logo is
-  const BG = '#001630', DENSITY = 0.85, COARSE = 84;
+  const DENSITY = 0.85, COARSE = 84;
+  const ground = () => getComputedStyle(wrap).backgroundColor;   // white, or navy in dark mode (site.css)
   const PAL = [[0,149,235], [122,92,255], [255,92,157], [255,168,74]];   // the ribbon: blue, violet, pink, amber
   const colAt = u => { const s = Math.max(0, Math.min(.999, u)) * 3, i = s | 0, f = s - i, a = PAL[i], b = PAL[i + 1];
     return 'rgb(' + (a[0] + (b[0] - a[0]) * f | 0) + ',' + (a[1] + (b[1] - a[1]) * f | 0) + ',' + (a[2] + (b[2] - a[2]) * f | 0) + ')'; };
@@ -1087,12 +1088,12 @@ gl_FragColor=vec4(col,1.);}`;
   const sprites = COLS.map(() => document.createElement('canvas'));
   let spriteV = 0, spriteS = 0, spritePad = 0;
   function makeSprites(v, dpr){
-    const pad = Math.max(2, v * .2), S = Math.ceil(v + pad * 2);
+    const pad = Math.max(3, v * .55), S = Math.ceil(v + pad * 2);   // a wide blur, so each pixel dissolves into the ground
     sprites.forEach((c, i) => {
       c.width = c.height = Math.ceil(S * dpr);
       const g = c.getContext('2d'); g.setTransform(dpr, 0, 0, dpr, 0, 0);
-      g.shadowColor = COLS[i]; g.shadowBlur = pad * dpr * .9; g.shadowOffsetX = 4000 * dpr;   // only the blurred shadow lands on the sprite
-      g.fillStyle = '#000'; g.fillRect(pad + v * .08 - 4000, pad + v * .08, v * .84, v * .84);
+      g.shadowColor = COLS[i]; g.shadowBlur = pad * dpr * .8; g.shadowOffsetX = 4000 * dpr;   // only the blurred shadow lands on the sprite
+      g.fillStyle = '#000'; g.fillRect(pad + v * .15 - 4000, pad + v * .15, v * .7, v * .7);
     });
     spriteV = v; spriteS = S; spritePad = pad;
   }
@@ -1131,15 +1132,15 @@ gl_FragColor=vec4(col,1.);}`;
     const r = wrap.getBoundingClientRect(), w = Math.max(1, Math.floor(r.width)), h = Math.max(1, Math.floor(r.height));
     if (w !== W || h !== H){ W = w; H = h; const dpr = Math.min(devicePixelRatio || 1, 2); cv.width = W * dpr; cv.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0); mask = null; }
     if (!mask) buildMask();
-    const v = cellSize(), gap = v > 2 ? 1 : 0, soft = v >= 9, dpr = Math.min(devicePixelRatio || 1, 2);
+    const v = cellSize(), gap = v > 2 ? 1 : 0, soft = v >= 5, dpr = Math.min(devicePixelRatio || 1, 2);
     if (soft && v !== spriteV) makeSprites(v, dpr);
-    ctx.fillStyle = BG; ctx.fillRect(0, 0, W, H);
+    ctx.fillStyle = ground(); ctx.fillRect(0, 0, W, H);
     for (let y = 0; y < H; y += v) for (let x = 0; x < W; x += v){
       const cx = Math.min(W - 1, x + (v >> 1)), cy = Math.min(H - 1, y + (v >> 1));
       const inLogo = mask && mask[(cx + cy * W) * 4 + 3] > 128;
       if (inLogo || hash(x / v | 0, y / v | 0) >= DENSITY) continue;
       const u = x / W * .9 + y / H * .18 + (hash(x / v | 0, 7 + y / v | 0) - .5) * .14, k = Math.max(0, Math.min(STEPS - 1, Math.round(u * (STEPS - 1))));
-      ctx.globalAlpha = .55 + .45 * hash(3 + x / v | 0, y / v | 0);
+      ctx.globalAlpha = .72 + .28 * hash(3 + x / v | 0, y / v | 0);
       if (soft) ctx.drawImage(sprites[k], x - spritePad, y - spritePad, spriteS, spriteS);
       else { ctx.fillStyle = COLS[k]; ctx.fillRect(x, y, v - gap, v - gap); }
     }
@@ -1152,5 +1153,6 @@ gl_FragColor=vec4(col,1.);}`;
   addEventListener('scroll', onScroll, {passive: true});
   addEventListener('resize', () => { readMax(); queue(); }, {passive: true});
   reduce.addEventListener('change', queue);
+  new MutationObserver(queue).observe(document.documentElement, {attributes: true, attributeFilter: ['data-theme']});   // ground follows the theme
   queue();
 })();
