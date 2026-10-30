@@ -93,15 +93,6 @@
   if (matchMedia('(hover: hover) and (pointer: fine)').matches) regionBtns.forEach(b => b.parentElement.addEventListener('mouseenter', () => closeRegions(b)));
   document.addEventListener('keydown', e => { if (e.key === 'Escape') closeRegions(); });
 
-  // Demo form
-  const demoForm = document.getElementById('demo-form');
-  if (demoForm) demoForm.addEventListener('submit', e => {
-    e.preventDefault();
-    const email=document.getElementById('email'), note=document.getElementById('form-note');
-    if (!email.value || !email.checkValidity()){ note.textContent='Enter a work email address, like you@company.com.'; email.focus(); return; }
-    note.textContent='Thanks. A specialist will email '+email.value+' within one business day.';
-    email.value='';
-  });
 })();
 
 /* Product page panels: rows tick through once when the panel scrolls into view, and again when its button is pressed.
@@ -367,28 +358,12 @@
   });
 })();
 
-/* Demo panels on every page: carry the typed email to the contact form (via session storage, not the URL). */
-(function(){
-  document.querySelectorAll('#demo-form').forEach(form => {
-    if (document.getElementById('contact-form')) return;
-    form.addEventListener('submit', e => {
-      const email = form.querySelector('input[type=email]');
-      if (!email || !email.value || !email.checkValidity()) return;   // the existing handler shows the error
-      e.stopImmediatePropagation(); e.preventDefault();
-      try { sessionStorage.setItem('q-demo-email', email.value); } catch(err){}
-      location.href = 'contact.html';
-    }, true);
-  });
-})();
-
 /* Contact page: weekday date picker, local time slots, country code guess, validation and confirmation. */
 (function(){
   const form = document.getElementById('contact-form');
   if (!form) return;
   const $ = id => document.getElementById(id);
   const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
-  // prefill from a demo panel elsewhere on the site
-  try { const e = sessionStorage.getItem('q-demo-email'); if (e){ $('ct-email').value = e; sessionStorage.removeItem('q-demo-email'); } } catch(err){}
   // country code from the visitor's region
   const cc = /^Australia/.test(tz) ? '+61' : /Kolkata|Calcutta/.test(tz) ? '+91' : /^Europe\/London/.test(tz) ? '+44' : /Singapore/.test(tz) ? '+65' : /Dubai/.test(tz) ? '+971' : /^Pacific\/Auckland/.test(tz) ? '+64' : '+1';
   $('ct-cc').value = cc;

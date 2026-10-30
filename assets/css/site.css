@@ -348,12 +348,9 @@ button.mock-btn{border:0;width:calc(100% - 28px);cursor:pointer;font:inherit;fon
 .cta-copy{display:flex;flex-direction:column;align-items:flex-start;gap:32px;padding-bottom:clamp(40px,6vw,96px);position:relative;min-width:0}
 .cta-card .display{max-width:13em}
 .cta-mascot{position:relative;justify-self:center;width:min(100%,400px);height:auto;display:block;margin-bottom:clamp(24px,3vw,40px)}
-.cta form{display:flex;flex-direction:column;align-items:flex-start;gap:12px;width:100%;max-width:460px}
-.field{display:flex;gap:6px;width:100%;background:rgba(255,255,255,.1);border-radius:var(--r);padding:6px 6px 6px 16px}
-.field:focus-within{background:rgba(255,255,255,.16)}
-.field input{flex:1;min-width:0;border:0;background:transparent;font:inherit;color:#fff;outline:none}
-.field input::placeholder{color:rgba(255,255,255,.6)}
-.form-note{font-size:var(--t-small);color:rgba(255,255,255,.7);min-height:1.5em}
+.cta-actions{display:flex;flex-direction:column;align-items:flex-start;gap:12px}
+.cta-actions .btn{padding:14px 20px;font-size:var(--t-body)}
+.cta-note{font-size:var(--t-small);color:rgba(255,255,255,.7)}
 
 /* Footer */
 footer{padding:clamp(56px,7vw,96px) var(--side) 32px;font-size:var(--t-small)}
