@@ -254,7 +254,8 @@ p{margin:0}
 /* Statement */
 .statement{padding:var(--sec) var(--side);text-align:center}
 /* Homepage statement panel: same left/right edges and radius as the hero card, holds the features */
-.statement.panel{margin:0 var(--g);padding:clamp(64px,9vw,144px) max(calc(var(--side) - var(--g)),16px);text-align:center;border-radius:var(--r-lg);background:none}
+/* no panel now: a short top, so the logo strip sits centred between the hero and this heading */
+.statement.panel{margin:0 var(--g);padding:clamp(28px,3vw,48px) max(calc(var(--side) - var(--g)),16px) clamp(64px,9vw,144px);text-align:center;border-radius:var(--r-lg);background:none}
 .statement .display{max-width:16em;margin-inline:auto}
 .statement .soft{display:block}
 .statement.panel .features{margin-top:clamp(64px,8vw,128px);text-align:left;gap:clamp(32px,4vw,56px)}
