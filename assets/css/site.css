@@ -40,11 +40,9 @@
   --dur:.2s;
   --logo-hover:color-mix(in srgb,var(--brand) 14%,var(--surface)); /* hover tint behind logos; adapts to light and dark */
   --sec:clamp(96px,13vw,200px);
-  /* the hero's colour, carried lightly through the site: a glow for dark cards (with grain) and a faint wash for light sections */
+  /* the hero's colour, carried lightly through the site: a glow for dark cards (with grain); light sections sit over the page glow below */
   --grain:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .07 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   --aurora:radial-gradient(60% 85% at 0% 0%,rgba(0,149,235,.5),transparent 70%),radial-gradient(55% 80% at 100% 0%,rgba(122,92,255,.42),transparent 70%),radial-gradient(55% 80% at 100% 100%,rgba(0,212,232,.24),transparent 70%),radial-gradient(50% 75% at 0% 100%,rgba(255,92,157,.22),transparent 70%);
-  --wash-a:radial-gradient(40% 60% at 0% 10%,rgba(0,149,235,.08),transparent 70%),radial-gradient(35% 55% at 100% 0%,rgba(122,92,255,.07),transparent 70%);
-  --wash-b:radial-gradient(40% 60% at 100% 90%,rgba(0,212,232,.08),transparent 70%),radial-gradient(35% 55% at 0% 100%,rgba(255,92,157,.06),transparent 70%);
   color-scheme:light;
 }
 @media (prefers-color-scheme: dark){
@@ -1523,5 +1521,22 @@ main,footer{position:relative;z-index:1;background:var(--paper)}
 
 /* Hero theme, applied lightly: dark cards glow with the hero colours under a fine grain; a few light sections carry a faint wash */
 .results-card,.cta-card,.story.dark,.bl-card.hi,.mega .m-story{background-image:var(--grain),var(--aurora);background-size:160px,auto,auto,auto,auto}  /* one size per layer: the aurora is four gradients */
-.overview,.plats,.pp-hero{background-image:var(--wash-a)}
-.turn,.stories{background-image:var(--wash-b)}
+
+/* Page glow (after stripe.com): a soft gradient light behind the boxes. One fixed layer, two blurred glows and a very
+   light grain; site.js gives each section its own colours and position, and nudges it against the scroll for parallax.
+   Colours are registered so they can ease from one section to the next. */
+@property --ga{syntax:'<color>';inherits:true;initial-value:rgba(0,0,0,0)}
+@property --gb{syntax:'<color>';inherits:true;initial-value:rgba(0,0,0,0)}
+@property --gx{syntax:'<percentage>';inherits:true;initial-value:50%}
+@property --gy{syntax:'<percentage>';inherits:true;initial-value:60%}
+main:has(> .glow){clip-path:inset(0)}   /* keeps the fixed glow from showing over the footer reveal */
+.glow{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden;transition:--ga 1.2s var(--ease),--gb 1.2s var(--ease),--gx 1.8s var(--ease),--gy 1.8s var(--ease)}
+.glow-in{position:absolute;inset:-12vh 0;will-change:transform}
+.glow i{position:absolute;left:var(--gx);top:var(--gy);border-radius:50%;translate:-50% -50%;will-change:transform}
+.glow .g-halo{width:150vmax;height:100vmax;background:radial-gradient(closest-side,var(--gb),transparent);animation:glow-drift 30s ease-in-out infinite alternate}
+.glow .g-core{width:62vmax;height:48vmax;background:radial-gradient(closest-side,var(--ga),transparent 80%);animation:glow-drift 23s ease-in-out infinite alternate-reverse}
+.glow::after{content:"";position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .04 0 0 0 0 .14 0 0 0 0 .25 0 0 0 .05 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");background-size:160px}
+@keyframes glow-drift{from{transform:translate(-4vw,2vh) scale(1)}to{transform:translate(4vw,-3vh) scale(1.1)}}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .glow{opacity:.55} }
+:root[data-theme="dark"] .glow{opacity:.55}
+@media (prefers-reduced-motion:reduce){ .glow i{animation:none} }

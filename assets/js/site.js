@@ -573,6 +573,53 @@
   els.forEach(el => io.observe(el));
 })();
 
+/* Page glow: one fixed layer behind the boxes (site.css). The section nearest the middle of the screen sets its colours
+   and position, so the light changes as you reach each box, and the layer moves a little against the scroll inside
+   that section for parallax. The hero and the logo strip have their own ground, so the glow rests there. */
+(() => {
+  const secs = [...document.querySelectorAll('main > section, main > div')];
+  if (!secs.length || !('IntersectionObserver' in window)) return;
+  // [core, halo, x, y]: warm or bright core in a softer halo, after the stripe.com stats glow
+  const P = [
+    ['rgba(122,92,255,.42)', 'rgba(0,149,235,.32)',  '30%', '45%'],
+    ['rgba(0,212,232,.38)',  'rgba(0,149,235,.32)',  '74%', '55%'],
+    ['rgba(255,92,157,.32)',  'rgba(122,92,255,.32)', '26%', '62%'],
+    ['rgba(255,168,74,.58)', 'rgba(0,149,235,.38)', '50%', '72%'],
+    ['rgba(0,149,235,.38)',  'rgba(122,92,255,.29)','70%', '40%'],
+    ['rgba(0,212,232,.38)',  'rgba(0,149,235,.32)',  '30%', '52%'],
+    ['rgba(52,195,143,.35)', 'rgba(0,149,235,.29)', '72%', '60%'],
+    ['rgba(255,168,74,.48)',  'rgba(255,92,157,.29)','40%', '56%']
+  ];
+  const quiet = el => el.matches('.sh, .logos');
+  const g = document.createElement('div');
+  g.className = 'glow'; g.setAttribute('aria-hidden', 'true');
+  g.innerHTML = '<div class="glow-in"><i class="g-halo"></i><i class="g-core"></i></div>';
+  (document.querySelector('main') || document.body).prepend(g);   // inside main: above its white ground, clipped to it
+  const inner = g.firstElementChild;
+  let n = 0;
+  const pal = new Map(secs.map(el => [el, quiet(el) ? null : P[n++ % P.length]]));
+  let cur = null;
+  const set = el => {
+    if (el === cur) return;
+    cur = el;
+    const p = pal.get(el);
+    g.style.setProperty('--ga', p ? p[0] : 'rgba(0,0,0,0)'); g.style.setProperty('--gb', p ? p[1] : 'rgba(0,0,0,0)');
+    if (p){ g.style.setProperty('--gx', p[2]); g.style.setProperty('--gy', p[3]); }
+  };
+  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) set(e.target); }), {rootMargin: '-45% 0px -45% 0px'});
+  secs.forEach(el => io.observe(el));
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  // parallax: within the current section the light slides up a little as you scroll through it
+  let queued = false;
+  const frame = () => {
+    queued = false;
+    if (!cur) return;
+    const r = cur.getBoundingClientRect(), k = Math.min(1, Math.max(0, (innerHeight / 2 - r.top) / Math.max(1, r.height)));
+    inner.style.transform = 'translate3d(0,' + ((.5 - k) * 10).toFixed(2) + 'vh,0)';
+  };
+  addEventListener('scroll', () => { if (!queued){ queued = true; requestAnimationFrame(frame); } }, {passive: true});
+})();
+
 /* Light motion inside sections, once each as it scrolls in: headings fade up, list items and tiles rise in turn,
    the effort chart wipes across the year, security icons draw their outlines and the CTA mascot waves. Skipped for reduced motion. */
 (() => {
