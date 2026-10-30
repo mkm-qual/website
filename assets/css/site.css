@@ -491,7 +491,7 @@ footer{padding:clamp(56px,7vw,96px) var(--side) 32px;font-size:var(--t-small)}
 .cx-cta-card > :not(img){position:relative;z-index:1}
 .cx-cta-card .display{max-width:13em}
 .cx-cta-card p{color:rgba(255,255,255,.82);max-width:30em}
-.cx-cta-card form{display:flex;flex-direction:column;align-items:center;gap:12px;width:100%;max-width:460px}
+.cx-cta-card .cta-actions{align-items:center}   /* this panel is centred, so the button and note centre too */
 
 .btn-ghost[aria-current="page"]{background:var(--surface)}
 
