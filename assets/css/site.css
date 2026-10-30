@@ -1281,9 +1281,9 @@ fieldset.ct-f{border:0;margin:0;padding:0}
 :root{--px-h:clamp(220px,38vw,520px)}
 main,footer{position:relative;z-index:1;background:var(--paper)}
 .px-spacer{height:var(--px-h)}
-.px-reveal{position:fixed;left:0;right:0;bottom:0;height:var(--px-h);z-index:0;background:#FFFFFF}
-@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .px-reveal{background:#001630} }
-:root[data-theme="dark"] .px-reveal{background:#001630}
+.px-reveal{position:fixed;left:0;right:0;bottom:0;height:var(--px-h);z-index:0;background:#FFFFFF;color:#0A2540}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .px-reveal{background:#001630;color:#3D6496} }
+:root[data-theme="dark"] .px-reveal{background:#001630;color:#3D6496}
 .px-reveal canvas{display:block;width:100%;height:100%}
 
 /* ---------- Stakeholder round (Oct 2026): feature proof, differentiators, Salesforce-first platforms ---------- */
