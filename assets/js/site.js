@@ -58,10 +58,11 @@
     if (p === last) return;
     last = p;
     reel.style.transform = 'translate3d(' + (-p * dist).toFixed(1) + 'px,0,0)';
+    reel.style.setProperty('--rx', (p * dist).toFixed(1) + 'px');   // the card glow stays still while the cards slide
   };
   const queue = () => { if (on && !queued){ queued = true; requestAnimationFrame(frame); } };
   const measure = () => {
-    sec.classList.remove('hs'); sec.style.height = ''; reel.style.transform = ''; last = -1;
+    sec.classList.remove('hs'); sec.style.height = ''; reel.style.transform = ''; reel.style.removeProperty('--rx'); last = -1;
     on = wide.matches;
     if (!on) return;
     reel.scrollLeft = 0;
@@ -74,6 +75,8 @@
     start = sec.getBoundingClientRect().top + scrollY + pad;
     frame();
   };
+  // swiped (not pinned): the card glow follows the reel's own scroll the same way
+  reel.addEventListener('scroll', () => { if (!on) reel.style.setProperty('--rx', reel.scrollLeft.toFixed(0) + 'px'); }, {passive: true});
   // Arrows step the page instead of the reel while it's pinned
   const nav = document.querySelector('[data-reel-nav="reel"]');
   if (nav) nav.addEventListener('click', e => {
@@ -611,7 +614,9 @@
       // the core at (x, y) of the section, the halo opposite and lower; in each box's layer coordinates (layer = box + 60% each side)
       const cx = s.left + s.width * S.x, cy = s.top + s.height * S.y, hx = s.left + s.width * (1 - S.x), hy = s.top + s.height * .75;
       S.boxes.forEach(b => {
-        const r = b.getBoundingClientRect(), ox = r.left - r.width * .6, oy = r.top - r.height * .6;
+        // in the sideways reel, measure each card at rest: add back how far the reel has slid (--rx)
+        const rx = parseFloat(getComputedStyle(b).getPropertyValue('--rx')) || 0;
+        const r = b.getBoundingClientRect(), ox = r.left + rx - r.width * .6, oy = r.top - r.height * .6;
         b.style.setProperty('--cx', (cx - ox).toFixed(0) + 'px'); b.style.setProperty('--cy', (cy - oy).toFixed(0) + 'px');
         b.style.setProperty('--hx', (hx - ox).toFixed(0) + 'px'); b.style.setProperty('--hy', (hy - oy).toFixed(0) + 'px');
       });
