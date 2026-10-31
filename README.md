@@ -51,7 +51,6 @@ Product names are written as **1-Click Generation**, **Instant Update** and **To
 
 - `assets/css/site.css`, `assets/js/site.js`: styles and behaviour shared by all pages.
   - Page-specific classes use a prefix: `pp-` product, `tc-` Total Control, `e2e-` walkthrough, `rs-` resources, `ct-` contact, `lg-` legal, `cs-` case studies, `bl-` blog, `sm-` sitemap, `ind-` industry segments, `sf-` homepage Salesforce panel, `ba-`/`ef-` homepage proof charts.
-- `assets/hero/`: the homepage hero video (1080p, and 540p for phones) with its poster frames, plus the team photo used on the Customers page.
 - `assets/brand/`: the official Qualitia, Qualitia Boson and symbol logos as SVG, light and white. The pages use an inline copy; these are the source files.
 - `assets/clients/`: customer logos as SVG.
 - `assets/mascot/`: mascot poses. `*-trim.webp` files are copies with the empty margins cropped. `waving-cutout.webp` has its backdrop removed.
@@ -63,12 +62,14 @@ Design tokens live at the top of `site.css`:
 - Type: `--t-display`, `--t-h1`, `--t-h2`, `--t-lede` (18), `--t-body` (16), `--t-list` (15), `--t-small` (14), `--t-meta` (13), `--t-xs` (12). Archivo for text, Geist Mono for labels and data.
 - Corner radii scale with the box: `--r-xs` 6px (chips, tags), `--r-sm` 8px (buttons, inputs, bars), `--r` 12px (cards), `--r-lg` 20px (full-width panels).
 - Motion: `--ease`, `--ease-spring` and `--dur`. Cards fade up as they scroll into view, and menus ease in. Both are off for visitors who prefer reduced motion.
+- Light: each section's content boxes share one moving gradient light (`.bx`, set up in `site.js`). On touch screens it sits still on a smaller layer, and the stories reel swipes instead of pinning.
 
-Earlier design iterations were removed from the site. They're still in git history; to restore one:
+Earlier versions are archived as git tags, not published:
+- `archive/v1`: the original site with the looping video hero.
+- `archive/v2`: the original site with the first scroll-story hero.
+- `archive/v4`: this design plus silk ribbons in the content boxes.
 
-```bash
-git checkout 3ffa0af -- versions/
-```
+To look at one, check it out on its own branch, for example `git switch -c look-v4 archive/v4`, and preview it locally.
 
 ## Publishing changes
 

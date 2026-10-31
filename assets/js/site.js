@@ -8,9 +8,9 @@
   menuBtn.addEventListener('click', e => { e.stopPropagation(); setMega(mega.hidden); });
   mega.addEventListener('click', e => { if (e.target.closest('a')) setMega(false); });
 
-  // Floating pill nav
+  // Floating nav: a circle with the Q that opens the menu below it
   const pill = document.getElementById('pill'), pillBtn = document.getElementById('pill-menu'), pillList = document.getElementById('pill-list');
-  const setPill = open => { pillList.hidden = !open; pillBtn.setAttribute('aria-expanded', open); };
+  const setPill = open => { pillList.hidden = !open; pillBtn.setAttribute('aria-expanded', open); pillBtn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu'); };
   pillBtn.addEventListener('click', e => { e.stopPropagation(); setPill(pillList.hidden); });
   pillList.addEventListener('click', e => { if (e.target.closest('a')) setPill(false); });
   document.addEventListener('click', e => {
@@ -46,22 +46,25 @@
     nav.querySelector('[data-dir="1"]').addEventListener('click', () => stepReel(1));
   });
 
-  // Stories: on wide screens the section pins while vertical scroll slides the reel across
+  // Stories: on wide screens with a mouse or trackpad, the section pins while vertical scroll slides the reel across
   (() => {
   const sec = document.querySelector('.stories'), reel = document.getElementById('reel');
   if (!sec || !reel || !sec.querySelector('.hs-pin') || reduce) return;
-  const wide = matchMedia('(min-width: 900px) and (min-height: 640px)');
-  let on = false, start = 0, dist = 0, last = -1, queued = false;
+  const wide = matchMedia('(pointer: fine) and (min-width: 900px) and (min-height: 640px)');   // touch keeps the native swipe row: pinning fights momentum scrolling
+  // the reel eases toward where the scroll says it should be, so wheel steps become one continuous glide;
+  // only a transform changes per frame, so it stays on the compositor
+  let on = false, start = 0, dist = 0, cur = 0, raf = 0;
+  const target = () => Math.min(1, Math.max(0, (scrollY - start) / dist)) * dist;
   const frame = () => {
-    queued = false;
-    const p = Math.min(1, Math.max(0, (scrollY - start) / dist));
-    if (p === last) return;
-    last = p;
-    reel.style.transform = 'translate3d(' + (-p * dist).toFixed(1) + 'px,0,0)';
+    raf = 0;
+    const to = target(), d = to - cur;
+    cur = Math.abs(d) < .3 ? to : cur + d * .14;
+    reel.style.transform = 'translate3d(' + (-cur).toFixed(2) + 'px,0,0)';
+    if (cur !== to) raf = requestAnimationFrame(frame);
   };
-  const queue = () => { if (on && !queued){ queued = true; requestAnimationFrame(frame); } };
+  const queue = () => { if (on && !raf) raf = requestAnimationFrame(frame); };
   const measure = () => {
-    sec.classList.remove('hs'); sec.style.height = ''; reel.style.transform = ''; last = -1;
+    sec.classList.remove('hs'); sec.style.height = ''; reel.style.transform = ''; cur = 0;
     on = wide.matches;
     if (!on) return;
     reel.scrollLeft = 0;
@@ -72,7 +75,7 @@
     const pad = parseFloat(getComputedStyle(sec).paddingTop);
     sec.style.height = (pad + innerHeight + dist) + 'px';
     start = sec.getBoundingClientRect().top + scrollY + pad;
-    frame();
+    cur = target(); frame();
   };
   // Arrows step the page instead of the reel while it's pinned
   const nav = document.querySelector('[data-reel-nav="reel"]');
@@ -136,6 +139,18 @@
   render('sf', RUNS.sf.lines.length);
   if (!reduce) timer=setTimeout(()=>run('sf'),2200);
   }
+
+  // Footer link groups: on phones each heading opens and closes its links (site.css folds them)
+  document.querySelectorAll('.foot > div > h4').forEach((h, i) => {
+    const list = h.nextElementSibling, col = h.parentElement;
+    if (!list) return;
+    list.id = list.id || 'foot-list-' + i;
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'foot-tg'; b.textContent = h.textContent;
+    b.setAttribute('aria-expanded', 'false'); b.setAttribute('aria-controls', list.id);
+    h.textContent = ''; h.append(b);
+    b.addEventListener('click', () => { const open = !col.classList.contains('open'); col.classList.toggle('open', open); b.setAttribute('aria-expanded', open); });
+  });
 
   // Footer office pop-overs
   const regionBtns = [...document.querySelectorAll('.regions button')];
@@ -488,6 +503,10 @@
     const cur = $('ct-date').value;
     focusISO = cur || minISO; const f = fromISO(focusISO); view = new Date(f.getFullYear(), f.getMonth(), 1);
     render(); cal.hidden = false; btn.setAttribute('aria-expanded', 'true');
+    // open upwards when the space below the field can't hold the calendar but the space above can
+    cal.classList.remove('up');
+    const b = btn.getBoundingClientRect(), h = cal.offsetHeight + 12;
+    if (innerHeight - b.bottom < h && b.top > h) cal.classList.add('up');
     (grid.querySelector('[tabindex="0"]:not(:disabled)') || grid.querySelector('button:not(:disabled)'))?.focus();
   }
   function close(refocus){ cal.hidden = true; btn.setAttribute('aria-expanded', 'false'); if (refocus) btn.focus(); }
@@ -573,6 +592,149 @@
   els.forEach(el => io.observe(el));
 })();
 
+/* Box glow: one light field per section, seen through its content boxes (site.css .bx). Each section gets a colour pair
+   and a spot for its bright core; the halo sits opposite. Every box gets those spots in its own coordinates, so the
+   tiles of a section show different parts of one light instead of repeating the same glow. The field drifts on its own
+   (CSS) and slides against the scroll for parallax, per section. Positions are measured once per layout. */
+(() => {
+  const main = document.querySelector('main');
+  if (!main) return;
+  const BOX = '.media,.overview,.cmp,.diff,.sf-panel,.secure-card,.story:not(.dark),.quote,.tile:not(.tile-cta),.kpi,.qt,.pp-card,.tc-e2e,.cs-feat,.cs-chart,.bl-card:not(.hi),.ind-panel,.ct-glow';
+  // [core, halo, core x, core y] with x and y as fractions of the section
+  const P = [
+    ['rgba(122,92,255,.30)', 'rgba(0,149,235,.22)',  .22, .35],
+    ['rgba(0,212,232,.30)',  'rgba(0,149,235,.22)',  .78, .4],
+    ['rgba(255,92,157,.24)', 'rgba(122,92,255,.22)', .3,  .45],
+    ['rgba(255,168,74,.32)', 'rgba(0,149,235,.24)',  .5,  .55],   // charts: centred, so the light sweeps through all four
+    ['rgba(0,149,235,.30)',  'rgba(122,92,255,.20)', .72, .3],
+    ['rgba(0,212,232,.30)',  'rgba(0,149,235,.22)',  .28, .4],
+    ['rgba(52,195,143,.27)', 'rgba(0,149,235,.20)',  .74, .45],
+    ['rgba(255,168,74,.35)', 'rgba(255,92,157,.20)', .4,  .4]
+  ];
+  const secs = [];
+  let n = 0;
+  [...main.children].forEach(sec => {
+    if (sec.matches('.sh, .logos')) return;
+    const boxes = sec.matches(BOX) ? [sec] : [...sec.querySelectorAll(BOX)];   // a box can be a section of its own
+    if (!boxes.length) return;
+    const p = P[n++ % P.length];
+    sec.style.setProperty('--ga', p[0]); sec.style.setProperty('--gb', p[1]);
+    boxes.forEach(b => b.classList.add('bx'));
+    secs.push({sec, boxes, x: p[2], y: p[3], c: 0, py: null});
+  });
+  if (!secs.length) return;
+  // on touch screens the light layer is smaller and still (site.css), which spares phones large animated layers
+  const touch = matchMedia('(pointer: coarse)').matches, K = touch ? .3 : 1;
+  const measure = () => {
+    secs.forEach(S => {
+      const s = (S.sec.querySelector('.hs-pin') || S.sec).getBoundingClientRect();   // a pinned section: light the pinned panel
+      S.c = s.top + scrollY + s.height / 2;
+      // the core at (x, y) of the section, the halo opposite and lower; in each box's layer coordinates (layer = box + one box size each side)
+      const cx = s.left + s.width * S.x, cy = s.top + s.height * S.y, hx = s.left + s.width * (1 - S.x), hy = s.top + s.height * .75;
+      S.boxes.forEach(b => {
+        const r = b.getBoundingClientRect();
+        let left = r.left;
+        const reel = b.closest('.reel');
+        if (reel){
+          // sideways reel: measure the card at rest (undo the reel's slide or scroll), then light it as it looks when
+          // centred in view. A fixed --rx per card, so sliding never repaints the glow
+          left -= new DOMMatrix(getComputedStyle(reel).transform).m41 - reel.scrollLeft;
+          const vw = (reel.parentElement || reel).getBoundingClientRect(), most = Math.max(0, reel.scrollWidth - reel.clientWidth);   // the reel slides no further
+          const slide = Math.min(most, Math.max(0, left + r.width / 2 - (vw.left + vw.width / 2)));
+          b.style.setProperty('--rx', slide.toFixed(0) + 'px');
+        }
+        const ox = left - r.width * K, oy = r.top - r.height * K;   // the layer reaches K box sizes past each edge (site.css)
+        b.style.setProperty('--cx', (cx - ox).toFixed(0) + 'px'); b.style.setProperty('--cy', (cy - oy).toFixed(0) + 'px');
+        b.style.setProperty('--hx', (hx - ox).toFixed(0) + 'px'); b.style.setProperty('--hy', (hy - oy).toFixed(0) + 'px');
+      });
+      S.py = null;
+    });
+    queue();
+  };
+  const still = touch || matchMedia('(prefers-reduced-motion: reduce)').matches;   // touch and reduced motion: no scroll parallax
+  let queued = false;
+  const frame = () => {
+    queued = false;
+    const mid = scrollY + innerHeight / 2;
+    secs.forEach(S => {
+      const py = Math.max(-80, Math.min(80, (S.c - mid) * .09));
+      if (Math.abs(S.c - mid) > innerHeight * 1.5) return;                 // off screen: leave it
+      if (S.py === null || Math.abs(py - S.py) > .5){ S.py = py; S.sec.style.setProperty('--py', py.toFixed(1) + 'px'); }
+    });
+  };
+  const queue = () => { if (!still && !queued){ queued = true; requestAnimationFrame(frame); } };
+  let t, lastW = innerWidth;
+  const remeasure = () => { clearTimeout(t); t = setTimeout(measure, 150); };
+  addEventListener('scroll', queue, {passive: true});
+  addEventListener('resize', () => { if (!touch || innerWidth !== lastW){ lastW = innerWidth; remeasure(); } }, {passive: true});   // on phones the browser bar resizes the height while scrolling
+  addEventListener('load', measure);
+  new ResizeObserver(remeasure).observe(main);
+  measure();
+  // only boxes on screen keep their light moving; the rest pause, so scrolling has the frame budget to itself
+  if ('IntersectionObserver' in window){
+    const io = new IntersectionObserver(es => es.forEach(e => e.target.classList.toggle('bx-idle', !e.isIntersecting)), {rootMargin: '200px 0px'});
+    secs.forEach(S => S.boxes.forEach(b => { b.classList.add('bx-idle'); io.observe(b); }));
+  }
+})();
+
+/* Light motion inside sections, once each as it scrolls in: headings fade up, list items and tiles rise in turn,
+   the effort chart wipes across the year, security icons draw their outlines and the CTA mascot waves. Skipped for reduced motion. */
+(() => {
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window)) return;
+  const GROUPS = [
+    ['.sec-title, .turn-head, .ov-text > h2, .ov-text > .lede', 'rv'],
+    ['.ov-types li, .pillars li, .sf-tiles li, .sf-chain li, .sec-items > div, .ba-r:not(.ba-h), .proof-foot', 'rv-s'],
+    ['.effort', 'rv-wipe'],
+    ['.sec-ico', 'rv-draw'],
+    ['.cta-mascot', 'rv-wave']
+  ];
+  const io = new IntersectionObserver(es => es.forEach(e => {
+    if (!e.isIntersecting) return;
+    const el = e.target; io.unobserve(el); el.classList.add('in');
+    const cls = el.dataset.rv;
+    if (cls === 'rv-draw') return;                                 // the outline stays drawn; nothing to undo
+    const done = ev => {
+      if (ev.target !== el) return;
+      el.removeEventListener(cls === 'rv-wave' ? 'animationend' : 'transitionend', done);
+      el.classList.remove(cls, 'in'); el.style.removeProperty('--rv-i'); delete el.dataset.rv;
+    };
+    el.addEventListener(cls === 'rv-wave' ? 'animationend' : 'transitionend', done);
+  }), {rootMargin: '0px 0px -8% 0px'});
+  GROUPS.forEach(([sel, cls]) => {
+    const els = [...document.querySelectorAll(sel)].filter(el => !el.classList.contains('rv') && el.getBoundingClientRect().top > innerHeight);
+    els.forEach(el => {
+      const sibs = [...el.parentElement.children].filter(c => els.includes(c));
+      el.style.setProperty('--rv-i', Math.min(sibs.indexOf(el), 8));
+      if (cls === 'rv-draw') el.querySelectorAll('path, circle, rect').forEach(n => n.setAttribute('pathLength', '1'));
+      el.dataset.rv = cls; el.classList.add(cls);
+      io.observe(el);
+    });
+  });
+})();
+
+/* ROI charts on hover: the effort chart gets a crosshair that reads both curves (sampled once from the SVG paths) and
+   marks the avoided upkeep between them. The bar and before/after rows are styled on hover in site.css. */
+(() => {
+  const eff = document.querySelector('.effort');
+  if (!eff) return;
+  const svg = eff.querySelector('svg'), them = svg.querySelector('.ef-them'), us = svg.querySelector('.ef-us');
+  const x = eff.querySelector('.ef-x'), dThem = x.querySelector('.them'), dUs = x.querySelector('.us'), gap = x.querySelector('.ef-gap');
+  // top edge of each area: the highest point at every x across the 400-wide viewBox
+  const edge = path => { const top = new Float32Array(401).fill(180), n = 600, L = path.getTotalLength();
+    for (let i = 0; i <= n; i++){ const p = path.getPointAtLength(L * i / n), k = Math.round(p.x); if (k >= 0 && k <= 400 && p.y < top[k]) top[k] = p.y; }
+    for (let k = 1; k <= 400; k++) if (top[k] >= 180 && top[k - 1] < 180) top[k] = top[k - 1];
+    return top; };
+  let eThem, eUs;
+  eff.addEventListener('pointermove', e => {
+    if (!eThem){ eThem = edge(them); eUs = edge(us); }
+    const r = svg.getBoundingClientRect(), fx = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width)), k = Math.round(fx * 400);
+    const yT = eThem[k] / 180 * r.height, yU = eUs[k] / 180 * r.height, top = r.top - eff.getBoundingClientRect().top;
+    x.style.left = (fx * r.width) + 'px'; x.style.top = top + 'px'; x.style.height = r.height + 'px';
+    dThem.style.top = yT + 'px'; dUs.style.top = yU + 'px';
+    gap.style.top = yT + 'px'; gap.style.height = Math.max(0, yU - yT) + 'px';
+  });
+})();
+
 /* Results: when the card comes into view the stats rise in turn and each figure counts up to its value. Reduced motion shows them as written. */
 (() => {
   const card = document.querySelector('.results-card');
@@ -634,6 +796,164 @@
   addEventListener('scroll', queue, {passive: true});
   addEventListener('resize', queue, {passive: true});
   update();
+})();
+
+/* Hero art: two silk ribbons sweep up through the hero, Stripe style. Each ribbon folds and twists along its length
+   (the visible width follows the twist), shades darker in the folds, catches a sheen, and carries fine fibres along it.
+   Colours run Qualitia blue, violet, pink and amber. The ground is the hero's own background, so it works in light and dark.
+   It leans a little toward the pointer, pauses off screen or in a background tab, and shows one still frame for reduced motion.
+   Without WebGL the CSS colour blobs stay. */
+(() => {
+  const mesh = document.querySelector('.sh-mesh'), stick = mesh && mesh.closest('.sh-stick');
+  if (!mesh) return;
+  const cv = document.createElement('canvas');
+  const gl = cv.getContext('webgl', {antialias: false, alpha: false, powerPreference: 'low-power'});
+  if (!gl) return;
+  const VS = 'attribute vec2 a;void main(){gl_Position=vec4(a,0.,1.);}';
+  const FS = `precision highp float;
+uniform vec2 r;uniform float t;uniform vec2 m;uniform vec3 bg;
+vec3 grad(float k){vec3 a=vec3(0.,.584,.922),b=vec3(.478,.361,1.),c=vec3(1.,.36,.616),d=vec3(1.,.66,.29);
+return k<.34?mix(a,b,k/.34):k<.68?mix(b,c,(k-.34)/.34):mix(c,d,(k-.68)/.32);}
+// one ribbon flowing across the full width: a gentle S-curve that dips under the middle and lifts at both sides,
+// twisting as it goes. The top edge is crisp, the lower edge melts away; colour runs across and along the band,
+// with darker folds, a sheen and fine fibres along its length
+vec4 ribbon(vec2 uv,float asp,float y0,float lift,float W,float ph,float tw,float T,float px){
+float x=uv.x-.5;
+float yc=y0+lift*x*x*4.+.045*sin(x*5.+T*.6+ph)+.02*sin(x*11.-T*.4+ph)+m.y*.03;
+float sl=lift*x*8.+.225*cos(x*5.+T*.6+ph)+.22*cos(x*11.-T*.4+ph);
+float d=(uv.y-yc)/sqrt(1.+sl*sl/(asp*asp));
+float tws=cos(x*tw-T*.45+ph+m.x*.8);
+float hw=W*(.2+.8*abs(tws));
+float u=d/hw;
+if(abs(u)>1.)return vec4(0.);
+float a=u>0.?clamp((1.-u)*hw/px,0.,1.):smoothstep(-1.,-.25,u);
+float face=tws<0.?-1.:1.;
+float fold=smoothstep(0.,.8,abs(tws));
+float k=clamp(.5+.3*u*face*smoothstep(0.,.45,abs(tws))+.5*x+.12*sin(T*.3+ph),0.,1.);
+vec3 c=grad(k);
+c*=.74+.26*fold;
+c+=exp(-pow((u-.3*face)*2.4,2.))*.28*fold;
+c*=1.+.045*sin(u*190.+sin(x*30.+ph)*2.)*sin(u*31.+x*12.);
+c=mix(c,vec3(1.),.07-.07*face*smoothstep(0.,.45,abs(tws)));
+return vec4(c,a);}
+void main(){
+vec2 uv=gl_FragCoord.xy/r;float asp=r.x/r.y;float T=t*.1;float px=1.5/r.y;
+vec3 col=bg;
+float wd=smoothstep(.6,1.3,asp);   // phones: a little lower and slimmer, under the app window
+vec4 b=ribbon(uv,asp,mix(.2,.21,wd),mix(.1,.14,wd),.03,2.4,7.,T,px);
+vec4 a=ribbon(uv,asp,mix(.18,.18,wd),mix(.12,.16,wd),mix(.08,.11,wd),0.,4.4,T,px);
+float edge=smoothstep(.0,.1,uv.y);   // always fade out before the bottom of the hero, so the container never cuts it
+col=mix(col,b.rgb,b.a*.8*edge);col=mix(col,a.rgb,a.a*edge);
+gl_FragColor=vec4(col,1.);}`;
+  const sh = (type, src) => { const o = gl.createShader(type); gl.shaderSource(o, src); gl.compileShader(o); return gl.getShaderParameter(o, gl.COMPILE_STATUS) ? o : null; };
+  const vs = sh(gl.VERTEX_SHADER, VS), fs = sh(gl.FRAGMENT_SHADER, FS);
+  if (!vs || !fs) return;
+  const pr = gl.createProgram(); gl.attachShader(pr, vs); gl.attachShader(pr, fs); gl.linkProgram(pr);
+  if (!gl.getProgramParameter(pr, gl.LINK_STATUS)) return;
+  gl.useProgram(pr);
+  gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 3,-1, -1,3]), gl.STATIC_DRAW);
+  const loc = gl.getAttribLocation(pr, 'a'); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+  const uR = gl.getUniformLocation(pr, 'r'), uT = gl.getUniformLocation(pr, 't'), uM = gl.getUniformLocation(pr, 'm'), uB = gl.getUniformLocation(pr, 'bg');
+  cv.className = 'sh-gl'; cv.setAttribute('aria-hidden', 'true');
+  mesh.prepend(cv); mesh.classList.add('gl');
+
+  const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const SCALE = Math.min(devicePixelRatio || 1, matchMedia('(pointer: coarse)').matches ? 1.5 : 2);   // sharp ribbon edges; a little lighter on phones
+  const size = () => {
+    const w = Math.max(1, Math.round(mesh.clientWidth * SCALE)), h = Math.max(1, Math.round(mesh.clientHeight * SCALE));
+    if (cv.width !== w || cv.height !== h){ cv.width = w; cv.height = h; gl.viewport(0, 0, w, h); gl.uniform2f(uR, w, h); }
+  };
+  // the ribbons sit on the hero's own background colour, read again whenever the theme changes
+  const ground = () => {
+    const c = getComputedStyle(stick).backgroundColor.match(/[\d.]+/g) || [0, 22, 48];
+    gl.uniform3f(uB, c[0] / 255, c[1] / 255, c[2] / 255);
+  };
+  const mx = {x: 0, y: 0, tx: 0, ty: 0};
+  const draw = time => {
+    mx.x += (mx.tx - mx.x) * .04; mx.y += (mx.ty - mx.y) * .04;
+    gl.uniform1f(uT, time / 1000 + 30); gl.uniform2f(uM, mx.x, mx.y);
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
+  };
+  size(); ground();
+  const redrawStill = () => { if (still) draw(0); };
+  addEventListener('resize', () => { size(); redrawStill(); }, {passive: true});
+  new MutationObserver(() => { ground(); redrawStill(); }).observe(document.documentElement, {attributes: true, attributeFilter: ['data-theme']});
+  matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { ground(); redrawStill(); });
+  if (still){ draw(0); return; }
+  addEventListener('pointermove', e => { mx.tx = e.clientX / innerWidth - .5; mx.ty = .5 - e.clientY / innerHeight; }, {passive: true});
+  let on = true, raf = 0;
+  const loop = time => { raf = 0; draw(time); if (on && !document.hidden) raf = requestAnimationFrame(loop); };
+  const wake = () => { if (on && !document.hidden && !raf) raf = requestAnimationFrame(loop); };
+  new IntersectionObserver(es => { on = es[0].isIntersecting; wake(); }).observe(mesh);
+  document.addEventListener('visibilitychange', wake);
+  wake();
+})();
+
+/* Colour flow behind the "Join them" panel: the blurred hero art from before the silk ribbons. Noise-warped bands of
+   blue, violet, cyan, pink and amber, drawn at a fifth of the size and stretched (the upscale is the blur), under a
+   grain. Paused off screen or in a background tab; one still frame for reduced motion; the CSS blobs stay without WebGL. */
+(() => {
+  const box = document.querySelector('.blur-mesh');
+  if (!box) return;
+  const cv = document.createElement('canvas');
+  const gl = cv.getContext('webgl', {antialias: false, alpha: false, powerPreference: 'low-power'});
+  if (!gl) return;
+  const VS = 'attribute vec2 a;void main(){gl_Position=vec4(a,0.,1.);}';
+  const FS = `precision highp float;
+uniform vec2 r;uniform float t;
+vec3 pm(vec3 x){return mod(((x*34.)+1.)*x,289.);}
+float sn(vec2 v){const vec4 C=vec4(.211324865405187,.366025403784439,-.577350269189626,.024390243902439);
+vec2 i=floor(v+dot(v,C.yy));vec2 x0=v-i+dot(i,C.xx);vec2 i1=(x0.x>x0.y)?vec2(1.,0.):vec2(0.,1.);
+vec4 x12=x0.xyxy+C.xxzz;x12.xy-=i1;i=mod(i,289.);
+vec3 p=pm(pm(i.y+vec3(0.,i1.y,1.))+i.x+vec3(0.,i1.x,1.));
+vec3 w=max(.5-vec3(dot(x0,x0),dot(x12.xy,x12.xy),dot(x12.zw,x12.zw)),0.);w*=w;w*=w;
+vec3 x=2.*fract(p*C.www)-1.;vec3 h=abs(x)-.5;vec3 ox=floor(x+.5);vec3 a0=x-ox;
+w*=1.79284291400159-.85373472095314*(a0*a0+h*h);
+vec3 g;g.x=a0.x*x0.x+h.x*x0.y;g.yz=a0.yz*x12.xz+h.yz*x12.yw;return 130.*dot(w,g);}
+void main(){
+vec2 uv=gl_FragCoord.xy/r;vec2 p=vec2(uv.x*r.x/r.y,uv.y);float T=t*.045;
+vec2 q=vec2(sn(p*.8+vec2(T,-T*.6)),sn(p*.8+vec2(-T*.8,T*.5)+5.2));
+float n=sn(p*1.4+q*1.1+vec2(T*.7,0.));
+float d=uv.y-(.12+.72*uv.x)-.16*q.x;
+float b=exp(-d*d*2.2);
+float d2=d+.5+.08*q.y;float b2=exp(-d2*d2*8.)*.6;
+vec3 navy=vec3(0.,.086,.188);
+vec3 c=mix(vec3(0.,.584,.922),vec3(.478,.361,1.),smoothstep(-.55,.55,n));
+c=mix(c,vec3(0.,.83,.91),smoothstep(.15,.85,q.y)*.85);
+c=mix(c,vec3(1.,.36,.616),smoothstep(.25,.9,sn(p*.6-vec2(T*.5,T*.3)+9.))*.9);
+c=mix(c,vec3(1.,.7,.36),smoothstep(.55,1.,n*.6+q.x*.6)*b);
+vec3 c2=mix(vec3(.478,.361,1.),vec3(1.,.36,.616),smoothstep(-.4,.6,q.x));
+vec3 o=mix(navy,c,b*.92);o=mix(o,c2,b2);
+float hx=(uv.x-.5)*1.8,hy=(uv.y-.5)*2.4;o*=1.-.32*exp(-hx*hx-hy*hy);
+gl_FragColor=vec4(o,1.);}`;
+  const sh = (type, src) => { const o = gl.createShader(type); gl.shaderSource(o, src); gl.compileShader(o); return gl.getShaderParameter(o, gl.COMPILE_STATUS) ? o : null; };
+  const vs = sh(gl.VERTEX_SHADER, VS), fs = sh(gl.FRAGMENT_SHADER, FS);
+  if (!vs || !fs) return;
+  const pr = gl.createProgram(); gl.attachShader(pr, vs); gl.attachShader(pr, fs); gl.linkProgram(pr);
+  if (!gl.getProgramParameter(pr, gl.LINK_STATUS)) return;
+  gl.useProgram(pr);
+  gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 3,-1, -1,3]), gl.STATIC_DRAW);
+  const loc = gl.getAttribLocation(pr, 'a'); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+  const uR = gl.getUniformLocation(pr, 'r'), uT = gl.getUniformLocation(pr, 't');
+  cv.setAttribute('aria-hidden', 'true');
+  box.prepend(cv); box.classList.add('gl');
+  const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const size = () => {
+    const w = Math.max(1, Math.round(box.clientWidth * .2)), h = Math.max(1, Math.round(box.clientHeight * .2));
+    if (cv.width !== w || cv.height !== h){ cv.width = w; cv.height = h; gl.viewport(0, 0, w, h); gl.uniform2f(uR, w, h); }
+  };
+  const draw = time => { gl.uniform1f(uT, time / 1000 + 40); gl.drawArrays(gl.TRIANGLES, 0, 3); };
+  size();
+  addEventListener('resize', () => { size(); draw(performance.now()); }, {passive: true});
+  if (still){ draw(0); return; }
+  let on = false, raf = 0;
+  const loop = time => { raf = 0; draw(time); if (on && !document.hidden) raf = requestAnimationFrame(loop); };
+  const wake = () => { if (on && !document.hidden && !raf) raf = requestAnimationFrame(loop); };
+  new IntersectionObserver(es => { on = es[0].isIntersecting; wake(); }).observe(box);
+  document.addEventListener('visibilitychange', wake);
+  draw(0);
 })();
 
 /* Homepage hero: scroll story. One rAF loop reads how far the pinned hero has scrolled and writes CSS variables; site.css draws it.
@@ -832,59 +1152,26 @@
   });
 })();
 
-/* Hero video: load the right size, loop it, and blur it in/out over the first and last second of each loop.
-   Reduced motion or data saver keeps the still poster. The pause button stops the motion. */
-(() => {
-  const v = document.getElementById('hero-video');
-  if (!v) return;
-  const btn = document.getElementById('hero-pause');
-  const small = matchMedia('(max-width: 720px)').matches;
-  if (small && v.dataset.posterSm) v.poster = v.dataset.posterSm;
-  const saveData = navigator.connection && navigator.connection.saveData;
-  if (matchMedia('(prefers-reduced-motion: reduce)').matches || saveData) { if (btn) btn.hidden = true; return; }
-  v.src = small ? v.dataset.srcSm : v.dataset.srcLg;
-  const EDGE = 0.9, MAX = 14;   // seconds of blur at each end, peak blur in px
-  const blurAt = t => {
-    const d = v.duration || 0;
-    if (!d) return MAX;
-    if (t < EDGE) return MAX * (1 - t / EDGE);
-    if (t > d - EDGE) return MAX * (1 - (d - t) / EDGE);
-    return 0;
-  };
-  const paint = () => { v.style.filter = 'blur(' + blurAt(v.currentTime).toFixed(2) + 'px)'; };
-  let pending = false;   // one frame loop at a time, even after pause/play
-  const tick = () => {
-    if (pending) return;
-    pending = true;
-    const next = () => { pending = false; paint(); if (!v.paused) tick(); };
-    v.requestVideoFrameCallback ? v.requestVideoFrameCallback(next) : requestAnimationFrame(next);
-  };
-  v.style.filter = 'blur(' + MAX + 'px)';
-  v.addEventListener('playing', () => { paint(); tick(); });
-  v.play().catch(() => { v.style.filter = ''; });
-  if (btn) btn.addEventListener('click', () => {
-    const pause = !v.paused;
-    if (pause) { v.pause(); v.style.filter = 'blur(' + blurAt(v.currentTime).toFixed(2) + 'px)'; } else v.play();
-    btn.setAttribute('aria-pressed', pause);
-    btn.setAttribute('aria-label', pause ? 'Play background video' : 'Pause background video');
-  });
-})();
-
 /* Pixel reveal: draw the Qualitia wordmark (the Q symbol on narrow screens) as negative space in a dense field of
-   rounded pixels whose size shrinks from ~84px to fine over the final stretch of scroll. Static fine grid for reduced motion. */
+   crisp, slightly rounded pixels whose size shrinks from ~84px to fine over the final stretch of scroll. Each pixel
+   gets the same treatment as the content boxes above: a white tile with a hairline edge, and one soft moving light
+   (amber core, blue and violet haze) seen through all the tiles. The gaps stay plain, so the logo reads. The light
+   drifts while the panel is on screen; reduced motion shows a still frame. */
 (() => {
   const wrap = document.querySelector('.px-reveal'), qsym = document.getElementById('q-symbol');
   if (!wrap) return;
   const cv = wrap.querySelector('canvas'), ctx = cv.getContext('2d');
-  // the logo is negative space: a dense navy pixel field around it, empty cells where the logo is
-  const BG = '#001630', FG = '#10305a', DENSITY = 0.85, COARSE = 84;
-  const reduce = matchMedia('(prefers-reduced-motion: reduce)');
+  // the logo is negative space: a dense pixel field around it, empty cells where the logo is
+  const DENSITY = 0.85, COARSE = 84;
+  const dark = () => getComputedStyle(wrap).backgroundColor !== 'rgb(255, 255, 255)';   // the ground is site.css's: white, or navy in dark mode
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)'), still = reduce.matches || matchMedia('(pointer: coarse)').matches;
   const toImg = (sym, vb) => { const i = new Image(); i.onload = () => { mask = null; queue(); };
     i.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="' + vb + '">' + sym.innerHTML.replace(/currentColor|#0095EB/gi, '#fff') + '</svg>'); return i; };
   const wordmark = new Image(); wordmark.onload = () => { mask = null; queue(); };
   wordmark.src = 'assets/brand/qualitia-logo-white.svg';
   const symbol = qsym ? toImg(qsym, '0 0 35 36') : null;
   let mask = null, W = 0, H = 0, queued = false;
+  const tiles = document.createElement('canvas'); let tileKey = '';   // the tile layer, cached per size and theme
   let maxY = 0; const readMax = () => { maxY = document.documentElement.scrollHeight - innerHeight; };   // page height, read on load and resize only
   const narrow = () => W < 600 && symbol;
   const fine = () => (narrow() ? 5 : 6);
@@ -914,20 +1201,44 @@
     if (w !== W || h !== H){ W = w; H = h; const dpr = Math.min(devicePixelRatio || 1, 2); cv.width = W * dpr; cv.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0); mask = null; }
     if (!mask) buildMask();
     const v = cellSize(), gap = v > 2 ? 1 : 0, rad = 1 + 3 * Math.max(0, Math.min(1, (v - fine()) / (COARSE - fine())));
-    ctx.fillStyle = BG; ctx.fillRect(0, 0, W, H); ctx.fillStyle = FG;
-    for (let y = 0; y < H; y += v) for (let x = 0; x < W; x += v){
-      const cx = Math.min(W - 1, x + (v >> 1)), cy = Math.min(H - 1, y + (v >> 1));
-      const inLogo = mask && mask[(cx + cy * W) * 4 + 3] > 128;
-      if (inLogo || hash(x / v | 0, y / v | 0) >= DENSITY) continue;
-      if (ctx.roundRect){ ctx.beginPath(); ctx.roundRect(x, y, v - gap, v - gap, rad); ctx.fill(); } else ctx.fillRect(x, y, v - gap, v - gap);
+    const dk = dark(), edge = v >= 10, dpr = Math.min(devicePixelRatio || 1, 2), key = [v, W, H, dk, !!mask].join();
+    // 1. the tiles, like the boxes: a near-white (or surface) fill and a hairline edge; drawn once per size, then reused
+    if (key !== tileKey){
+      tileKey = key; tiles.width = W * dpr; tiles.height = H * dpr;
+      const ctx = tiles.getContext('2d'); ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.beginPath();
+      for (let y = 0; y < H; y += v) for (let x = 0; x < W; x += v){
+        const cx = Math.min(W - 1, x + (v >> 1)), cy = Math.min(H - 1, y + (v >> 1));
+        const inLogo = mask && mask[(cx + cy * W) * 4 + 3] > 128;
+        if (inLogo || hash(x / v | 0, y / v | 0) >= DENSITY) continue;
+        if (ctx.roundRect) ctx.roundRect(x + .5, y + .5, v - gap - 1, v - gap - 1, rad); else ctx.rect(x + .5, y + .5, v - gap - 1, v - gap - 1);
+      }
+      ctx.fillStyle = dk ? '#13233A' : '#F1F4F9'; ctx.fill();   // solid, like the boxes, so the light shows at full strength
+      ctx.strokeStyle = dk ? 'rgba(255,255,255,.1)' : (edge ? 'rgba(10,37,64,.1)' : 'rgba(10,37,64,.09)'); ctx.lineWidth = 1; ctx.stroke();
     }
+    ctx.clearRect(0, 0, W, H);                                   // the panel's own background shows between tiles
+    ctx.drawImage(tiles, 0, 0, W, H);
+    // 2. the moving light, painted only where tiles are (source-atop), like the section light behind the boxes
+    const t = (reduce.matches ? 12 : performance.now() / 1000) * .25;
+    const glow = (x, y, rx, ry, c) => { const g = ctx.createRadialGradient(x, y, 0, x, y, Math.max(rx, ry)); g.addColorStop(0, c); g.addColorStop(1, 'rgba(255,255,255,0)');
+      ctx.save(); ctx.translate(x, y); ctx.scale(rx / Math.max(rx, ry), ry / Math.max(rx, ry)); ctx.translate(-x, -y); ctx.fillStyle = g; ctx.fillRect(x - Math.max(rx, ry), y - Math.max(rx, ry), Math.max(rx, ry) * 2, Math.max(rx, ry) * 2); ctx.restore(); };
+    ctx.globalCompositeOperation = 'source-atop';
+    ctx.globalAlpha = dk ? .6 : 1;
+    glow(W * (.72 + .18 * Math.sin(t * .9)), H * (.6 + .25 * Math.cos(t * .7)), W * .5, H * 1.1, 'rgba(0,149,235,.5)');
+    glow(W * (.22 + .16 * Math.cos(t * .6)), H * (.45 + .3 * Math.sin(t * .8)), W * .38, H * .9, 'rgba(122,92,255,.46)');
+    glow(W * (.48 + .22 * Math.sin(t * .5 + 1)), H * (.5 + .22 * Math.sin(t * 1.1)), W * .3, H * .8, 'rgba(255,168,74,.56)');
+    ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'source-over';
+    if (live && !still && !document.hidden) queue();   // keep the light moving while the panel is on screen (not on touch: redraw on scroll only)
   }
   function queue(){ if (!queued){ queued = true; requestAnimationFrame(draw); } }
   readMax(); addEventListener('load', readMax);
   if ('ResizeObserver' in window) new ResizeObserver(readMax).observe(document.body);   // late images change the height
-  const onScroll = () => { if (scrollY >= maxY - H - 240) queue(); };
+  let live = false;
+  const onScroll = () => { live = scrollY >= maxY - H - 240; if (live) queue(); };
+  document.addEventListener('visibilitychange', onScroll);
   addEventListener('scroll', onScroll, {passive: true});
   addEventListener('resize', () => { readMax(); queue(); }, {passive: true});
   reduce.addEventListener('change', queue);
+  new MutationObserver(queue).observe(document.documentElement, {attributes: true, attributeFilter: ['data-theme']});   // ground follows the theme
   queue();
 })();

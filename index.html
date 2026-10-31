@@ -9,41 +9,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@100..700&family=Geist+Mono:wght@400;500&display=swap">
 <script>try{var t=localStorage.getItem("q-theme");if(t==="light"||t==="dark")document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
-<link rel="stylesheet" href="assets/css/site.css?v=8087f193">
-<style id="nm-css">/* Platform and floating menus: Qualitia Boson, then Capabilities, Platforms, Enterprise and Proof, Industries at the foot */
-#mega.nm{display:block;padding:0;overflow:hidden}
-.nm-body{display:grid;grid-template-columns:1fr 1fr 1fr .9fr;gap:8px;padding:18px 18px 16px}
-.nm-col{min-width:0;padding:4px}
-.nm-col h5,.nm-proof h5,.nm-ft h5{margin:0 0 8px;padding:0 10px;font:500 12px var(--mono,monospace);letter-spacing:.05em;text-transform:uppercase;color:var(--ink-soft)}
-.nm-it{display:flex;align-items:center;gap:12px;padding:8px 10px;border-radius:8px;font-size:14px;font-weight:500;color:var(--ink);text-decoration:none;transition:background .2s}
-.nm-it:hover{background:var(--surface)}.nm-it[aria-current]{color:#5B4CF0}
-.nm-ic{flex:none;width:30px;height:30px;padding:6px;border-radius:6px;background:color-mix(in srgb,#5B4CF0 10%,var(--paper));stroke:#5B4CF0;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
-.nm-tag{display:inline-block;margin-left:6px;padding:2px 6px;border-radius:6px;font:500 10px/1.4 var(--sans,sans-serif);font-style:normal;vertical-align:1px}
-.nm-tag.ga{background:color-mix(in srgb,#34C38F 18%,var(--paper));color:#137A54}.nm-tag.ea{background:#B4C6FF;color:#001630}
-.nm-proof{display:flex;flex-direction:column;gap:12px;padding:16px;border-radius:12px;background:#0A2540;color:#fff;background-image:radial-gradient(60% 80% at 0% 0%,rgba(0,149,235,.45),transparent 70%),radial-gradient(55% 80% at 100% 0%,rgba(122,92,255,.4),transparent 70%);text-decoration:none}
-.nm-proof h5{padding:0;margin:0;color:#ADBDCC}
-.nm-proof .n{font-size:36px;font-weight:200;letter-spacing:-.03em;line-height:1}
-.nm-proof p{margin:3px 0 0;font-size:13px;color:#ADBDCC}
-.nm-proof span{margin-top:auto;font-size:14px;font-weight:500}
-.nm-ft{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:12px 24px 14px;border-top:1px solid var(--ink-faint)}
-.nm-ft h5{margin:0 6px 0 0;padding:0}
-.nm-ft a{font-size:13px;padding:6px 10px;border-radius:8px;background:var(--surface);color:var(--ink);text-decoration:none;transition:background .2s}
-.nm-ft a:hover{background:color-mix(in srgb,#5B4CF0 12%,var(--surface))}
-#mega.nm .vsw{margin:0 24px 12px}
-@media (max-width:1000px){.nm-body{grid-template-columns:1fr 1fr}}
-@media (max-width:560px){.nm-body{grid-template-columns:1fr}.nm-ft{padding-inline:16px}}
-/* floating menu: the same sections, each opening to its links */
-#pill-list.nm{gap:0;padding:8px 12px 12px}
-.nm-fhd{display:flex;padding:8px 8px 10px;color:var(--ink);border-bottom:1px solid var(--ink-faint)}.nm-fhd svg{height:18px;width:auto}
-.nm-acc{border-bottom:1px solid var(--ink-faint)}
-.nm-acc summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;padding:11px 8px;font-weight:500;font-size:14px;color:var(--ink)}
-.nm-acc summary::-webkit-details-marker{display:none}
-.nm-acc summary::after{content:"+";font-size:18px;font-weight:300;color:var(--ink-soft)}.nm-acc[open] summary::after{content:"\2013"}
-.nm-acc a{display:block;padding:7px 8px 7px 16px;font-size:14px;color:var(--ink);text-decoration:none;border-radius:8px}
-.nm-acc a:hover{background:var(--surface)}.nm-acc a[aria-current]{color:#5B4CF0}
-#pill-list.nm .mf-actions{margin-top:4px}
-.nm-acc:last-of-type{border-bottom:0}   /* the divider below (actions or version switch) already draws this line */
-</style>
+<link rel="stylesheet" href="assets/css/site.css?v=7f3b91a3">
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -94,43 +60,85 @@
 </header>
 
 <nav class="pill-nav" id="pill" aria-label="Quick navigation">
-  <a class="logo" href="index.html" aria-label="Qualitia home"><svg class="logo-sym" viewBox="0 0 35 36" aria-hidden="true"><use href="#q-symbol"/></svg></a>
-  <div class="pill-r">
-    <button class="theme-btn" type="button" data-theme-toggle aria-label="Switch to night mode"><svg class="moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg><svg class="sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></button>
-  <button class="btn btn-soft" id="pill-menu" aria-expanded="false" aria-controls="pill-list">Menu <svg class="caret" viewBox="0 0 8 8" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M1 2.5l3 3 3-3"/></svg></button>
-    <a class="btn btn-cta" href="contact.html">Book a demo</a>
-  </div>
+  <button class="pill-btn" id="pill-menu" type="button" aria-expanded="false" aria-controls="pill-list" aria-label="Open menu">
+    <svg class="pb-q" viewBox="0 0 35 36" aria-hidden="true"><use href="#q-symbol"/></svg>
+    <svg class="pb-menu" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    <svg class="pb-close" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+  </button>
   <div class="mega-float nm" id="pill-list" hidden>
     <div class="nm-fhd"><svg viewBox="0 0 250 36" aria-label="Qualitia Boson"><use href="#q-boson"/></svg></div>
     <details class="nm-acc" open><summary>Capabilities</summary><a href="one-click-generation.html">1-Click Generation</a><a href="#feat-heal">Self-healing</a><a href="instant-update.html">Instant Update</a><a href="total-control.html">End-to-end workflows</a></details>
     <details class="nm-acc"><summary>Platforms</summary><a href="#platforms">Salesforce <em class="nm-tag ga">Available</em></a><a href="contact.html">ServiceNow <em class="nm-tag ea">Early access</em></a></details>
     <details class="nm-acc"><summary>Enterprise</summary><a href="#secure">Runs inside your network</a><a href="#secure">Security &amp; compliance</a><a href="total-control.html">Integrations</a></details>
     <details class="nm-acc"><summary>Proof</summary><a href="#results">Results</a><a href="customers.html">Customers &amp; stories</a><a href="customers.html#industry-banking">Industries</a></details>
+    <div class="mf-actions"><button class="theme-btn" type="button" data-theme-toggle aria-label="Switch to night mode"><svg class="moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg><svg class="sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></button><a class="btn btn-cta" href="contact.html">Book a demo</a></div>
   </div>
 </nav>
 
 <main>
-  <!-- Hero -->
-  <section class="hero">
-    <div class="hero-card">
-      <video class="hero-photo hero-video" id="hero-video" muted loop playsinline preload="none" aria-hidden="true" poster="assets/hero/hero-loop-poster.jpg" data-poster-sm="assets/hero/hero-loop-poster-960.jpg" data-src-lg="assets/hero/hero-loop-1080.mp4" data-src-sm="assets/hero/hero-loop-540.mp4"></video>
-      <button class="hero-pause" type="button" id="hero-pause" aria-label="Pause background video" aria-pressed="false"><svg class="i-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14M16 5v14"/></svg><svg class="i-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg></button>
-      <a class="hero-tag" href="#platforms"><span class="chip">New</span>1-Click testing, now for ServiceNow</a>
-      <div class="hero-in">
-        <h1>One click. <span>Regression in hours, not weeks.</span></h1>
-        <div class="hero-side">
-          <p class="lede">Qualitia Boson builds your Salesforce test automation from your org’s metadata and keeps it current in one click, so every release is accurate first, and fast.</p>
-          <div class="row">
-            <a class="btn btn-cta" href="#demo">Book a demo</a>
-            <a class="btn btn-soft" href="#feat-generate">See how 1-Click works</a>
-          </div>
-          <div class="hero-notes">
-            <span><i class="dot"></i>Runs inside your network</span>
-            <span><i class="dot"></i>Salesforce · every cloud</span>
-            <span><i class="dot"></i>100% no-code</span>
+  <!-- Hero: scroll story. A cursor clicks Generate and the suite builds itself (site.js drives it; reduced motion shows the finished state) -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <symbol id="mo-hand" viewBox="0 0 34 42">
+      <path d="M12 2.5v29.2l7-6.4 4.6 10.6 4.5-2-4.5-10.2h9.4z" fill="#fff" stroke="#001630" stroke-width="2.2" stroke-linejoin="round"/>
+    </symbol>
+  </svg>
+  <section class="sh" id="hero" aria-label="Qualitia Boson: one click generates your Salesforce regression suite">
+    <div class="sh-stick">
+      <div class="sh-mesh" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+      <div class="sh-copy">
+        <div class="sh-lines">
+          <h1 class="sh-line" data-l="0">One click.<br><span class="dim">That’s the whole script.</span></h1>
+          <p class="sh-line" data-l="1" aria-hidden="true">Every journey, <em>generated</em><br><span class="dim">from your org’s metadata.</span></p>
+          <p class="sh-line" data-l="2" aria-hidden="true">Regression in <em>hours</em>,<br><span class="dim">not weeks.</span></p>
+        </div>
+      </div>
+
+      <ol class="sh-steps" aria-hidden="true"><li><i><b></b></i><span>Read org</span></li><li><i><b></b></i><span>Point</span></li><li><i><b></b></i><span>Click</span></li><li><i><b></b></i><span>Generate</span></li><li><i><b></b></i><span>Release</span></li></ol>
+
+      <div class="sh-stage">
+        <div class="sh-app" aria-hidden="true">
+          <div class="sh-bar"><span class="dots"><i></i><i></i><i></i></span><svg viewBox="0 0 250 36"><use href="#q-boson"/></svg><span class="env">Sales Cloud · UAT</span></div>
+          <div class="sh-body">
+            <div class="sh-side">
+              <h5>Org metadata</h5>
+              <span>Objects <small>312</small></span>
+              <span>Page layouts <small>148</small></span>
+              <span>Flows <small>96</small></span>
+              <span>Lightning components <small>211</small></span>
+              <span>Permission sets <small>58</small></span>
+              <span>Validation rules <small>174</small></span>
+            </div>
+            <div class="sh-main">
+              <div class="sh-head">
+                <b>Generate automation<small>6 journeys found in metadata</small></b>
+                <span class="sh-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 3L5 13h6l-1 8 8-10h-6z"/></svg><span class="sh-go-t">Generate</span><i class="sh-ripple"></i></span>
+              </div>
+              <div class="sh-list">
+                <div class="sh-row" data-steps="14"><span>Lead to Opportunity conversion</span><span class="pb"><i></i></span><span class="st">queued</span></div>
+                <div class="sh-row" data-steps="22"><span>Quote with CPQ discount approval</span><span class="pb"><i></i></span><span class="st">queued</span></div>
+                <div class="sh-row" data-steps="11"><span>Case escalation, Lightning console</span><span class="pb"><i></i></span><span class="st">queued</span></div>
+                <div class="sh-row" data-steps="18"><span>OmniScript · Policy onboarding</span><span class="pb"><i></i></span><span class="st">queued</span></div>
+                <div class="sh-row" data-steps="16"><span>Contract renewal with approvals</span><span class="pb"><i></i></span><span class="st">queued</span></div>
+                <div class="sh-row" data-steps="9"><span>Run as · Partner community user</span><span class="pb"><i></i></span><span class="st">queued</span></div>
+              </div>
+              <div class="sh-foot"><span><b id="sh-tests">0</b>tests generated</span><span><b id="sh-cov">0%</b>flow coverage</span><span><b id="sh-time">0s</b>authoring time</span></div>
+            </div>
           </div>
         </div>
       </div>
+
+      <div class="sh-hand" aria-hidden="true"><svg viewBox="0 0 34 42"><use href="#mo-hand"/></svg></div>
+
+      <div class="sh-end">
+        <p class="lede">Qualitia Boson builds your Salesforce test automation from your org’s metadata and keeps it current in one click, so every release is accurate first, and fast.</p>
+        <div class="row">
+          <a class="btn btn-cta" href="#demo">Book a demo</a>
+          <a class="btn btn-soft" href="#feat-generate">See how 1-Click works</a>
+        </div>
+        <div class="sh-notes"><span><i></i>Runs inside your network</span><span><i></i>Salesforce · every cloud</span><span><i></i>100% no-code</span></div>
+      </div>
+
+      <div class="sh-hint" aria-hidden="true"><b></b></div>
     </div>
   </section>
 
@@ -324,12 +332,13 @@
         </div>
         <div class="effort">
           <svg viewBox="0 0 400 180" preserveAspectRatio="none" role="img" aria-label="Illustrative chart: with script-based tools, cumulative testing effort keeps climbing as maintenance builds up. With Boson it rises slowly, ending around 60% lower after a year.">
-            <defs><pattern id="effort-hatch" width="12" height="12" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="12" height="12" class="eh-b"/><rect width="6" height="12" class="eh-a"/></pattern></defs>
+            <defs><linearGradient id="effort-us" x1="0" x2="1" y1="0" y2="0"><stop offset="0" stop-color="#0A6FD6"/><stop offset="1" stop-color="#5B4CF0"/></linearGradient><pattern id="effort-hatch" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="8" height="8" class="eh-b"/><rect width="2.2" height="8" class="eh-a"/></pattern></defs>
             <path class="ef-them" d="M0 180 L0 178 C80 154 140 122 200 98 S330 48 400 36 L400 180 Z"/>
             <path class="ef-us" d="M0 180 L0 178 C70 164 150 144 230 124 S350 98 400 90 L400 180 Z"/>
           </svg>
           <span class="ef-lab ef-lab-them">Script-based tools</span>
           <span class="ef-lab ef-lab-us">Boson</span>
+          <span class="ef-x" aria-hidden="true"><i class="ef-gap"></i><i class="ef-dot them"></i><i class="ef-dot us"></i></span>
         </div>
         <div class="ticks ef-ticks"><span style="left:0">Sprint 1</span><span style="left:50%">Sprint 13</span><span style="left:100%">Sprint 26</span></div>
         <p class="legend"><i class="ef-key"></i>Hatched: the extra upkeep script-based suites need. Boson ends the year with ~60% less effort.<!-- TODO: validate the ~60% --></p>
@@ -492,7 +501,6 @@
 <div class="px-spacer" aria-hidden="true"></div>
 <div class="px-reveal" aria-hidden="true"><canvas></canvas></div>
 
-<script src="assets/js/site.js?v=95ec46ae"></script>
-<script>/* Version switch: V1 to V4 at the foot of the Platform menu and the floating menu, each link opening this same page in that version */(()=>{const m=location.pathname.match(/^(.*?\/)(v[234]\/)?([^\/]*)$/);if(!m)return;const base=m[1],cur=m[2]?m[2][1]:'1',file=m[3]||'index.html',vs=[['1',''],['2','v2/'],['3','v3/'],['4','v4/']];const make=()=>{const d=document.createElement('div');d.className='vsw';d.setAttribute('role','group');d.setAttribute('aria-label','Site version');d.innerHTML='<span>Version</span>'+vs.map(([n,p])=>'<a href="'+base+p+file+'"'+(n===cur?' aria-current="page"':'')+'>V'+n+'</a>').join('');return d;};['mega','pill-list'].forEach(id=>{const el=document.getElementById(id);if(el)el.append(make());});const st=document.createElement('style');st.textContent='.vsw{grid-column:1/-1;display:flex;align-items:center;gap:4px;margin-top:10px;padding:12px 10px 4px;border-top:1px solid color-mix(in srgb,currentColor 12%,transparent);font:500 12px/1 inherit}.vsw span{margin-right:auto;font-size:11px;letter-spacing:.06em;text-transform:uppercase;opacity:.65}.vsw a{padding:7px 11px;border-radius:8px;background:color-mix(in srgb,currentColor 7%,transparent);text-decoration:none;color:inherit;transition:background .2s}.vsw a:hover{background:color-mix(in srgb,currentColor 14%,transparent)}.vsw a[aria-current]{background:#5B4CF0;color:#fff}';document.head.append(st);})();</script>
+<script src="assets/js/site.js?v=56200a44"></script>
 </body>
 </html>
