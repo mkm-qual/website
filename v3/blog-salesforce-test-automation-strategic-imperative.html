@@ -42,6 +42,14 @@
 .nm-acc a{display:block;padding:7px 8px 7px 16px;font-size:14px;color:var(--ink);text-decoration:none;border-radius:8px}
 .nm-acc a:hover{background:var(--surface)}.nm-acc a[aria-current]{color:#5B4CF0}
 #pill-list.nm .mf-actions{margin-top:4px}
+.nm-acc:last-of-type{border-bottom:0}   /* the divider below (actions or version switch) already draws this line */
+</style>
+<style id="nm-hover">/* menu links hover like the Built for Salesforce tiles: lift onto white with a brand edge, the icon fills and tilts */
+.nm-it,.nm-acc a,.nm-ft a{transition:translate .35s cubic-bezier(.34,1.56,.64,1),box-shadow .25s,background-color .2s}
+.nm-it:hover,.nm-acc a:hover,.nm-ft a:hover{translate:0 -2px;background:var(--box,var(--paper));box-shadow:0 0 0 1px color-mix(in srgb,#5B4CF0 28%,transparent),0 12px 24px -14px rgba(10,37,64,.3)}
+.nm-ic{transition:background-color .25s,stroke .25s,rotate .35s cubic-bezier(.34,1.56,.64,1),scale .35s cubic-bezier(.34,1.56,.64,1)}
+.nm-it:hover .nm-ic{background-color:#4F55E6;stroke:#fff;rotate:-6deg;scale:1.08}
+@media (hover:none),(prefers-reduced-motion:reduce){.nm-it:hover,.nm-acc a:hover,.nm-ft a:hover{translate:none}.nm-it:hover .nm-ic{rotate:none;scale:none}}
 </style>
 </head>
 <body>
