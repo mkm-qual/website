@@ -1642,7 +1642,7 @@ main,footer{position:relative;z-index:1;background:var(--paper)}
 .bx-idle::before,.bx-idle::after{animation-play-state:paused;will-change:auto}   /* off screen: the light rests (site.js) */
 
 /* Phones: headings sized like the hero headline (about 28-32px), and centred heading blocks set left, with their
-   intro text and buttons */
+   intro text and buttons. The hero itself stays centred. */
 @media (max-width:560px){
   :root{--t-display:clamp(28px,8vw,32px);--t-h1:clamp(26px,7.2vw,30px);--t-h2:clamp(22px,6.2vw,26px)}
   .bl-hero h1{font-size:var(--t-display)}
@@ -1650,10 +1650,6 @@ main,footer{position:relative;z-index:1;background:var(--paper)}
   .turn-head,.sec-title,.cx-intro,.cx-head,.cx-cta-card,.cx-cta-card .cta-actions{align-items:flex-start}
   .cx-head .ov-link{align-self:flex-start!important}
   .statement .display{margin-inline:0}
-  .sh-copy{text-align:left}
-  .sh-lines{place-items:center start}
-  .sh-end{left:var(--side);width:calc(100% - 2 * var(--side));text-align:left;transform:translateY(calc((1 - var(--e,0)) * 24px))}
-  .sh-end .row,.sh-notes{justify-content:flex-start}
 }
 
 /* Footer on phones: each link group folds into an accordion under its heading (site.js makes the heading a button) */
