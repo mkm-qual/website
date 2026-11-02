@@ -367,13 +367,13 @@
   }
 })();
 
-/* Day / night switch. Follows the device setting until the visitor picks one; the choice is remembered on this device. */
+/* Day / night switch, in the footer. The site opens in light (the head script sets it); choosing dark is remembered
+   on this device. */
 (function(){
   const btns = [...document.querySelectorAll('[data-theme-toggle]')];
   if (!btns.length) return;
   const root = document.documentElement;
-  const media = matchMedia('(prefers-color-scheme: dark)');
-  const current = () => root.getAttribute('data-theme') || (media.matches ? 'dark' : 'light');
+  const current = () => root.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
   function sync(){
     const mode = current();
     btns.forEach(b => {
@@ -389,7 +389,6 @@
     try { localStorage.setItem('q-theme', next); } catch(err){}
     sync();
   }));
-  media.addEventListener('change', sync);   // device switched while no choice is saved
   sync();
 })();
 
