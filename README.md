@@ -19,6 +19,8 @@ Then open http://127.0.0.1:4173. Open the pages through a local server rather th
 - `one-click-generation.html`: 1-Click Generation.
 - `instant-update.html`: Instant Update.
 - `total-control.html`: Total Control, with the end-to-end app-screens walkthrough and the CI/CD pipeline simulator.
+- `security.html`: Runs inside your network, with security and compliance.
+- `integrations.html`: Integrations: CI/CD, test management, defect tracking, device clouds and sign-in, with the same pipeline simulator.
 
 **Customers and resources**
 - `customers.html`: one customers section where industry tabs filter the logo grid and show that industry's panel (`ind-` classes; `#industry-banking`, `#industry-insurance` and so on preselect a tab), then case studies, stats and testimonials.
