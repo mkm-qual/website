@@ -1169,11 +1169,13 @@ gl_FragColor=vec4(o,1.);}`;
   const wordmark = new Image(); wordmark.onload = () => { mask = null; queue(); };
   wordmark.src = 'assets/brand/qualitia-logo-white.svg';
   const symbol = qsym ? toImg(qsym, '0 0 35 36') : null;
-  let mask = null, W = 0, H = 0, queued = false;
-  const tiles = document.createElement('canvas'); let tileKey = '';   // the tile layer, cached per size and theme
+  let mask = null, W = 0, H = 0, queued = false, live = false;
+  let dk = dark();                                                  // the ground colour, re-read only when the theme changes
+  const DPR = Math.min(devicePixelRatio || 1, 2);
   let maxY = 0; const readMax = () => { maxY = document.documentElement.scrollHeight - innerHeight; };   // page height, read on load and resize only
   const narrow = () => W < 600 && symbol;
   const fine = () => (narrow() ? 5 : 6);
+  const cache = new Map();                                          // size key -> tile canvas, the few most recent (scrolling back reuses them)
   const hash = (a, b) => { const n = 43758.5453123 * Math.sin(127.1 * a + 311.7 * b); return n - Math.floor(n); };
   function buildMask(){
     const img = narrow() ? symbol : wordmark;
@@ -1194,50 +1196,75 @@ gl_FragColor=vec4(o,1.);}`;
     const t = Math.max(0, Math.min(1, (scrollY - (max - H)) / H));
     return Math.round(COARSE - (COARSE - f) * (t <= 0.35 ? 0 : (t - 0.35) / 0.65) ** 2);
   }
-  function draw(){
-    queued = false;
-    const r = wrap.getBoundingClientRect(), w = Math.max(1, Math.floor(r.width)), h = Math.max(1, Math.floor(r.height));
-    if (w !== W || h !== H){ W = w; H = h; const dpr = Math.min(devicePixelRatio || 1, 2); cv.width = W * dpr; cv.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0); mask = null; }
-    if (!mask) buildMask();
-    const v = cellSize(), gap = v > 2 ? 1 : 0, rad = 1 + 3 * Math.max(0, Math.min(1, (v - fine()) / (COARSE - fine())));
-    const dk = dark(), edge = v >= 10, dpr = Math.min(devicePixelRatio || 1, 2), key = [v, W, H, dk, !!mask].join();
-    // 1. the tiles, like the boxes: a near-white (or surface) fill and a hairline edge; drawn once per size, then reused
-    if (key !== tileKey){
-      tileKey = key; tiles.width = W * dpr; tiles.height = H * dpr;
-      const ctx = tiles.getContext('2d'); ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      ctx.beginPath();
-      for (let y = 0; y < H; y += v) for (let x = 0; x < W; x += v){
-        const cx = Math.min(W - 1, x + (v >> 1)), cy = Math.min(H - 1, y + (v >> 1));
-        const inLogo = mask && mask[(cx + cy * W) * 4 + 3] > 128;
-        if (inLogo || hash(x / v | 0, y / v | 0) >= DENSITY) continue;
-        if (ctx.roundRect) ctx.roundRect(x + .5, y + .5, v - gap - 1, v - gap - 1, rad); else ctx.rect(x + .5, y + .5, v - gap - 1, v - gap - 1);
-      }
-      ctx.fillStyle = dk ? '#13233A' : '#F1F4F9'; ctx.fill();   // solid, like the boxes, so the light shows at full strength
-      ctx.strokeStyle = dk ? 'rgba(255,255,255,.1)' : (edge ? 'rgba(10,37,64,.1)' : 'rgba(10,37,64,.09)'); ctx.lineWidth = 1; ctx.stroke();
+  function tileLayer(v){
+    const key = [v, W, H, dk].join();
+    let c = cache.get(key);
+    if (c){ cache.delete(key); cache.set(key, c); return c; }      // most recent last
+    c = document.createElement('canvas'); c.width = Math.ceil(W * DPR); c.height = Math.ceil(H * DPR);
+    const x2 = c.getContext('2d'); x2.setTransform(DPR, 0, 0, DPR, 0, 0);
+    const gap = v > 2 ? 1 : 0, rad = 1 + 3 * Math.max(0, Math.min(1, (v - fine()) / (COARSE - fine()))), s = v - gap;
+    const cells = [];
+    for (let y = 0; y < H; y += v) for (let x = 0; x < W; x += v){
+      const cx = Math.min(W - 1, x + (v >> 1)), cy = Math.min(H - 1, y + (v >> 1));
+      if ((mask && mask[(cx + cy * W) * 4 + 3] > 128) || hash(x / v | 0, y / v | 0) >= DENSITY) continue;
+      cells.push(x, y);
     }
-    ctx.clearRect(0, 0, W, H);                                   // the panel's own background shows between tiles
-    ctx.drawImage(tiles, 0, 0, W, H);
-    // 2. the moving light, painted only where tiles are (source-atop), like the section light behind the boxes
-    const t = (reduce.matches ? 12 : performance.now() / 1000) * .25;
-    const glow = (x, y, rx, ry, c) => { const g = ctx.createRadialGradient(x, y, 0, x, y, Math.max(rx, ry)); g.addColorStop(0, c); g.addColorStop(1, 'rgba(255,255,255,0)');
-      ctx.save(); ctx.translate(x, y); ctx.scale(rx / Math.max(rx, ry), ry / Math.max(rx, ry)); ctx.translate(-x, -y); ctx.fillStyle = g; ctx.fillRect(x - Math.max(rx, ry), y - Math.max(rx, ry), Math.max(rx, ry) * 2, Math.max(rx, ry) * 2); ctx.restore(); };
+    if (v >= 12 && x2.roundRect){
+      // larger pixels: rounded tiles with a hairline edge, like the boxes
+      x2.beginPath();
+      for (let i = 0; i < cells.length; i += 2) x2.roundRect(cells[i] + .5, cells[i + 1] + .5, s - 1, s - 1, rad);
+      x2.fillStyle = dk ? '#13233A' : '#F1F4F9'; x2.fill();       // solid, like the boxes, so the light shows at full strength
+      x2.strokeStyle = dk ? 'rgba(255,255,255,.1)' : 'rgba(10,37,64,.1)'; x2.lineWidth = 1; x2.stroke();
+    } else {
+      // fine pixels (thousands of them): the same look from two plain fills, the edge colour and then the tile inside it
+      x2.fillStyle = dk ? '#2B394E' : '#DCE1E8';
+      for (let i = 0; i < cells.length; i += 2) x2.fillRect(cells[i], cells[i + 1], s, s);
+      x2.fillStyle = dk ? '#13233A' : '#F1F4F9';
+      for (let i = 0; i < cells.length; i += 2) x2.fillRect(cells[i] + 1, cells[i + 1] + 1, s - 2, s - 2);
+    }
+    cache.set(key, c);
+    if (cache.size > 3) cache.delete(cache.keys().next().value);
+    return c;
+  }
+  function draw(now){
+    queued = false;
+    if (!W || !H) return;
+    if (!mask) buildMask();
+    ctx.clearRect(0, 0, W, H);                                      // the panel's own background shows between tiles
+    ctx.drawImage(tileLayer(cellSize()), 0, 0, W, H);
+    // the moving light, painted only where tiles are (source-atop), like the section light behind the boxes
+    const t = (reduce.matches ? 12 : (now || performance.now()) / 1000) * .25;
+    const glow = (x, y, rx, ry, c) => { const m = Math.max(rx, ry), g = ctx.createRadialGradient(x, y, 0, x, y, m); g.addColorStop(0, c); g.addColorStop(1, 'rgba(255,255,255,0)');
+      ctx.save(); ctx.translate(x, y); ctx.scale(rx / m, ry / m); ctx.translate(-x, -y); ctx.fillStyle = g; ctx.fillRect(x - m, y - m, m * 2, m * 2); ctx.restore(); };
     ctx.globalCompositeOperation = 'source-atop';
     ctx.globalAlpha = dk ? .6 : 1;
     glow(W * (.72 + .18 * Math.sin(t * .9)), H * (.6 + .25 * Math.cos(t * .7)), W * .5, H * 1.1, 'rgba(0,149,235,.5)');
     glow(W * (.22 + .16 * Math.cos(t * .6)), H * (.45 + .3 * Math.sin(t * .8)), W * .38, H * .9, 'rgba(122,92,255,.46)');
     glow(W * (.48 + .22 * Math.sin(t * .5 + 1)), H * (.5 + .22 * Math.sin(t * 1.1)), W * .3, H * .8, 'rgba(255,168,74,.56)');
     ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'source-over';
-    if (live && !still && !document.hidden) queue();   // keep the light moving while the panel is on screen (not on touch: redraw on scroll only)
+    if (live && !still && !document.hidden) queue();                // keep the light drifting while the panel is on screen (not on touch)
   }
   function queue(){ if (!queued){ queued = true; requestAnimationFrame(draw); } }
-  readMax(); addEventListener('load', readMax);
-  if ('ResizeObserver' in window) new ResizeObserver(readMax).observe(document.body);   // late images change the height
-  let live = false;
-  const onScroll = () => { live = scrollY >= maxY - H - 240; if (live) queue(); };
-  document.addEventListener('visibilitychange', onScroll);
+  function resize(){
+    const r = wrap.getBoundingClientRect(), w = Math.max(1, Math.floor(r.width)), h = Math.max(1, Math.floor(r.height));
+    if (w === W && h === H) return;
+    W = w; H = h; cv.width = Math.ceil(W * DPR); cv.height = Math.ceil(H * DPR); ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    mask = null; cache.clear(); queue();
+  }
+  readMax(); resize();
+  addEventListener('load', () => { readMax(); resize(); queue(); });
+  if ('ResizeObserver' in window){
+    new ResizeObserver(readMax).observe(document.body);            // late images change the page height
+    new ResizeObserver(resize).observe(wrap);
+  }
+  // on screen or near it: tracked by an observer, so no layout reads on scroll
+  if ('IntersectionObserver' in window) new IntersectionObserver(es => { live = es[0].isIntersecting; if (live) queue(); }, {rootMargin: '240px 0px'}).observe(wrap);
+  else live = true;
+  const onScroll = () => { if (live) queue(); };
   addEventListener('scroll', onScroll, {passive: true});
-  addEventListener('resize', () => { readMax(); queue(); }, {passive: true});
+  document.addEventListener('visibilitychange', onScroll);
+  addEventListener('resize', () => { readMax(); resize(); }, {passive: true});
   reduce.addEventListener('change', queue);
-  new MutationObserver(queue).observe(document.documentElement, {attributes: true, attributeFilter: ['data-theme']});   // ground follows the theme
+  new MutationObserver(() => { dk = dark(); cache.clear(); queue(); }).observe(document.documentElement, {attributes: true, attributeFilter: ['data-theme']});   // ground follows the theme
   queue();
 })();
