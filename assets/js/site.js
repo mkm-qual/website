@@ -27,6 +27,17 @@
     if (show) setMega(false); else setPill(false);
   };
   addEventListener('scroll', onScroll, {passive:true}); onScroll();
+  // Back to top: the arrow above the Q; it nudges while the page scrolls and settles a moment after
+  const pillTop = document.getElementById('pill-top');
+  if (pillTop){
+    pillTop.addEventListener('click', e => { e.stopPropagation(); setPill(false); scrollTo({top: 0, behavior: reduce ? 'auto' : 'smooth'}); });
+    let settle = 0;
+    addEventListener('scroll', () => {
+      if (!pillShown || reduce) return;
+      if (!settle) pill.classList.add('scrolling');
+      clearTimeout(settle); settle = setTimeout(() => { settle = 0; pill.classList.remove('scrolling'); }, 220);
+    }, {passive:true});
+  }
 
   // Logo track loop
   const track = document.getElementById('track');
