@@ -821,16 +821,17 @@
   if (!gl) return;
   const VS = 'attribute vec2 a;void main(){gl_Position=vec4(a,0.,1.);}';
   const FS = `precision highp float;
-uniform vec2 r;uniform float t;uniform vec2 m;uniform vec3 bg;
+uniform vec2 r;uniform float t;uniform vec2 m;uniform vec3 bg;uniform float y0;
 vec3 grad(float k){vec3 a=vec3(0.,.584,.922),b=vec3(.478,.361,1.),c=vec3(1.,.36,.616),d=vec3(1.,.66,.29);
 return k<.34?mix(a,b,k/.34):k<.68?mix(b,c,(k-.34)/.34):mix(c,d,(k-.68)/.32);}
-// one ribbon flowing across the full width: a gentle S-curve that dips under the middle and lifts at both sides,
+// one ribbon flowing across the full width: a curve that dips under the middle and lifts at both sides (on wide screens
+// a deeper U, cv=1, so it stays clear of the hero text and sweeps up only near the edges),
 // twisting as it goes. The top edge is crisp, the lower edge melts away; colour runs across and along the band,
 // with darker folds, a sheen and fine fibres along its length
-vec4 ribbon(vec2 uv,float asp,float y0,float lift,float W,float ph,float tw,float T,float px){
+vec4 ribbon(vec2 uv,float asp,float y0,float lift,float W,float ph,float tw,float T,float px,float cv){
 float x=uv.x-.5;
-float yc=y0+lift*x*x*4.+.045*sin(x*5.+T*.6+ph)+.02*sin(x*11.-T*.4+ph)+m.y*.03;
-float sl=lift*x*8.+.225*cos(x*5.+T*.6+ph)+.22*cos(x*11.-T*.4+ph);
+float yc=y0+lift*mix(x*x*4.,abs(x)*x*x*8.,cv)+.045*sin(x*5.+T*.6+ph)+.02*sin(x*11.-T*.4+ph)+m.y*.03;
+float sl=lift*mix(x*8.,abs(x)*x*24.,cv)+.225*cos(x*5.+T*.6+ph)+.22*cos(x*11.-T*.4+ph);
 float d=(uv.y-yc)/sqrt(1.+sl*sl/(asp*asp));
 float tws=cos(x*tw-T*.45+ph+m.x*.8);
 float hw=W*(.2+.8*abs(tws));
@@ -850,8 +851,8 @@ void main(){
 vec2 uv=gl_FragCoord.xy/r;float asp=r.x/r.y;float T=t*.1;float px=1.5/r.y;
 vec3 col=bg;
 float wd=smoothstep(.6,1.3,asp);   // phones: a little lower and slimmer, under the app window
-vec4 b=ribbon(uv,asp,mix(.2,.21,wd),mix(.1,.14,wd),.03,2.4,7.,T,px);
-vec4 a=ribbon(uv,asp,mix(.18,.18,wd),mix(.12,.16,wd),mix(.08,.11,wd),0.,4.4,T,px);
+vec4 b=ribbon(uv,asp,mix(.2,y0+.03,wd),mix(.1,.13,wd),.03,2.4,7.,T,px,wd);   // y0: as high as the hero text allows, set from the page
+vec4 a=ribbon(uv,asp,mix(.18,y0,wd),mix(.12,.13,wd),mix(.08,.1,wd),0.,4.4,T,px,wd);
 float edge=smoothstep(.0,.1,uv.y);   // always fade out before the bottom of the hero, so the container never cuts it
 col=mix(col,b.rgb,b.a*.8*edge);col=mix(col,a.rgb,a.a*edge);
 gl_FragColor=vec4(col,1.);}`;
@@ -864,7 +865,7 @@ gl_FragColor=vec4(col,1.);}`;
   gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 3,-1, -1,3]), gl.STATIC_DRAW);
   const loc = gl.getAttribLocation(pr, 'a'); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
-  const uR = gl.getUniformLocation(pr, 'r'), uT = gl.getUniformLocation(pr, 't'), uM = gl.getUniformLocation(pr, 'm'), uB = gl.getUniformLocation(pr, 'bg');
+  const uR = gl.getUniformLocation(pr, 'r'), uT = gl.getUniformLocation(pr, 't'), uM = gl.getUniformLocation(pr, 'm'), uB = gl.getUniformLocation(pr, 'bg'), uY = gl.getUniformLocation(pr, 'y0');
   cv.className = 'sh-gl'; cv.setAttribute('aria-hidden', 'true');
   mesh.prepend(cv); mesh.classList.add('gl');
 
@@ -885,9 +886,24 @@ gl_FragColor=vec4(col,1.);}`;
     gl.uniform1f(uT, time / 1000 + 30); gl.uniform2f(uM, mx.x, mx.y);
     gl.drawArrays(gl.TRIANGLES, 0, 3);
   };
-  size(); ground();
+  // lift the ribbon as high as it can go while its top edge (curve + wobble + width) stays a gap below the closing hero text,
+  // checked against each line of that text at its own width; mirrors the wide-screen curve in the shader
+  const clear = () => {
+    const mr = mesh.getBoundingClientRect(); if (!mr.height) return;
+    const end = stick.querySelector('.sh-end'), lift = (1 - (parseFloat(end && end.style.getPropertyValue('--e')) || 0)) * 24;   // undo its rise-in offset
+    const asp = mr.width / mr.height, k = Math.min(1, Math.max(0, (asp - .6) / .7)), wd = k * k * (3 - 2 * k);
+    let y = .35;
+    if (end) for (const el of end.children){
+      const b = el.getBoundingClientRect(); if (!b.height) continue;
+      const x = Math.min(.5, b.width / 2 / mr.width), shape = (1 - wd) * 4 * x * x + wd * 8 * x * x * x;
+      y = Math.min(y, (mr.bottom - (b.bottom - lift) - 10) / mr.height - .13 * shape - .065 - .1);
+    }
+    gl.uniform1f(uY, Math.max(.03, y));
+  };
+  size(); ground(); clear();
+  if (document.fonts) document.fonts.ready.then(() => { clear(); redrawStill(); });
   const redrawStill = () => { if (still) draw(0); };
-  addEventListener('resize', () => { size(); redrawStill(); }, {passive: true});
+  addEventListener('resize', () => { size(); clear(); redrawStill(); }, {passive: true});
   new MutationObserver(() => { ground(); redrawStill(); }).observe(document.documentElement, {attributes: true, attributeFilter: ['data-theme']});
   matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { ground(); redrawStill(); });
   if (still){ draw(0); return; }
@@ -985,7 +1001,6 @@ gl_FragColor=vec4(o,1.);}`;
   const stick = sh && sh.querySelector('.sh-stick');
   const hero = sh && {
     lines: [...sh.querySelectorAll('.sh-line')],
-    steps: [...sh.querySelectorAll('.sh-steps li')],
     side: [...sh.querySelectorAll('.sh-side span')],
     rows: [...sh.querySelectorAll('.sh-row')],
     app: sh.querySelector('.sh-app'),
@@ -994,7 +1009,7 @@ gl_FragColor=vec4(o,1.);}`;
     end: sh.querySelector('.sh-end'), hint: sh.querySelector('.sh-hint'),
     tests: document.getElementById('sh-tests'), cov: document.getElementById('sh-cov'), time: document.getElementById('sh-time')
   };
-  let lastRail = -1, lastLine = -1;
+  let lastLine = -1;
   // geometry read once per layout (load, resize): the hand's start and target, and where the scroll hint sits
   let geo = null;
   function measure(){
@@ -1070,11 +1085,6 @@ gl_FragColor=vec4(o,1.);}`;
     const top = o.indexOf(Math.max(...o));
     if (top !== lastLine){ h.lines.forEach((l, i) => i === top ? l.removeAttribute('aria-hidden') : l.setAttribute('aria-hidden', 'true')); lastLine = top; }
 
-    // step bar: each segment fills across its own stretch of the story
-    const B = [0, .12, .3, .38, .74, 1];
-    const stage = p < .12 ? 0 : p < .3 ? 1 : p < .38 ? 2 : p < .74 ? 3 : 4;
-    h.steps.forEach((li, i) => set(li, '--sf', seg(p, B[i], B[i + 1])));
-    if (stage !== lastRail){ h.steps.forEach((li, i) => { li.classList.toggle('on', i === stage); li.classList.toggle('done', i < stage); }); lastRail = stage; }
   }
 
   if (!sh) return;

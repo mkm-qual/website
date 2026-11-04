@@ -1428,13 +1428,6 @@ main,footer{position:relative;z-index:1;background:var(--paper)}
 .sh-hint b::after{content:"";position:absolute;left:50%;top:7px;width:3px;height:7px;margin-left:-1.5px;border-radius:2px;background:var(--sh-fg);animation:sh-wheel 1.6s var(--ease) infinite}
 @keyframes sh-wheel{0%{opacity:0;transform:translateY(-3px)}30%{opacity:1}100%{opacity:0;transform:translateY(10px)}}
 
-/* step bar along the foot of the stage: five segments fill in turn (same language as the Total Control walkthrough bar) */
-.sh-steps{position:absolute;left:50%;bottom:30px;transform:translateX(-50%);width:min(560px,calc(100% - 2 * var(--side)));display:flex;gap:8px;list-style:none;margin:0;padding:0;z-index:4;pointer-events:none;opacity:calc(min(1,var(--p,0) * 16) * (1 - var(--z,0)))}   /* fades out with the app window at the end */
-.sh-steps li{flex:1;display:flex;flex-direction:column;gap:10px;font-size:var(--t-meta);color:color-mix(in srgb,var(--sh-fg) 45%,transparent);transition:color .3s}
-.sh-steps li.done{color:var(--sh-soft)}
-.sh-steps li.on{color:var(--sh-fg)}
-.sh-steps i{display:block;height:3px;border-radius:3px;background:var(--sh-line);overflow:hidden}
-.sh-steps b{display:block;height:100%;width:calc(var(--sf,0) * 100%);border-radius:inherit;background:var(--brand)}   /* solid, like the Total Control walkthrough bar */
 
 
 /* the app window */
@@ -1485,8 +1478,6 @@ main,footer{position:relative;z-index:1;background:var(--paper)}
   .sh-body{grid-template-columns:1fr}
   .sh-side{display:none}
   .sh-row{grid-template-columns:minmax(0,1fr) 64px 72px;gap:8px;padding:8px 10px}
-  .sh-steps{bottom:22px}
-  .sh-steps span{font-size:var(--t-xs)}
 }
 @media (max-width:560px){
   .sh-stick{--fs:clamp(26px,7.6vw,32px);--ct:84px}
@@ -1506,7 +1497,7 @@ main,footer{position:relative;z-index:1;background:var(--paper)}
 @media (prefers-reduced-motion:reduce){
   .sh{height:auto}
   .sh-stick{position:relative;height:auto;min-height:100svh;padding-bottom:40px}
-  .sh-hand,.sh-hint,.sh-steps{display:none}
+  .sh-hand,.sh-hint{display:none}
 }
 
 /* Hero theme, applied lightly: dark cards glow with the hero colours under a fine grain; a few light sections carry a faint wash */
