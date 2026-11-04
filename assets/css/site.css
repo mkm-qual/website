@@ -1808,35 +1808,3 @@ main,footer{position:relative;z-index:1;background:var(--paper)}
 .pill-top:focus-visible{outline:2px solid var(--brand);outline-offset:0;border-radius:var(--r-xs)}
 .pill-nav.scrolling .pill-top svg{animation:pt-nudge .9s var(--ease) infinite}
 @keyframes pt-nudge{0%,100%{transform:translateY(1px)}50%{transform:translateY(-2.5px)}}
-
-/* Instant Update card on the homepage: sprint changes as typed rows with an impact bar, in the same panel language as the diagrams */
-.vz-sp{position:relative;width:100%;display:flex;flex-direction:column;gap:12px;padding:14px;border-radius:18px;isolation:isolate;color:var(--ink);font-size:var(--t-meta);
-  background:radial-gradient(circle,color-mix(in srgb,var(--ink) 8%,transparent) .8px,transparent 1.2px) 0 0/12px 12px,linear-gradient(180deg,color-mix(in srgb,var(--brand) 6%,var(--box-card)),var(--box-card) 70%);
-  box-shadow:0 1px 0 rgba(255,255,255,.7) inset,0 28px 56px -30px rgba(30,50,150,.5),0 2px 6px -2px rgba(11,31,58,.08)}
-.vz-sp::before{content:"";position:absolute;inset:0;border-radius:inherit;padding:1px;background:linear-gradient(140deg,color-mix(in srgb,var(--brand) 70%,transparent),color-mix(in srgb,#5B4CF0 45%,transparent) 45%,color-mix(in srgb,var(--ink) 10%,transparent));-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none}
-.vz-sp-hd{display:flex;justify-content:space-between;align-items:center;gap:8px}
-.vz-sp-hd .lbl{font-family:var(--mono);font-size:10.5px;font-weight:500;letter-spacing:.08em;text-transform:uppercase}
-.vz-sp ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
-.vz-sp li{position:relative;display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:10px;padding:9px 10px 11px;border-radius:12px;background:var(--box-card);box-shadow:var(--stroke),0 8px 18px -14px rgba(11,31,58,.35)}
-.vz-sp li::after{content:"";position:absolute;left:10px;right:10px;bottom:5px;height:3px;border-radius:2px;background:linear-gradient(90deg,var(--c) var(--w),color-mix(in srgb,var(--ink) 6%,transparent) var(--w))}
-.vz-sp .ic{width:26px;height:26px;border-radius:7px;display:grid;place-items:center;color:var(--c);background:color-mix(in srgb,var(--c) 12%,transparent);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--c) 22%,transparent)}
-.vz-sp .ic svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.vz-sp .tx{min-width:0;display:flex;flex-direction:column;line-height:1.25}
-.vz-sp .tx b{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.vz-sp .tx small{display:flex;align-items:center;gap:6px;color:var(--ink-soft);font-size:11.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.vz-sp .tx em{font-style:normal;font-family:var(--mono);font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--c)}
-.vz-sp .n{display:flex;flex-direction:column;align-items:flex-end;font-family:var(--mono);font-size:var(--t-small);font-weight:500;line-height:1.1;font-variant-numeric:tabular-nums}
-.vz-sp .n small{font-size:9.5px;font-weight:400;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft)}
-.vz-sp-ft{display:flex;justify-content:space-between;align-items:center;gap:10px;padding-top:2px}
-.vz-sp-ft span:first-child{color:var(--ink-soft)}
-.vz-sp-ft b{font-family:var(--mono);font-weight:500;color:var(--ink)}
-.vz-sp-btn{position:relative;overflow:hidden;padding:9px 16px;border-radius:var(--r-sm);background:var(--us-fill);color:#fff;font-weight:500;box-shadow:0 10px 22px -12px rgba(91,76,240,.75)}
-.vz-sp-btn::after{content:"";position:absolute;inset:0;background:linear-gradient(105deg,transparent 40%,rgba(255,255,255,.35) 50%,transparent 60%);transform:translateX(-100%);animation:vz-sheen-btn 4.5s var(--ease) infinite}
-@keyframes vz-sheen-btn{0%,60%{transform:translateX(-100%)}85%,100%{transform:translateX(100%)}}
-/* impact bars fill as the card scrolls into view, where the browser supports it */
-@supports (animation-timeline: view()){
-  .vz-sp li::after{animation:vz-bar linear both;animation-timeline:view();animation-range:entry 20% cover 45%}
-  @keyframes vz-bar{from{background-size:0 100%}}
-  .vz-sp li::after{background:linear-gradient(90deg,var(--c),var(--c)) 0 0/var(--w) 100% no-repeat,color-mix(in srgb,var(--ink) 6%,transparent)}
-}
-
