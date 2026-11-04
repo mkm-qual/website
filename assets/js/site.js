@@ -830,8 +830,10 @@ return k<.34?mix(a,b,k/.34):k<.68?mix(b,c,(k-.34)/.34):mix(c,d,(k-.68)/.32);}
 // with darker folds, a sheen and fine fibres along its length
 vec4 ribbon(vec2 uv,float asp,float y0,float lift,float W,float ph,float tw,float T,float px,float cv){
 float x=uv.x-.5;
-float yc=y0+lift*mix(x*x*4.,abs(x)*x*x*8.,cv)+.045*sin(x*5.+T*.6+ph)+.02*sin(x*11.-T*.4+ph)+m.y*.03;
-float sl=lift*mix(x*8.,abs(x)*x*24.,cv)+.225*cos(x*5.+T*.6+ph)+.22*cos(x*11.-T*.4+ph);
+float wv=1.+.3*cv;   // wide screens: a livelier wave
+float br=.7+.3*sin(T*.6+ph);   // wide screens: the main wave stands still and breathes as a U (dips mid, lifts at the sides) instead of travelling, so it never reads as a W
+float yc=y0+lift*mix(x*x*4.,abs(x)*x*x*8.,cv)+wv*(.045*mix(sin(x*5.+T*.6+ph),-cos(x*5.)*br,cv)+.02*sin(x*11.-T*.4+ph))+m.y*.03;
+float sl=lift*mix(x*8.,abs(x)*x*24.,cv)+wv*(.225*mix(cos(x*5.+T*.6+ph),sin(x*5.)*br,cv)+.22*cos(x*11.-T*.4+ph));
 float d=(uv.y-yc)/sqrt(1.+sl*sl/(asp*asp));
 float tws=cos(x*tw-T*.45+ph+m.x*.8);
 float hw=W*(.15+.8*sqrt(tws*tws+.0324));   // a rounded minimum, so the twist rolls over smoothly instead of pinching to a point
@@ -851,8 +853,8 @@ void main(){
 vec2 uv=gl_FragCoord.xy/r;float asp=r.x/r.y;float T=t*.1;float px=1.5/r.y;
 vec3 col=bg;
 float wd=smoothstep(.6,1.3,asp);   // phones: a little lower and slimmer, under the app window
-vec4 b=ribbon(uv,asp,mix(.2,y0+.03,wd),mix(.1,.13,wd),.03,2.4,7.,T,px,wd);   // y0: as high as the hero text allows, set from the page
-vec4 a=ribbon(uv,asp,mix(.18,y0,wd),mix(.12,.13,wd),mix(.08,.1,wd),0.,4.4,T,px,wd);
+vec4 b=ribbon(uv,asp,mix(.2,y0+.03,wd),mix(.1,.2,wd),mix(.03,.065,wd),2.4,mix(7.,8.5,wd),T,px,wd);   // y0: as high as the hero text allows, set from the page
+vec4 a=ribbon(uv,asp,mix(.18,y0,wd),mix(.12,.2,wd),mix(.08,.135,wd),0.,mix(4.4,6.,wd),T,px,wd);
 float edge=smoothstep(.0,.1,uv.y);   // always fade out before the bottom of the hero, so the container never cuts it
 col=mix(col,b.rgb,b.a*.8*edge);col=mix(col,a.rgb,a.a*edge);
 gl_FragColor=vec4(col,1.);}`;
@@ -896,7 +898,7 @@ gl_FragColor=vec4(col,1.);}`;
     if (end) for (const el of end.children){
       const b = el.getBoundingClientRect(); if (!b.height) continue;
       const x = Math.min(.5, b.width / 2 / mr.width), shape = (1 - wd) * 4 * x * x + wd * 8 * x * x * x;
-      y = Math.min(y, (mr.bottom - (b.bottom - lift) - 10) / mr.height - .13 * shape - .065 - .1);
+      y = Math.min(y, (mr.bottom - (b.bottom - lift) - 10) / mr.height - .2 * shape - .065 * 1.3 - .135);   // .135: the front ribbon's half-width
     }
     gl.uniform1f(uY, Math.max(.03, y));
   };
