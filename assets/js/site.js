@@ -35,7 +35,7 @@
     addEventListener('scroll', () => {
       if (!pillShown || reduce) return;
       if (!settle) pill.classList.add('scrolling');
-      clearTimeout(settle); settle = setTimeout(() => { settle = 0; pill.classList.remove('scrolling'); }, 220);
+      clearTimeout(settle); settle = setTimeout(() => { settle = 0; pill.classList.remove('scrolling'); }, 400);
     }, {passive:true});
   }
 
