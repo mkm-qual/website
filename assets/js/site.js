@@ -834,7 +834,7 @@ float yc=y0+lift*mix(x*x*4.,abs(x)*x*x*8.,cv)+.045*sin(x*5.+T*.6+ph)+.02*sin(x*1
 float sl=lift*mix(x*8.,abs(x)*x*24.,cv)+.225*cos(x*5.+T*.6+ph)+.22*cos(x*11.-T*.4+ph);
 float d=(uv.y-yc)/sqrt(1.+sl*sl/(asp*asp));
 float tws=cos(x*tw-T*.45+ph+m.x*.8);
-float hw=W*(.2+.8*abs(tws));
+float hw=W*(.15+.8*sqrt(tws*tws+.0324));   // a rounded minimum, so the twist rolls over smoothly instead of pinching to a point
 float u=d/hw;
 if(abs(u)>1.)return vec4(0.);
 float a=u>0.?clamp((1.-u)*hw/px,0.,1.):smoothstep(-1.,-.25,u);
